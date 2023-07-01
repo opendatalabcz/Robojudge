@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Optional
 import uuid
 
 import chromadb
 import chromadb.config
 
 from utils.logger import logging
-from utils.types import Document, Optional
+from utils.types import Case, Metadata
 
 # TODO: Actual DB server
 logger = logging.getLogger(__name__)
@@ -19,12 +19,14 @@ class DB:
 
     @staticmethod
     def generate_id(name: str):
-        return uuid.uuid5(uuid.NAMESPACE_URL, name)
+        return str(uuid.uuid5(uuid.NAMESPACE_URL, name))
 
     def create_collection(self, col_name: str):
-        if self.client.get_collection(col_name):
+        try:
+            self.client.get_collection(col_name)
             logger.warn(f'Collection "{col_name}" already exists.')
-            return
+        except:
+            pass
 
         self.client.create_collection(col_name)
         logger.info(f'Created collection "{col_name}".')
@@ -37,7 +39,7 @@ class DB:
         return self.client.get_or_create_collection(col_name)
 
     # TODO: Split into smaller chunks
-    def upsert_documents(self, col_name: str, documents: List[Document]):
+    def upsert_documents(self, col_name: str, documents: List[Case]):
         collection = self.get_collection(col_name)
 
         parsed_documents = {
@@ -49,15 +51,15 @@ class DB:
         for document in documents:
             parsed_documents["documents"].append(document.text)
             parsed_documents["metadatas"].append(
-                {**document.metadata, "name": document.name})
-            parsed_documents["ids"].append(DB.generate_id(document.name))
+                {"case_id": document.id, "jednaci_cislo": document.metadata.jednaci_cislo})
+            parsed_documents["ids"].append(DB.generate_id(document.id))
 
         collection.upsert(**parsed_documents)
 
     def get_documents(self, col_name: str, doc_ids: List[str]):
         collection = self.get_collection(col_name)
 
-        collection.get(ids=doc_ids)
+        return collection.get(ids=doc_ids)
 
     def delete_documents(self, col_name: str, doc_ids: List[str]):
         collection = self.get_collection(col_name)

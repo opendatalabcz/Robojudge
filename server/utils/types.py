@@ -3,6 +3,7 @@ from datetime import date
 
 from pydantic import BaseModel
 
+
 class CaseMetadataAttributes(StrEnum):
     JEDNACI_CISLO = 'jednaci_cislo'
     COURT = 'court'
@@ -14,6 +15,7 @@ class CaseMetadataAttributes(StrEnum):
     KEYWORDS = 'keywords'
     REGULATIONS_MENTIONED = 'regulations_mentioned'
     RELATED_CASES = 'related_cases'
+
 
 DOCUMENT_METADATA_MAP = {
     "Jednací číslo": CaseMetadataAttributes.JEDNACI_CISLO,
@@ -28,6 +30,7 @@ DOCUMENT_METADATA_MAP = {
     "Vztah k jiným rozhodnutím": CaseMetadataAttributes.RELATED_CASES,
 }
 
+
 class Metadata(BaseModel):
     jednaci_cislo: str
     court: str
@@ -40,8 +43,9 @@ class Metadata(BaseModel):
     regulations_mentioned: list[str] = []
     related_cases: list[str] = []
 
+
 class Case(BaseModel):
     id: str
-    name: str = ''
     metadata: Metadata
-    text: str = ''
+    verdict: str = ''
+    reasoning: str = ''

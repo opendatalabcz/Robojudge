@@ -30,11 +30,8 @@ class CasePageScraper:
     page: str = ''
     page_soup: BeautifulSoup
 
-    text: str = ''
-    metadata: Metadata
-
-    def __init__(self, case_id: str) -> None:
-        self.case_id = case_id
+    def __init__(self, case_id: str | int) -> None:
+        self.case_id = str(case_id)
 
     async def scrape_case(self) -> Case | None:
         self.page = await CasePageScraper.scrape_case_page(self.case_id)
@@ -42,10 +39,10 @@ class CasePageScraper:
             return Case(id=self.case_id)
         self.page_soup = BeautifulSoup(self.page, 'html.parser')
 
-        self.text = self.extract_text()
-        self.metadata = self.extract_metadata()
+        verdict, reasoning = self.extract_text()
+        metadata = self.extract_metadata()
 
-        return Case(id=self.case_id, text=self.text, metadata=self.metadata)
+        return Case(id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
 
         # TODO: check if the case exists by some error element on the page
     @staticmethod
@@ -84,21 +81,28 @@ class CasePageScraper:
             ', ')
         metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED] = metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED].split(
             ', ')
-        metadata[CaseMetadataAttributes.RELATED_CASES] = metadata[CaseMetadataAttributes.RELATED_CASES].split(
-            ', ')
-        
-        if metadata[CaseMetadataAttributes.RELATED_CASES][0] == '':
-            del metadata[CaseMetadataAttributes.RELATED_CASES]
+        # TODO: Proper related cases parsing
+        # metadata[CaseMetadataAttributes.RELATED_CASES] = metadata[CaseMetadataAttributes.RELATED_CASES].split(
+        #     ', ')
+        # if metadata[CaseMetadataAttributes.RELATED_CASES][0] == '':
+        #     del metadata[CaseMetadataAttributes.RELATED_CASES]
+        metadata[CaseMetadataAttributes.RELATED_CASES] = []
 
         return Metadata(**metadata)
 
-    def extract_text(self):
+    def extract_text(self) -> tuple[str, str]:
         text_box = self.page_soup.find(name='div', class_='detailBottom')
         rows = text_box.find_all(name='p')
-        text = []
-        for row in rows:
-            text.append(row.get_text())
-        return '\n'.join(text)
+        texts = [row.get_text() for row in rows]
+
+        verdict_index = texts.index('takto:')
+        reasoning_index = texts.index('Odůvodnění:')
+        footer_index = texts.index('Poučení:')
+
+        verdict = '\n'.join(texts[verdict_index+1: reasoning_index])
+        reasoning = '\n'.join(texts[reasoning_index+1: footer_index])
+
+        return verdict, reasoning
 
     @staticmethod
     async def get_newest_case_id():
