@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      # TODO: Env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  chroma:
+    build: ../chroma/
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/data/db   
+
+volumes:
+  mongo-data:
+  chroma-data:

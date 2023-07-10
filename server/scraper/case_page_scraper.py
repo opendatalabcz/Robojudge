@@ -7,6 +7,7 @@ from playwright.sync_api import sync_playwright
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 from bs4 import BeautifulSoup
 
+from utils.settings import settings
 from utils.types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetadataAttributes
 from utils.logger import logging
 from utils.functional import parse_date
@@ -34,15 +35,20 @@ class CasePageScraper:
         self.case_id = str(case_id)
 
     async def scrape_case(self) -> Case | None:
-        self.page = await CasePageScraper.scrape_case_page(self.case_id)
-        if not self.page:
-            return Case(id=self.case_id)
-        self.page_soup = BeautifulSoup(self.page, 'html.parser')
+        try:
+            self.page = await CasePageScraper.scrape_case_page(self.case_id)
+            if not self.page:
+                return None
+            self.page_soup = BeautifulSoup(self.page, 'html.parser')
 
-        verdict, reasoning = self.extract_text()
-        metadata = self.extract_metadata()
+            verdict, reasoning = self.extract_text()
+            metadata = self.extract_metadata()
 
-        return Case(id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
+            logging.debug(f'Scraped case: {self.case_id}')
+
+            return Case(id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
+        except Exception:
+            logging.exception(f'Error while scraping case "{self.case_id}":')
 
         # TODO: check if the case exists by some error element on the page
     @staticmethod
@@ -53,7 +59,7 @@ class CasePageScraper:
             await page.goto(CasePageScraper.JUSTICE_BASE_URL + id)
 
             try:
-                await page.wait_for_selector('div[id="PrintDiv"]')
+                await page.wait_for_selector('div[id="PrintDiv"]', timeout=settings.SCRAPER_TIMEOUT)
             except PlaywrightTimeoutError:
                 logging.warning(f'Timeout or no case with {id}.')
                 return ''
@@ -126,4 +132,4 @@ class CasePageScraper:
                 case_ids.append(case_id.removeprefix(
                     CasePageScraper.LINK_PREFIX))
 
-            return case_ids[0]
+            return int(case_ids[0])

@@ -1,3 +1,6 @@
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+from server.utils.settings import settings
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', level=settings.LOG_LEVEL)

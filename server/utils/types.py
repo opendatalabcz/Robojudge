@@ -36,8 +36,8 @@ class Metadata(BaseModel):
     court: str
     subject_matter: str
     judge_name: str
-    sentence_date: date
-    publication_date: date
+    sentence_date: str
+    publication_date: str
     ecli_id: str = ''
     keywords: list[str] = []
     regulations_mentioned: list[str] = []

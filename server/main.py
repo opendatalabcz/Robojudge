@@ -3,19 +3,23 @@ import asyncio
 from fastapi import FastAPI
 import uvicorn
 
+from utils.logger import logging
 from scraper.case_page_scraper import CasePageScraper
-from db.vector_db import DB
+from server.db.chroma_db import embedding_db
+from db.mongo_db import test_db
+import routers.query
 
 app = FastAPI()
 
+app.include_router(routers.query.router)
 
-# Milvus for vectors
+
+# MongoDB for metadata
+# Full DB case upload method
 
 # Basic POST endpoint for search and summary
 
 # Background task for scraping
-
-# MongoDB for metadata
 
 
 # async def main():
@@ -34,4 +38,14 @@ app = FastAPI()
 
 
 if __name__ == '__main__':
-    uvicorn.run(app)
+    # uvicorn.run(app, port=4000)
+
+    # logging.info(embedding_db.client.heartbeat())
+
+    col = test_db.test_collection
+
+    id = col.insert_one({
+        "title": 'whatever'
+    })
+
+    print(id)
