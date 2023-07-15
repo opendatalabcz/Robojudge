@@ -4,7 +4,6 @@ from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from server.db.chroma_db import embedding_db
-from server.model.gpt import OpenAIPrompter
 
 class CaseSearchRequest(BaseModel):
     query_text: str
@@ -22,8 +21,5 @@ async def get_all_cases():
 @router.post('/search')
 async def search_cases(request: CaseSearchRequest):
     cases = embedding_db.find_case_chunks_by_text(**request.dict())
-    # summaries = []
-    # for case in cases:
-    #     summaries.append(OpenAIPrompter.summarize_case(case.text))
 
     return cases

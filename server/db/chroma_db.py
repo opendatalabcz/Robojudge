@@ -114,7 +114,7 @@ class CaseEmbeddingStorage:
     def delete_case_chunks(self, case_ids: list[str]):
         return self.collection.delete(ids=case_ids)
 
-    def find_case_chunks_by_text(self, query_text: str, limit: int = 5, included_fields: list[str] = ['documents', 'metadatas']):
+    def find_case_chunks_by_text(self, query_text: str, limit: int = 5, included_fields: list[str] = ['documents', 'metadatas']) -> list[CaseChunk]:
         query_result = CaseEmbeddingStorage.parse_text_query_result(self.collection.query(
             query_texts=[query_text], n_results=limit, include=included_fields))
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
