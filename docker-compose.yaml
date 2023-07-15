@@ -20,7 +20,13 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - chroma-data:/data/db   
+      - chroma-data:/data/db
+
+  server:
+    build: server/
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:${APP_PORT}
 
 volumes:
   mongo-data:

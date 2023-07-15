@@ -1,9 +1,8 @@
 from pymongo import MongoClient, ReplaceOne
-from bson.objectid import ObjectId
 
-from utils.settings import settings
-from utils.logger import logging
-from utils.types import Metadata, Case
+from server.utils.settings import settings
+from server.utils.logger import logging
+from server.utils.types import Case
 
 # TODO: index by case_id
 # TODO: use motor
@@ -13,7 +12,7 @@ class CaseMetadataStorage:
 
     def __init__(self) -> None:
         self.client = MongoClient(settings.MONGODB_URL)
-        logging.info('Connection to MongoDB established.')
+        logging.info(f'Connection established to MongoDB "{settings.MONGODB_URL}".')
 
     @property
     def collection(self):
@@ -29,13 +28,6 @@ class CaseMetadataStorage:
         except Exception:
             logging.exception(
                 f'Error while searching for latest case_id:')
-
-    # def find_metadata(self, query, projection=None):
-    #     try:
-    #         return self.collection.find(query, projection)
-    #     except Exception:
-    #         logging.exception(
-    #             f'Error while querying metadata with "{query}" "{projection}":')
 
     def upsert_metadata(self, cases: list[Case]):
         try:

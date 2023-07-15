@@ -1,51 +1,21 @@
 import asyncio
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from utils.logger import logging
-from scraper.case_page_scraper import CasePageScraper
-from server.db.chroma_db import embedding_db
-from db.mongo_db import test_db
-import routers.query
+from server.utils.logger import logging
+from server.utils.settings import settings
+
+import server.routers.cases
 
 app = FastAPI()
 
-app.include_router(routers.query.router)
+# TODO: Env the FE URL
+app.add_middleware(CORSMiddleware, allow_origins=[
+               'http://localhost:3000'], allow_methods=["*"], allow_headers=["*"])
 
-
-# MongoDB for metadata
-# Full DB case upload method
-
-# Basic POST endpoint for search and summary
-
-# Background task for scraping
-
-
-# async def main():
-#     db = DB()
-
-#     db.create_collection('docs_1')
-
-#     newest_id = await CasePageScraper.get_newest_case_id()
-#     scraper = CasePageScraper(newest_id)
-#     case = await scraper.scrape_case()
-
-#     db.upsert_documents('docs_1', [case])
-
-#     docs = db.get_documents('docs_1', [])
-#     print(docs)
-
+app.include_router(server.routers.cases.router)
 
 if __name__ == '__main__':
-    # uvicorn.run(app, port=4000)
-
-    # logging.info(embedding_db.client.heartbeat())
-
-    col = test_db.test_collection
-
-    id = col.insert_one({
-        "title": 'whatever'
-    })
-
-    print(id)
+    uvicorn.run(app, port=settings.APP_PORT)

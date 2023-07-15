@@ -7,10 +7,10 @@ from playwright.sync_api import sync_playwright
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 from bs4 import BeautifulSoup
 
-from utils.settings import settings
-from utils.types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetadataAttributes
-from utils.logger import logging
-from utils.functional import parse_date
+from server.utils.settings import settings
+from server.utils.types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetadataAttributes
+from server.utils.logger import logging
+from server.utils.functional import parse_date
 
 LINK_REGEX = re.compile(r'/(\d+\s*\w+\s*\d+\/\d{4})\s*-?(\s*\d+)?/gm')
 

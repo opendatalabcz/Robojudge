@@ -1,7 +1,7 @@
 from strenum import StrEnum
-from datetime import date
+from typing import Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CaseMetadataAttributes(StrEnum):
@@ -49,3 +49,10 @@ class Case(BaseModel):
     metadata: Metadata
     verdict: str = ''
     reasoning: str = ''
+
+class CaseChunk(BaseModel):
+    chunk_id: str = Field(description='Not case_id but the internal ChromaDB id')
+    chunk_index: int
+    case_id: str
+    chunk_text: str
+    metadata: Dict
