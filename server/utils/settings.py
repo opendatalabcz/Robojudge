@@ -2,11 +2,15 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_PORT=4000
-    ENVIRONMENT='dev'
+    SERVER_PORT = 4000
+    SERVER_VERSION = '0.1.0'
+    ENVIRONMENT = 'dev'
 
-    EMBEDDING_DB_HOST='localhost'
-    EMBEDDING_DB_PORT=8000
+    CLIENT_HOST = 'http://localhost'
+    CLIENT_PORT = 3000
+
+    EMBEDDING_DB_HOST = 'localhost'
+    EMBEDDING_DB_PORT = 8000
     EMBEDDING_CACHE_DIR = 'embedding_models'
     EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'
 

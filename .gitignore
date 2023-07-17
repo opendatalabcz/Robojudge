@@ -3,3 +3,5 @@
 embedding_models
 build
 .env
+myproject.egg-info
+bp_server.egg-info

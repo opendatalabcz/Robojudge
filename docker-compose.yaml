@@ -5,12 +5,8 @@ services:
   mongo:
     image: mongo
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      # TODO: Env
     ports:
-      - "27017:27017"
+      - ${MONGO_DB_PORT}:${MONGO_DB_PORT}
     volumes:
       - mongo-data:/data/db
 
@@ -18,15 +14,18 @@ services:
     build: ../chroma/
     restart: always
     ports:
-      - "8000:8000"
+      - ${CHROMA_DB_PORT}:${CHROMA_DB_PORT}
     volumes:
       - chroma-data:/data/db
 
   server:
-    build: server/
+    build: ./
     restart: unless-stopped
+    depends_on:
+      - mongo
+      - chroma
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - ${SERVER_PORT}:${SERVER_PORT}
 
 volumes:
   mongo-data:

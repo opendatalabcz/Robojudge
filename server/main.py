@@ -12,12 +12,16 @@ import server.routers.summaries
 
 app = FastAPI()
 
-# TODO: Env the FE URL
 app.add_middleware(CORSMiddleware, allow_origins=[
-               'http://localhost:3000'], allow_methods=["*"], allow_headers=["*"])
+    f'{settings.CLIENT_HOST}:{settings.CLIENT_PORT}'], allow_methods=["*"], allow_headers=["*"])
 
 app.include_router(server.routers.cases.router)
 app.include_router(server.routers.summaries.router)
 
+
+@app.get('/health')
+async def get_health():
+    return {"status": "up", "version": settings.SERVER_VERSION, "environment": settings.ENVIRONMENT}
+
 if __name__ == '__main__':
-    uvicorn.run(app, port=settings.APP_PORT)
+    uvicorn.run(app, host='0.0.0.0', port=settings.SERVER_PORT)
