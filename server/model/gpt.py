@@ -2,6 +2,7 @@ import openai
 
 from utils.logger import logging
 
+# TODO: Move to ENV
 openai.api_key = "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"
 
 logger = logging.getLogger(__name__)

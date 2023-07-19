@@ -1,9 +1,6 @@
 import re
-import asyncio
 import logging
 
-from pydantic import BaseModel
-from playwright.sync_api import sync_playwright
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 from bs4 import BeautifulSoup
 
@@ -28,6 +25,7 @@ class CasePageScraper:
     MAIN_PAGE_URL = "https://rozhodnuti.justice.cz/SoudniRozhodnuti/"
     LINK_PREFIX = 'rozhodnuti/'
 
+    case_id: str = ''
     page: str = ''
     page_soup: BeautifulSoup
 
@@ -50,6 +48,7 @@ class CasePageScraper:
         except Exception:
             logging.exception(f'Error while scraping case "{self.case_id}":')
 
+        # TODO: does not make sense to be static
         # TODO: check if the case exists by some error element on the page
     @staticmethod
     async def scrape_case_page(id: str):
