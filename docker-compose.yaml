@@ -18,14 +18,14 @@ services:
     volumes:
       - chroma-data:/data/db
 
-  server:
-    build: ./
-    restart: unless-stopped
-    depends_on:
-      - mongo
-      - chroma
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+  # server:
+  #   build: ./
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mongo
+  #     - chroma
+  #   ports:
+  #     - ${SERVER_PORT}:${SERVER_PORT}
 
 volumes:
   mongo-data:

@@ -1,6 +1,4 @@
 from strenum import StrEnum
-from typing import Dict
-
 from pydantic import BaseModel, Field
 
 
@@ -55,4 +53,7 @@ class CaseChunk(BaseModel):
     chunk_index: int
     case_id: str
     chunk_text: str
-    metadata: Dict
+    metadata: dict
+
+class CaseWithSummary(Case):
+    summary: str = ''

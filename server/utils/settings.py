@@ -14,11 +14,17 @@ class Settings(BaseSettings):
     EMBEDDING_CACHE_DIR = 'embedding_models'
     EMBEDDING_MODEL = 'multi-qa-MiniLM-L6-cos-v1'
 
-    MONGODB_URL = "mongodb://root:example@localhost:27017"
+    MONGODB_URL = "mongodb://localhost:27017"
 
     SCRAPER_TIMEOUT = 10_000
 
     LOG_LEVEL = 'DEBUG'
+
+    OPENAI_API_KEY = ''
+
+    TOKENIZER_INPUT_LENGTH = 600
+    TOKENIZER_MODEL = 'czech-morfflex2.0-pdtc1.0-220710'
+    TOKENIZER_URL = 'http://lindat.mff.cuni.cz/services/morphodita/api/tag'
 
     class Config:
         env_file = '.env'

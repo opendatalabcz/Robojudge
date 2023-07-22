@@ -80,8 +80,6 @@ class CaseEmbeddingStorage:
             metadata = {
                 "case_id": case.id,
                 "jednaci_cislo": case.metadata.jednaci_cislo,
-                # TODO: consider omitting
-                "verdict": case.verdict,
             }
 
             # Create chunks of the case's reasoning and create embeddings of these chunks

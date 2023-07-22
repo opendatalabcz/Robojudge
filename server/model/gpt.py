@@ -1,13 +1,15 @@
 import openai
 
-from utils.logger import logging
+from server.utils.logger import logging
+from server.utils.settings import settings
 
-# TODO: Move to ENV
-openai.api_key = "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"
+openai.api_key = settings.OPENAI_API_KEY
 
 logger = logging.getLogger(__name__)
 
+# TODO: make async
 # TODO: ignore poplatek a náklady řízení somehow somewhere
+# TODO: Ignore anonymized fields [...]
 # TODO: give references to answers
 SYSTEM_MESSAGE = (
     "You are a legal assistant who summarizes the provided court ruling."
