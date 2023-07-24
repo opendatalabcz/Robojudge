@@ -35,7 +35,7 @@ class Lemmatizer:
             try:
                 res = await client.get(settings.TOKENIZER_URL, params=tokenize_params)
                 tokens = res.json().get('result')
-                return [token.get("lemma", 'token') for sentence in tokens for token in sentence]
+                return [token.get('lemma', 'token') for sentence in tokens for token in sentence]
             except Exception as e:
                 logging.exception(f'Error while lemmatizing text "{text}":')
 
