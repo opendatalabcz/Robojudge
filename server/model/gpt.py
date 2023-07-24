@@ -11,12 +11,12 @@ openai.api_key = settings.OPENAI_API_KEY
 logger = logging.getLogger(__name__)
 
 # TODO: make async
-# TODO: ignore poplatek a náklady řízení somehow somewhere
-# TODO: give references to answers
+# TODO: retry logic
+# TODO: try GPT-4
 SYSTEM_MESSAGE = (
     "You are a legal assistant who summarizes the provided court ruling. "
-    "Extract the main factual and legal information. Ignore anonymized fields marked with square brackets '[...]'. "
-    "Ignore information about 'soudní poplatek' and 'náklady řízení'. "
+    "Summarize what the case was about. Ignore anonymized fields marked with square brackets '[...]'. "
+    "Ignore information about any administrative fees and legal costs reimbursement."
     "Answer only in Czech."
 )
 
@@ -26,7 +26,7 @@ class OpenAIPrompter:
     def summarize_case(case_reasoning: str):
         messages = [
             {"role": "system", "content": SYSTEM_MESSAGE},
-            {"role": "user", "content": f'Summarize this court decision in a professional style: {case_reasoning}'}
+            {"role": "user", "content": f'Summarize what this court decision was about as a legal professional, but do not mention any administrative fees and legal costs reimbursement. Use 5-10 sentences: {case_reasoning}'}
         ]
 
         try:
