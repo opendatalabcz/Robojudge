@@ -4,22 +4,23 @@ from server.utils.settings import settings
 from server.utils.logger import logging
 from server.utils.types import Case, CaseWithSummary
 
-# TODO: index by case_id
-# TODO: use motor
-# TODO: rename to document_db
 
-
-class CaseMetadataStorage:
+class DocumentStorage:
     client: MongoClient
+    DB_NAME = 'cases'
+    COLLECTION_NAME = 'metadata'
 
     def __init__(self) -> None:
         self.client = MongoClient(settings.MONGODB_URL)
         logging.info(
             f'Connection established to MongoDB "{settings.MONGODB_URL}".')
 
+        self.collection.create_index('case_id')
+
+    # Searching is done through the collection object directly
     @property
     def collection(self):
-        return self.client['cases']['metadata']
+        return self.client[self.DB_NAME][self.COLLECTION_NAME]
 
     def find_latest_case_id(self):
         try:
@@ -32,7 +33,7 @@ class CaseMetadataStorage:
             logging.exception(
                 f'Error while searching for latest case_id:')
 
-    def upsert_metadata(self, cases: list[Case]):
+    def upsert_documents(self, cases: list[Case]):
         try:
             updates = [
                 ReplaceOne({"case_id": case.id},
@@ -45,8 +46,10 @@ class CaseMetadataStorage:
             logging.exception(
                 f'Error while upserting metadata: "{cases}":')
 
-    # TODO: create a general update method?
-    def add_summaries(self, summaries: list[CaseWithSummary]):
+    def add_document_summaries(self, summaries: list[CaseWithSummary]):
+        if len(summaries) < 1:
+            return
+
         try:
             updates = [
                 UpdateOne({"case_id": summary.id},
@@ -58,9 +61,9 @@ class CaseMetadataStorage:
             self.collection.bulk_write(updates)
         except Exception:
             logging.exception(
-                f'Error while add summaries {summaries}:')
+                f'Error while adding summaries {summaries}:')
 
-    def delete_metadata(self, case_ids: list[str]):
+    def delete_documents(self, case_ids: list[str]):
         try:
             self.collection.delete_many({"case_id": {"$in": case_ids}})
         except Exception:
@@ -68,4 +71,4 @@ class CaseMetadataStorage:
                 f'Error while deleting metadata with ids {case_ids}:')
 
 
-metadata_db = CaseMetadataStorage()
+document_db = DocumentStorage()

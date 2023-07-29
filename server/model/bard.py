@@ -1,14 +1,4 @@
-import asyncio
-
-from server.db.chroma_db import embedding_db
-from server.db.mongo_db import document_db
-from server.tasks.fetch_new_cases import fetch_new_cases
-from server.scraper.case_page_scraper import CasePageScraper
-
-from server.model.gpt import OpenAIPrompter
-from server.model.lemmatizer import lemmatizer
-
-# https://rozhodnuti.justice.cz/rozhodnuti/435673
+from bardapi import Bard
 
 test_text = """
 Návrhem, který se dostal do dispozice soudu dne [datum], se žalobce dožadoval vydání rozhodnutí, kterým by soud uložil žalovanému povinnost zaplatit žalobci částku ve výši 21 474 Kč, včetně zákonného úroku z prodlení z jím jednotlivě požadovaných částek, a v neposlední řadě se dožadoval přiznání práva na náhradu nákladů řízení, které účelně vynaložil k uplatnění svého práva proti žalovanému.
@@ -27,18 +17,6 @@ Vzhledem k tomu, že žalovaný se dostal se splněním svých povinností vů�
 Rozhodnutí o náhradě nákladů řízení má pak oporu v § 142 odst. 1 o. s. ř. V daném případě to byl žalobce, kdo byl plně ve věci úspěšný, a komu náleží právo na přiznání plné náhrady nákladů řízení, které účelně vynaložil k uplatnění svého práva proti žalovanému. Předmětné náklady představuje zaplacený soudní poplatek ve výši 1074 Kč, odměna za 3 úkony právní služby – 3 x 300 Kč podle § 14b odst. 1 vyhl. 177/1996 Sb., 3 režijní paušály – 3 x 100 Kč podle § 14b odst. 5 vyhl. 177/1996 Sb., 21% DPH ze součtu odměny a režijních paušálů. Celkem tak byla žalovanému uložena povinnost zaplatit žalobci na náhradě nákladů řízení částka ve výši 2526 Kč, kterou je žalovaný povinen uhradit s poukazem na ustanovení § 149 odst. 1 o. s. ř. k rukám advokátky Mgr. [jméno] [příjmení].
 """
 
-async def main():
-    case = await CasePageScraper(435673).scrape_case()
-
-    # print(OpenAIPrompter.summarize_case(test_text))
-
-    # lemmatized = await lemmatizer.lemmatize_text(test_text)
-    # print(lemmatized)
-
-    embedding_db.upsert_cases([case])
-    document_db.upsert_documents([case])
-
-    await fetch_new_cases()
-
-if __name__ == '__main__':
-    asyncio.run(main())
+bard = Bard(token='ZAhtrk08JHE-3aiRM-aqPnexOuwOw_01dmglZMVCKFOiF83dWJN7oadLrZugIS-4QXCtWQ.')
+res = bard.get_answer(f"V 5-10 větách shrň toto soudní rozhodnutí: {test_text}")
+print(res)

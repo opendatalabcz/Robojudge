@@ -16,6 +16,7 @@ from tokenizers.pre_tokenizers import PreTokenizer
 from tokenizers.normalizers import Normalizer
 from tokenizers.decoders import Decoder
 
+
 class Embeddder:
     model: SentenceTransformer
 
@@ -29,54 +30,57 @@ class Embeddder:
 
 embedder = Embeddder()
 
-class JiebaPreTokenizer:
-    def jieba_split(self, i: int, normalized_string: NormalizedString) -> list[NormalizedString]:
-        splits = []
-        # # we need to call `str(normalized_string)` because jieba expects a str,
-        # # not a NormalizedString
-        #     splits.append(normalized_string[start:stop])
+if __name__ == '__main__':
+    class JiebaPreTokenizer:
+        def jieba_split(self, i: int, normalized_string: NormalizedString) -> list[NormalizedString]:
+            splits = []
+            # # we need to call `str(normalized_string)` because jieba expects a str,
+            # # not a NormalizedString
+            #     splits.append(normalized_string[start:stop])
 
-        # return splits
-        # We can also easily do it in one line:
-        # return asyncio.run(lemmatizer.lemmatize_text(str(normalized_string)))
-        return ['hhhhhhh']
+            # return splits
+            # We can also easily do it in one line:
+            # return asyncio.run(lemmatizer.lemmatize_text(str(normalized_string)))
+            return ['hhhhhhh']
 
-    def pre_tokenize(self, pretok: PreTokenizedString):
-        # Let's call split on the PreTokenizedString to split using `self.jieba_split`
-        pretok.split(self.jieba_split)
+        def pre_tokenize(self, pretok: PreTokenizedString):
+            # Let's call split on the PreTokenizedString to split using `self.jieba_split`
+            pretok.split(self.jieba_split)
 
+    # Mean Pooling - Take attention mask into account for correct averaging
 
-#Mean Pooling - Take attention mask into account for correct averaging
-def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output[0] #First element of model_output contains all token embeddings
-    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    def mean_pooling(model_output, attention_mask):
+        # First element of model_output contains all token embeddings
+        token_embeddings = model_output[0]
+        input_mask_expanded = attention_mask.unsqueeze(
+            -1).expand(token_embeddings.size()).float()
+        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
+    # Sentences we want sentence embeddings for
+    sentences = ['Tohle je česká věta vole', 'Each sentence is converted']
 
-# Sentences we want sentence embeddings for
-sentences = ['Tohle je česká věta vole', 'Each sentence is converted']
+    # Load model from HuggingFace Hub
+    tokenizer = AutoTokenizer.from_pretrained(
+        'sentence-transformers/all-MiniLM-L6-v2')
+    # tokenizer = Tokenizer(WordPiece())
+    # tokenizer.pre_tokenizer = PreTokenizer.custom(JiebaPreTokenizer())
+    model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
 
-# Load model from HuggingFace Hub
-tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
-# tokenizer = Tokenizer(WordPiece())
-# tokenizer.pre_tokenizer = PreTokenizer.custom(JiebaPreTokenizer())
-model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+    # Tokenize sentences
+    encoded_input = tokenizer(sentences, padding=True,
+                              truncation=True, return_tensors='pt')
+    print(encoded_input)
+    print(tokenizer.decode(encoded_input['input_ids'][0]))
 
+    # # Compute token embeddings
+    # with torch.no_grad():
+    #     model_output = model(**encoded_input)
 
-# Tokenize sentences
-encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
-print(encoded_input)
-print(tokenizer.decode(encoded_input['input_ids'][0]))
+    # # Perform pooling
+    # sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
 
-# # Compute token embeddings
-# with torch.no_grad():
-#     model_output = model(**encoded_input)
+    # # Normalize embeddings
+    # sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
 
-# # Perform pooling
-# sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
-
-# # Normalize embeddings
-# sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
-
-# print("Sentence embeddings:")
-# print(sentence_embeddings)
+    # print("Sentence embeddings:")
+    # print(sentence_embeddings)

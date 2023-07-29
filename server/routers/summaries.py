@@ -2,7 +2,7 @@ from threading import Thread
 
 from fastapi import APIRouter, Body
 
-from server.db.mongo_db import metadata_db
+from server.db.mongo_db import document_db
 from server.db.chroma_db import embedding_db
 from server.model.gpt import OpenAIPrompter
 from server.routers.cases import CaseSearchRequest
@@ -12,7 +12,7 @@ router = APIRouter(prefix='/summary')
 
 
 def upload_summaries_to_db(case_summaries: list[CaseWithSummary]):
-    metadata_db.add_summaries(case_summaries)
+    document_db.add_document_summaries(case_summaries)
 
 
 @router.post('/search', response_model=list[CaseWithSummary])
@@ -20,7 +20,7 @@ async def search_cases(request: CaseSearchRequest):
     cases = embedding_db.find_case_chunks_by_text(**request.dict())
     case_ids = set(case.case_id for case in cases)
 
-    cases_in_document_db = list(metadata_db.collection.find(
+    cases_in_document_db = list(document_db.collection.find(
         {"case_id": {"$in": list(case_ids)}}))
     case_map = {summary['case_id']: {**summary, "id": summary['case_id']}
                 for summary in cases_in_document_db}
@@ -37,8 +37,9 @@ async def search_cases(request: CaseSearchRequest):
             # Use the beginning and end of the reasoning for summary
             text_excerpt = '\n'.join([*case_chunks['documents'][:2],
                                      *case_chunks['documents'][-2:]])
-            case_with_summary.summary = OpenAIPrompter.summarize_case(
-                text_excerpt)
+            # TODO: reenable for production
+            # case_with_summary.summary = OpenAIPrompter.summarize_case(
+            #     text_excerpt)
 
         case_summaries.append(case_with_summary)
 

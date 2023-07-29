@@ -9,21 +9,14 @@ from server.utils.types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetada
 from server.utils.logger import logging
 from server.utils.functional import parse_date
 
-LINK_REGEX = re.compile(r'/(\d+\s*\w+\s*\d+\/\d{4})\s*-?(\s*\d+)?/gm')
-
 logger = logging.getLogger(__name__)
-
-# from_input = page.locator('input[type="date"]').nth(2).type('24062023')
-# from_input = page.locator('input[type="date"]').nth(3).type('25062023')
-
-# more_button = page.get_by_text('Více možností')
-# await more_button.click()
 
 
 class CasePageScraper:
     JUSTICE_BASE_URL = 'https://rozhodnuti.justice.cz/rozhodnuti/'
     MAIN_PAGE_URL = "https://rozhodnuti.justice.cz/SoudniRozhodnuti/"
     LINK_PREFIX = 'rozhodnuti/'
+    JEDNACI_CISLO_REGEX = r'(\d+\s\w{1,3}\s\d+\/\d{4,}(-\d+)?)'
 
     case_id: str = ''
     page: str = ''
@@ -37,6 +30,7 @@ class CasePageScraper:
             self.page = await CasePageScraper.scrape_case_page(self.case_id)
             if not self.page:
                 return None
+            
             self.page_soup = BeautifulSoup(self.page, 'html.parser')
 
             verdict, reasoning = self.extract_text()
@@ -48,19 +42,16 @@ class CasePageScraper:
         except Exception:
             logging.exception(f'Error while scraping case "{self.case_id}":')
 
-        # TODO: does not make sense to be static
-        # TODO: check if the case exists by some error element on the page
-    @staticmethod
-    async def scrape_case_page(id: str):
+    async def scrape_case_page(self):
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
             page = await browser.new_page()
-            await page.goto(CasePageScraper.JUSTICE_BASE_URL + id)
+            await page.goto(CasePageScraper.JUSTICE_BASE_URL + self.case_id)
 
             try:
                 await page.wait_for_selector('div[id="PrintDiv"]', timeout=settings.SCRAPER_TIMEOUT)
             except PlaywrightTimeoutError:
-                logging.warning(f'Timeout or no case with {id}.')
+                logging.warning(f'Timeout or no case with {self.case_id}.')
                 return ''
 
             return await page.content()
@@ -80,18 +71,22 @@ class CasePageScraper:
 
         metadata[CaseMetadataAttributes.SENTENCE_DATE] = parse_date(
             metadata[CaseMetadataAttributes.SENTENCE_DATE])
+
         metadata[CaseMetadataAttributes.PUBLICATION_DATE] = parse_date(
             metadata[CaseMetadataAttributes.PUBLICATION_DATE])
-        metadata[CaseMetadataAttributes.KEYWORDS] = metadata[CaseMetadataAttributes.KEYWORDS].split(
-            ', ')
+
+        if metadata.get(CaseMetadataAttributes.KEYWORDS, None):
+            metadata[CaseMetadataAttributes.KEYWORDS] = metadata[CaseMetadataAttributes.KEYWORDS].split(
+                ', ')
+
         metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED] = metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED].split(
             ', ')
-        # TODO: Proper related cases parsing
-        # metadata[CaseMetadataAttributes.RELATED_CASES] = metadata[CaseMetadataAttributes.RELATED_CASES].split(
-        #     ', ')
-        # if metadata[CaseMetadataAttributes.RELATED_CASES][0] == '':
-        #     del metadata[CaseMetadataAttributes.RELATED_CASES]
-        metadata[CaseMetadataAttributes.RELATED_CASES] = []
+
+        if metadata.get(CaseMetadataAttributes.RELATED_CASES, None):
+            metadata[CaseMetadataAttributes.RELATED_CASES] = self.parse_related_cases(
+                metadata[CaseMetadataAttributes.RELATED_CASES])
+        else:
+            metadata[CaseMetadataAttributes.RELATED_CASES] = []
 
         return Metadata(**metadata)
 
@@ -108,6 +103,11 @@ class CasePageScraper:
         reasoning = '\n'.join(texts[reasoning_index+1: footer_index])
 
         return verdict, reasoning
+
+    def parse_related_cases(self, raw_related_cases: str) -> list[str]:
+        matches = re.compile(self.JEDNACI_CISLO_REGEX).findall(
+            raw_related_cases)
+        return [match[0] for match in matches]
 
     @staticmethod
     async def get_newest_case_id():

@@ -5,9 +5,9 @@ import more_itertools
 from concurrent.futures import ThreadPoolExecutor
 
 from server.db.chroma_db import embedding_db
-from server.db.mongo_db import metadata_db
+from server.db.mongo_db import document_db
 from server.scraper.case_page_scraper import CasePageScraper
-from server.db.mongo_db import metadata_db
+from server.db.mongo_db import document_db
 from server.utils.logger import logging
 from server.utils.functional import periodic
 
@@ -20,9 +20,9 @@ PARSER_THREAD_COUNT = 3
 
 async def determine_case_ids_to_parse():
     latest_id = await CasePageScraper.get_newest_case_id()
-    latest_id_in_db = metadata_db.find_latest_case_id() or 0
+    latest_id_in_db = document_db.find_latest_case_id() or 0
 
-    case_ids_in_db = list(metadata_db.collection.find({}, {"case_id"}))
+    case_ids_in_db = list(document_db.collection.find({}, {"case_id"}))
     case_ids_in_db = set(int(case['case_id']) for case in case_ids_in_db)
 
     lower = latest_id_in_db + 1
@@ -81,16 +81,11 @@ def parser_worker(q, worker_id):
             # Get rid of None's
             filtered_cases = [case for case in cases if case]
             embedding_db.upsert_cases(filtered_cases)
-            metadata_db.upsert_metadata(filtered_cases)
+            document_db.upsert_documents(filtered_cases)
             logging.info(f'{worker_id} - Upserted cases "{[case.id for case in filtered_cases]}".')
         except Exception:
             logging.exception(f'Parser #{worker_id} - Error while parsing cases:')
 
-
-async def writer_worker(params):
-    case_ids, q = params
-    cases = await asyncio.gather(*[CasePageScraper(case_id).scrape_case() for case_id in case_ids])
-    await q.put(cases)
 
 @periodic(FETCH_INTERVAL_IN_SECONDS)
 async def main():

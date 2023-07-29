@@ -24,7 +24,7 @@ def parsed_case():
 
 @pytest.mark.asyncio
 async def test_scrape_case_page(html_page: str):
-    tested_page = await CasePageScraper.scrape_case_page('435673')
+    tested_page = await CasePageScraper('435673').scrape_case_page()
     assert tested_page == html_page
 
 def test_extract_metadata(case_scraper: CasePageScraper, parsed_case: dict):
