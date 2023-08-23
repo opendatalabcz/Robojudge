@@ -15,8 +15,10 @@ services:
     restart: always
     ports:
       - ${CHROMA_DB_PORT}:${CHROMA_DB_PORT}
+    environment:
+      IS_PERSISTENT: true
     volumes:
-      - chroma-data:/data/db
+      - chroma-data:/chroma
 
   # server:
   #   build: ./

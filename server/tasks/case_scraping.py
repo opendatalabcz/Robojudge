@@ -4,6 +4,7 @@ from multiprocessing import Queue, Process
 import more_itertools
 from concurrent.futures import ThreadPoolExecutor
 
+from server.utils.settings import settings
 from server.db.chroma_db import embedding_db
 from server.db.mongo_db import document_db
 from server.scraper.case_page_scraper import CasePageScraper
@@ -11,16 +12,16 @@ from server.db.mongo_db import document_db
 from server.utils.logger import logging
 from server.utils.functional import periodic
 
-FETCH_INTERVAL_IN_SECONDS=3600
+FETCH_INTERVAL_IN_SECONDS=180
 BATCH_SIZE = 10
 MAX_SCRAPE_SIZE = 20
 SCRAPER_THREAD_COUNT = 3
-PARSER_THREAD_COUNT = 3
+PARSER_PROCESS_COUNT = 3
 
 
 async def determine_case_ids_to_parse():
     latest_id = await CasePageScraper.get_newest_case_id()
-    latest_id_in_db = document_db.find_latest_case_id() or 0
+    latest_id_in_db = document_db.find_latest_case_id() or settings.OLDEST_KNOWN_CASE_ID
 
     case_ids_in_db = list(document_db.collection.find({}, {"case_id"}))
     case_ids_in_db = set(int(case['case_id']) for case in case_ids_in_db)
@@ -38,7 +39,7 @@ async def fetch_new_cases():
 
     # Parsers are computation-intensive so separate processes are required
     parsers = []
-    for index in range(PARSER_THREAD_COUNT):
+    for index in range(PARSER_PROCESS_COUNT):
         parser = Process(target=parser_worker, args=(q,index))
         parser.start()
         parsers.append(parser)
@@ -49,7 +50,7 @@ async def fetch_new_cases():
         coroutines = [(scrape_cases(chunk), index)
                       for index, chunk in enumerate(case_id_chunks)]
         for index, result in enumerate(executor.map(scraper_worker, coroutines)):
-            logging.info(f'Finished case batch #{index}')
+            logging.info(f'Finished scraping case batch #{index}')
             q.put(result)
 
     q.put('DONE')

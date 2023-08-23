@@ -7,7 +7,7 @@ from server.db.chroma_db import embedding_db
 
 class CaseSearchRequest(BaseModel):
     query_text: str
-    limit: Optional[int] = 5
+    limit: Optional[int] = 3
     included_fields: Optional[list[str]] = ['documents', 'metadatas']
 
 router = APIRouter(prefix='/cases')

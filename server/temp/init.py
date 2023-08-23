@@ -2,11 +2,9 @@ import asyncio
 
 from server.db.chroma_db import embedding_db
 from server.db.mongo_db import document_db
-from server.tasks.fetch_new_cases import fetch_new_cases
+from server.tasks.case_scraping import fetch_new_cases
 from server.scraper.case_page_scraper import CasePageScraper
 
-from server.model.gpt import OpenAIPrompter
-from server.model.lemmatizer import lemmatizer
 
 # https://rozhodnuti.justice.cz/rozhodnuti/435673
 
@@ -29,11 +27,6 @@ Rozhodnutí o náhradě nákladů řízení má pak oporu v § 142 odst. 1 o. s
 
 async def main():
     case = await CasePageScraper(435673).scrape_case()
-
-    # print(OpenAIPrompter.summarize_case(test_text))
-
-    # lemmatized = await lemmatizer.lemmatize_text(test_text)
-    # print(lemmatized)
 
     embedding_db.upsert_cases([case])
     document_db.upsert_documents([case])

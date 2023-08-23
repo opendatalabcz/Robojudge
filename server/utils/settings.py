@@ -21,10 +21,20 @@ class Settings(BaseSettings):
     LOG_LEVEL = 'DEBUG'
 
     OPENAI_API_KEY = ''
+    OPENAI_API_BASE = ''
+    GPT_MODEL_NAME='chatgpt'
+
+    BARD__Secure_1PSID = ''
+    BARD__Secure_1PSIDTS = ''
 
     TOKENIZER_INPUT_LENGTH = 600
     TOKENIZER_MODEL = 'czech-morfflex2.0-pdtc1.0-220710'
     TOKENIZER_URL = 'http://lindat.mff.cuni.cz/services/morphodita/api/tag'
+
+    OLDEST_KNOWN_CASE_ID = 450  # Based on manual testing, this is one of the first available cases
+
+    DEFAULT_SUMMARIZE_LLM = 'chatgpt'
+    SUMMARIZE_MAX_PARALLEL_REQUESTS=4
 
     class Config:
         env_file = '.env'

@@ -10,6 +10,7 @@ class CaseMetadataAttributes(StrEnum):
     SUBJECT_MATTER = 'subject_matter'
     SENTENCE_DATE = 'sentence_date'
     PUBLICATION_DATE = 'publication_date'
+    LAST_CHANGE_DATE = 'last_change_date'
     KEYWORDS = 'keywords'
     REGULATIONS_MENTIONED = 'regulations_mentioned'
     RELATED_CASES = 'related_cases'
@@ -23,6 +24,7 @@ DOCUMENT_METADATA_MAP = {
     "Předmět řízení": CaseMetadataAttributes.SUBJECT_MATTER,
     "Datum vydání": CaseMetadataAttributes.SENTENCE_DATE,
     "Datum zveřejnění": CaseMetadataAttributes.PUBLICATION_DATE,
+    "Datum poslední změny": CaseMetadataAttributes.PUBLICATION_DATE,
     "Klíčová slova": CaseMetadataAttributes.KEYWORDS,
     "Zmíněná ustanovení": CaseMetadataAttributes.REGULATIONS_MENTIONED,
     "Vztah k jiným rozhodnutím": CaseMetadataAttributes.RELATED_CASES,

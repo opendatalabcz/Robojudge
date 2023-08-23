@@ -16,7 +16,8 @@ class CasePageScraper:
     JUSTICE_BASE_URL = 'https://rozhodnuti.justice.cz/rozhodnuti/'
     MAIN_PAGE_URL = "https://rozhodnuti.justice.cz/SoudniRozhodnuti/"
     LINK_PREFIX = 'rozhodnuti/'
-    JEDNACI_CISLO_REGEX = r'(\d+\s\w{1,3}\s\d+\/\d{4,}(-\d+)?)'
+    JEDNACI_CISLO_REGEX = re.compile(r'(\d+\s\w{1,3}\s\d+\/\d{4,}(-\d+)?)')
+    PARAGRAPH_NUM_REGEX = re.compile(r'^\d+.\s', flags=re.MULTILINE)
 
     case_id: str = ''
     page: str = ''
@@ -27,10 +28,10 @@ class CasePageScraper:
 
     async def scrape_case(self) -> Case | None:
         try:
-            self.page = await CasePageScraper.scrape_case_page(self.case_id)
+            self.page = await self.scrape_case_page()
             if not self.page:
                 return None
-            
+
             self.page_soup = BeautifulSoup(self.page, 'html.parser')
 
             verdict, reasoning = self.extract_text()
@@ -71,9 +72,11 @@ class CasePageScraper:
 
         metadata[CaseMetadataAttributes.SENTENCE_DATE] = parse_date(
             metadata[CaseMetadataAttributes.SENTENCE_DATE])
-
         metadata[CaseMetadataAttributes.PUBLICATION_DATE] = parse_date(
             metadata[CaseMetadataAttributes.PUBLICATION_DATE])
+        if metadata.get(CaseMetadataAttributes.LAST_CHANGE_DATE, None):
+            metadata[CaseMetadataAttributes.LAST_CHANGE_DATE] = parse_date(
+                metadata[CaseMetadataAttributes.LAST_CHANGE_DATE])
 
         if metadata.get(CaseMetadataAttributes.KEYWORDS, None):
             metadata[CaseMetadataAttributes.KEYWORDS] = metadata[CaseMetadataAttributes.KEYWORDS].split(
@@ -100,12 +103,15 @@ class CasePageScraper:
         footer_index = texts.index('Poučení:')
 
         verdict = '\n'.join(texts[verdict_index+1: reasoning_index])
-        reasoning = '\n'.join(texts[reasoning_index+1: footer_index])
+        reasoning_chunks: list[str] = texts[reasoning_index+1: footer_index]
+
+        reasoning = '\n'.join(re.sub(
+            CasePageScraper.PARAGRAPH_NUM_REGEX, '', chunk) for chunk in reasoning_chunks)
 
         return verdict, reasoning
 
     def parse_related_cases(self, raw_related_cases: str) -> list[str]:
-        matches = re.compile(self.JEDNACI_CISLO_REGEX).findall(
+        matches = self.JEDNACI_CISLO_REGEX.findall(
             raw_related_cases)
         return [match[0] for match in matches]
 

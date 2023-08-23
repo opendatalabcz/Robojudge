@@ -11,3 +11,5 @@ bp_server.egg-info
 llama/
 fiqa
 embedding_training
+
+datasets/tokenizer

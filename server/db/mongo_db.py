@@ -25,15 +25,19 @@ class DocumentStorage:
     def find_latest_case_id(self):
         try:
             cases = self.collection.find().sort("$natural", -1).limit(1)
-            if not cases:
-                return 0
+            cases = list(cases)
+            if len(cases) < 1:
+                return settings.OLDEST_KNOWN_CASE_ID
 
-            return int(cases[0]["case_id"])
+            return int(list(cases)[0]["case_id"])
         except Exception:
             logging.exception(
                 f'Error while searching for latest case_id:')
 
     def upsert_documents(self, cases: list[Case]):
+        if not len(cases):
+            logging.warning('No documents to upsert to MongoDB')
+
         try:
             updates = [
                 ReplaceOne({"case_id": case.id},

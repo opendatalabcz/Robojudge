@@ -18,7 +18,6 @@ PARAGRAPH_BATCH_SIZE = 4
 
 
 class CasesInChromaDB(BaseModel):
-    # TODO: test different embeddings
     embeddings: list[str] | None = []
     documents: list[str] = []
     metadatas: list[Dict] | None = []
@@ -73,6 +72,10 @@ class CaseEmbeddingStorage:
         return parsed_result
 
     def upsert_cases(self, cases: list[Case]):
+        if not len(cases):
+            logging.warning('No cases provided to upsert into chromaDB')
+            return
+
         cases_for_db = CasesInChromaDB()
         for case in cases:
             # Only the most important metadata are stored here

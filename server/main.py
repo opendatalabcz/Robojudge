@@ -25,3 +25,7 @@ async def get_health():
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=settings.SERVER_PORT)
+
+# TODO: Compare summarization with some non-LLM model (if available for Czech)
+# TODO: create runnable scripts of the tasks/ dir (with arguments)
+# TODO: update env.example
