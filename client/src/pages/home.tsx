@@ -3,10 +3,12 @@ import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import {
+  Alert,
   Button,
   Card,
   CardContent,
   CircularProgress,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -33,6 +35,8 @@ const styles = {
   },
 };
 
+// TODO: fix too wide body causing scrollbar
+
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
                   případy podobné. Nejlepších výsledků dosáhnete zadáním ca. 200
                   znaků a použitím právní terminologie.`;
@@ -48,11 +52,16 @@ export function Home() {
   const [cases, setCases] = useState<Case[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isErrorAlertShown, setIsErrorAlertShown] = useState(false);
 
   const [helperText, setHelperText] = useState(DEFAULT_HELPER_TEXT);
 
   const handleTextInputChange = (value: string) => {
-    if (value.length == 0) setHelperText(DEFAULT_HELPER_TEXT);
+    if (value.length > 0 && value.length < MIN_DESCRIPTION_LENGTH) {
+      setHelperText(INPUT_TOO_SHORT);
+    } else if (value.length > MAX_DESCRIPTION_LENGTH) {
+      setHelperText(INPUT_TOO_LONG);
+    } else setHelperText(DEFAULT_HELPER_TEXT);
     setCaseDescription(value);
   };
 
@@ -79,14 +88,30 @@ export function Home() {
       console.log(data.map(convertObjectKeysToCamelCase));
 
       setCases(data.map(convertObjectKeysToCamelCase));
-      setIsLoading(false);
     } catch (err) {
       console.error(err);
+      setIsErrorAlertShown(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
+      <Snackbar
+        open={isErrorAlertShown}
+        autoHideDuration={6000}
+        onClose={() => setIsErrorAlertShown(false)}
+      >
+        <Alert
+          onClose={() => setIsErrorAlertShown(false)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.
+        </Alert>
+      </Snackbar>
+
       {isLoading ? (
         <div
           style={{
@@ -141,7 +166,11 @@ export function Home() {
           </Card>
         </Grid2>
       </Grid2>
-      <Grid2 container spacing={3} style={{ padding: "1rem" }}>
+      <Grid2
+        container
+        spacing={3}
+        style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
+      >
         {cases.map((courtCase) => (
           <CaseCard key={courtCase.id} courtCase={courtCase} />
         ))}

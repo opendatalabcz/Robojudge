@@ -25,16 +25,18 @@ class CasesInChromaDB(BaseModel):
 
 
 class CaseEmbeddingStorage:
-    client: chromadb.Client
+    client: chromadb.PersistentClient
 
     def __init__(self):
-        self.client = chromadb.Client(
-            chromadb.config.Settings(
-                chroma_api_impl="rest",
-                chroma_server_host=settings.EMBEDDING_DB_HOST,
-                chroma_server_http_port=settings.EMBEDDING_DB_PORT,
-                anonymized_telemetry=False,
-            ))
+        # TODO: once persistent docker image is available, use that
+        self.client = chromadb.HttpClient(
+            host=settings.EMBEDDING_DB_HOST,
+            port=settings.EMBEDDING_DB_PORT,
+            settings=chromadb.config.Settings(anonymized_telemetry=False)
+        )
+        # self.client = chromadb.PersistentClient(
+        #     path=settings.EMBEDDING_DB_PATH,
+        #     settings=chromadb.config.Settings(anonymized_telemetry=False))
         logging.info(
             f'Connection to established to ChromaDB "{settings.EMBEDDING_DB_HOST}:{settings.EMBEDDING_DB_PORT}".')
 
@@ -104,7 +106,8 @@ class CaseEmbeddingStorage:
         self.collection.upsert(**cases_for_db.dict())
 
     def get_all_cases(self):
-        case_chunks_from_db = CasesInChromaDB(**self.collection.get(ids=[]))
+        case_chunks_from_db = CasesInChromaDB(
+            **self.collection.get(ids=[], where={}))
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
 
     def get_case_chunks_by_id(self, case_ids: list[str]):

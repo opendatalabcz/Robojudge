@@ -33,10 +33,9 @@ class SummaryGenerator:
         try:
             file_name, text = input_params
             start = time.perf_counter()
-            summarizer = self.choose_summarizer()
-            summarizer = summarizer(text=text, file_name=file_name)
+            summarizer = self.choose_summarizer()(text=text, file_name=file_name)
             summary = asyncio.run(summarizer.summarize_text(
-                cache_chunks=True, cache_chunk_summaries=True))
+                cache_chunks=True, cache_chunk_summaries=True, create_overall_summary=False))
             logger.info(
                 f'Summarizing "{file_name}" with {self.llm} with {self.llm} took {time.perf_counter() - start} seconds')
 
@@ -46,7 +45,6 @@ class SummaryGenerator:
             logger.exception(
                 f'Error while summarizing "{file_name}" with {self.llm}:')
 
-    # TODO: Unify consts
     def choose_summarizer(self) -> BaseSummarizer:
         if self.llm == 'llama':
             return LlamaSummarizer

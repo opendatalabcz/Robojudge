@@ -7,6 +7,7 @@ import { Case } from "../pages/home";
 const styles = {
   caseCard: {
     minHeight: "350px",
+    minWidth: "300px",
     padding: "1rem",
   },
   caseCardHeader: {
@@ -21,7 +22,7 @@ export type CardCardProps = {
 
 export const CaseCard = ({ courtCase }: CardCardProps) => {
   return (
-    <Grid2 xs={12} md={6}>
+    <Grid2 xs={12} lg={6} xl={4}>
       <Card style={styles.caseCard} variant="outlined">
         <CardContent>
           <div style={styles.caseCardHeader}>
@@ -29,15 +30,14 @@ export const CaseCard = ({ courtCase }: CardCardProps) => {
               {(courtCase.metadata?.jednaciCislo as string) ?? ""}
             </Typography>
             <span>
-              {formatDate((courtCase.metadata.sentenceDate as string) ?? "")}
+              Datum vydání: {formatDate((courtCase.metadata.sentenceDate as string) ?? "")}
             </span>
           </div>
-          <Typography>{(courtCase.metadata?.court as string) ?? ""}</Typography>
-          {/* TODO: improve typograhy */}
-          <Typography>
+          <Typography variant="h6">{(courtCase.metadata?.court as string) ?? ""}</Typography>
+          <Typography variant="overline" gutterBottom>
             {((courtCase.metadata?.keywords as Array<string>) ?? []).join(", ")}
           </Typography>
-          <Typography>{courtCase.summary}</Typography>
+          <Typography gutterBottom>{courtCase.summary}</Typography>
           <a
             href={`${process.env.REACT_APP_JUSTICE_URL}/${courtCase.id}`}
             target="_blank"

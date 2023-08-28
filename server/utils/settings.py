@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     CLIENT_HOST = 'http://localhost'
     CLIENT_PORT = 3000
 
+    EMBEDDING_DB_PATH = 'chroma'
     EMBEDDING_DB_HOST = 'localhost'
     EMBEDDING_DB_PORT = 8000
     EMBEDDING_CACHE_DIR = 'embedding_models'
@@ -22,7 +23,7 @@ class Settings(BaseSettings):
 
     OPENAI_API_KEY = ''
     OPENAI_API_BASE = ''
-    GPT_MODEL_NAME='chatgpt'
+    GPT_MODEL_NAME='gpt-35-turbo-16k'
 
     BARD__Secure_1PSID = ''
     BARD__Secure_1PSIDTS = ''
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
     OLDEST_KNOWN_CASE_ID = 450  # Based on manual testing, this is one of the first available cases
 
     DEFAULT_SUMMARIZE_LLM = 'chatgpt'
-    SUMMARIZE_MAX_PARALLEL_REQUESTS=4
+    SUMMARIZE_MAX_PARALLEL_REQUESTS=1
 
     class Config:
         env_file = '.env'

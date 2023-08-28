@@ -2,6 +2,7 @@
 .pytest_cache
 
 .chroma/
+chroma/
 embedding_models
 build
 .env

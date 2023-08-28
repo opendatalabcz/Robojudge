@@ -10,15 +10,6 @@ services:
     volumes:
       - mongo-data:/data/db
 
-  chroma:
-    build: ../chroma/
-    restart: always
-    ports:
-      - ${CHROMA_DB_PORT}:${CHROMA_DB_PORT}
-    environment:
-      IS_PERSISTENT: true
-    volumes:
-      - chroma-data:/chroma
 
   # server:
   #   build: ./
@@ -31,4 +22,3 @@ services:
 
 volumes:
   mongo-data:
-  chroma-data:

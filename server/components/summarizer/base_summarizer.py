@@ -32,7 +32,7 @@ CHUNK_SUMMARY_PATH = Path('datasets/llm-summary-testing/piecewise-summaries/')
 RESULT_SUMMARY_SYSTEM_MESSAGE = """
     You are a legal assistant who creates a summary of a court ruling.
     You will receive several paragraphs summarizing parts of the ruling.
-    Put these paragraphs together into a single coherent summary.
+    Put these paragraphs together into a single coherent summary. The summary should be between 5 and 15 sentences long.
     Answer ONLY in Czech.
 """
 
@@ -44,7 +44,7 @@ class BaseSummarizer(ABC):
         self.file_name = file_name if file_name else DEFAULT_FILE_NAME
         self.safe_context_size = int(context_size - (context_size * 0.15))
 
-    async def summarize_text(self, cache_chunks=False, cache_chunk_summaries=False) -> str:
+    async def summarize_text(self, cache_chunks=False, cache_chunk_summaries=False, create_overall_summary = True) -> str:
         chunk_path = CHUNK_PATH / self.llm_type / self.file_name
         if cache_chunks and chunk_path.exists():
             self.chunks = chunk_path.read_text().split('\n')
@@ -53,16 +53,23 @@ class BaseSummarizer(ABC):
             if cache_chunks:
                 self.save_chunks()
 
-        self.chunk_summaries = await self.create_chunk_summaries()
-        if cache_chunk_summaries:
-            self.save_chunk_summaries()
+        chunk_summary_path = CHUNK_SUMMARY_PATH / self.llm_type / self.file_name
+        if cache_chunk_summaries and chunk_summary_path.exists():
+            self.chunk_summaries = chunk_summary_path.read_text().split('\n')
+        else:
+            self.chunk_summaries = await self.create_chunk_summaries()
+            if cache_chunk_summaries:
+                self.save_chunk_summaries()
 
         if len(self.chunk_summaries) == 1:
             logger.info(
                 'The text fit into a single chunk, returning its summary directly.')
             return self.chunk_summaries[0]
 
-        return await self.summarize_summaries()
+        if create_overall_summary:
+            return await self.summarize_summaries()
+        
+        return ''
 
     async def create_chunk_summaries(self) -> list[str]:
         coroutines = map(self.summarize_text_chunk, self.chunks)
@@ -77,23 +84,21 @@ class BaseSummarizer(ABC):
 
         #     coroutines.append(self.summarize_text_chunk(chunk))
 
-        # TODO: create a pool with a configurable rate-limitting
-
         # return await asyncio.gather(*coroutines)
 
     @classmethod
-    def ensure_path(path: Path):
+    def ensure_path(cls, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
 
     def save_chunks(self):
         chunk_path = CHUNK_PATH / self.llm_type / self.file_name
-        self.ensure_path(chunk_path)
+        BaseSummarizer.ensure_path(chunk_path)
         with open(chunk_path, 'w') as wf:
             wf.writelines('\n'.join(self.chunks))
 
     def save_chunk_summaries(self):
         chunk_summary_path = CHUNK_SUMMARY_PATH / self.llm_type / self.file_name
-        self.ensure_path(chunk_summary_path)
+        BaseSummarizer.ensure_path(chunk_summary_path)
         with open(chunk_summary_path, 'w') as wf:
             wf.writelines('\n'.join(self.chunk_summaries))
 

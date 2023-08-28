@@ -32,7 +32,7 @@ class GPTSummarizer(BaseSummarizer):
     MAX_CONTEXT_SIZE = 4000
 
     def __init__(self, text: str, file_name: str = '') -> None:
-        super().__init__(text, file_name,  context_size=self.SAFE_CONTEXT_SIZE)
+        super().__init__(text, file_name, context_size=self.MAX_CONTEXT_SIZE)
 
     @make_async
     def summarize_text_chunk(self, text_chunk: str):
