@@ -5,7 +5,7 @@ from playwright.async_api import async_playwright, TimeoutError as PlaywrightTim
 from bs4 import BeautifulSoup
 
 from robojudge.utils.settings import settings
-from robojudge.utils.types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetadataAttributes
+from robojudge.utils.internal_types import DOCUMENT_METADATA_MAP, Case, Metadata, CaseMetadataAttributes
 from robojudge.utils.logger import logging
 from robojudge.utils.functional import parse_date
 

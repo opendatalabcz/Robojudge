@@ -3,7 +3,6 @@ from multiprocessing import Queue, Process
 from concurrent.futures import ThreadPoolExecutor
 
 import more_itertools
-from tqdm.asyncio import tqdm
 
 from robojudge.utils.settings import settings
 from robojudge.db.chroma_db import embedding_db
@@ -50,7 +49,7 @@ async def fetch_new_cases():
     with ThreadPoolExecutor(max_workers=SCRAPER_THREAD_COUNT, thread_name_prefix='scraper') as executor:
         coroutines = [(scrape_cases(chunk), index)
                       for index, chunk in enumerate(case_id_chunks)]
-        for index, result in tqdm(enumerate(executor.map(scraper_worker, coroutines))):
+        for index, result in enumerate(executor.map(scraper_worker, coroutines)):
             logging.info(f'Finished scraping case batch #{index}')
             q.put(result)
 

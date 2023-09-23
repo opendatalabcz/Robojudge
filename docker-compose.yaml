@@ -14,7 +14,7 @@ services:
   chroma:
     image: ghcr.io/chroma-core/chroma:latest
     volumes:
-      - index-data:/chroma
+      - chroma-data:/chroma
     environment:
       - IS_PERSISTENT=TRUE
     ports:
@@ -49,7 +49,7 @@ services:
 
 volumes:
   mongo-data:
-  index-data:
+  chroma-data:
 
 networks:
   default:

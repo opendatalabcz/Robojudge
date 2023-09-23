@@ -8,16 +8,14 @@ import {
   CardContent,
   TextField,
   Tooltip,
-  Typography,
 } from "@mui/material";
-import { css } from '@emotion/react';
 import { CaseCard } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
-import { FloatingAlert } from "../components/FloatingAlert";
 
 export type Case = {
   id: string;
   summary: string;
+  title: string;
   metadata: Record<string, unknown>;
   reasoning: string;
   verdict: string;
@@ -25,18 +23,18 @@ export type Case = {
 
 // TODO: disuse emotion
 const styles = {
-  searchCard: css`
-    padding: "1rem";
-    maxWidth: "750px";
-    minWidth: "50vw";
-  `,
-  caseCardsContainer: css`
-    display: "flex";
-    gap: "30px";
-    width: "100%";
-  `,
-
-};
+  mainPageContainer: { height: '100%', position: 'relative', flex: 1 },
+  searchCard: {
+    padding: "1rem",
+    maxWidth: "750px",
+    minWidth: "50vw",
+  },
+  caseCardsContainer: {
+    display: "flex",
+    gap: "30px",
+    width: "100%",
+  }
+} as Record<string, React.CSSProperties>;
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
                   případy podobné. Nejlepších výsledků dosáhnete zadáním ca. 200
@@ -48,12 +46,16 @@ const MAX_DESCRIPTION_LENGTH = 500;
 const INPUT_TOO_SHORT = `Zadejte prosím delší popis případu (aspoň ${MIN_DESCRIPTION_LENGTH} znaků).`;
 const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} znaků.`;
 
-export function Home() {
+type HomeProps = {
+  triggerAlert: (text: string) => void;
+}
+
+export function Home({ triggerAlert }: HomeProps) {
   const [caseDescription, setCaseDescription] = useState("");
   const [cases, setCases] = useState<Case[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isErrorAlertShown, setIsErrorAlertShown] = useState(false);
+
 
   const [isInputInvalid, setIsInputInvalid] = useState(true);
   const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
@@ -85,7 +87,7 @@ export function Home() {
       setIsLoading(true);
 
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL ?? ""}/summary/search`,
+        `${process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"}/summary/search`,
         {
           query_text: caseDescription,
           limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,
@@ -95,16 +97,14 @@ export function Home() {
       setCases(data.map(convertObjectKeysToCamelCase));
     } catch (err) {
       console.error(err);
-      setIsErrorAlertShown(true);
+      triggerAlert("Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text="Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli." />
-
+    <div style={styles.mainPageContainer}>
       {isLoading ? (
         <LoadingOverlay />
       ) : null
@@ -114,12 +114,8 @@ export function Home() {
         style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
       >
         <Grid2 xs={12} style={{ display: "flex", justifyContent: "center" }}>
-          <Card css={styles.searchCard}>
+          <Card style={styles.searchCard}>
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                RoboJudge
-              </Typography>
-
               <Grid2>
                 <TextField
                   fullWidth
@@ -128,6 +124,7 @@ export function Home() {
                   maxRows={5}
                   value={caseDescription}
                   onChange={(e) => handleTextInputChange(e.target.value)}
+                  label="Popis případu"
                   helperText={DEFAULT_HELPER_TEXT}
                 ></TextField>
               </Grid2>
@@ -138,6 +135,7 @@ export function Home() {
                     <Button
                       onClick={searchForCases}
                       disabled={isLoading || isInputInvalid}
+                      variant="outlined"
                     >
                       Hledat
                     </Button>
@@ -150,13 +148,14 @@ export function Home() {
       </Grid2>
       <Grid2
         container
-        spacing={3}
+        spacing={4}
         style={{ margin: "1rem", opacity: isLoading ? 0.6 : 1 }}
       >
         {cases.map((courtCase) => (
-          <CaseCard key={courtCase.id} courtCase={courtCase} />
+          <CaseCard key={courtCase.id} courtCase={courtCase} triggerAlert={triggerAlert} />
         ))}
       </Grid2>
-    </>
+
+    </div>
   );
 }

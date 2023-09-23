@@ -6,8 +6,10 @@ from fastapi import APIRouter
 from robojudge.db.mongo_db import document_db
 from robojudge.db.chroma_db import embedding_db
 from robojudge.routers.cases import CaseSearchRequest
-from robojudge.utils.types import CaseWithSummary
+from robojudge.utils.internal_types import CaseWithSummary
 from robojudge.components.summarizer.gpt_summarizer import GPTSummarizer
+from robojudge.components.summarizer.langchain_summarizer import summarizer
+from robojudge.components.summarizer.case_title_generator import title_generator
 
 router = APIRouter(prefix='/summary', tags=['Case summaries'])
 
@@ -23,7 +25,9 @@ async def prepare_summary(case: CaseWithSummary):
         }})
 
         text = '\n'.join(case_chunks['documents'])
-        case.summary = await GPTSummarizer(text, case.id).summarize_text()
+        case.summary = await summarizer.summarize(text)
+    if not case.title:
+        case.title = await title_generator.generate_title(case.summary)
 
 @router.post('/search', response_model=list[CaseWithSummary])
 async def search_cases(request: CaseSearchRequest):

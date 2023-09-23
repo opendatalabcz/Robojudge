@@ -59,3 +59,4 @@ class CaseChunk(BaseModel):
 
 class CaseWithSummary(Case):
     summary: str = ''
+    title: str = ''

@@ -2,7 +2,7 @@ from pymongo import MongoClient, ReplaceOne, UpdateOne
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
-from robojudge.utils.types import Case, CaseWithSummary
+from robojudge.utils.internal_types import Case, CaseWithSummary
 
 
 class DocumentStorage:

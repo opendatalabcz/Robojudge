@@ -12,7 +12,7 @@ from chromadb.utils import embedding_functions
 # from robojudge.components.models.embedding import embedder
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
-from robojudge.utils.types import Case, CaseChunk
+from robojudge.utils.internal_types import Case, CaseChunk
 
 PARAGRAPH_BATCH_SIZE = 4
 
@@ -114,9 +114,13 @@ class CaseEmbeddingStorage:
         case_chunks_from_db = CasesInChromaDB(**self.collection.get(ids=[], where={}))
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
 
-    def get_case_chunks_by_id(self, case_ids: list[str]):
+    def get_case_chunks_by_chunk_id(self, case_ids: list[str]):
         case_chunks_from_db = CasesInChromaDB(**self.collection.get(ids=case_ids))
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
+
+    def get_case_chunks_by_case_id(self, case_ids: list[str]):
+        query_result = CaseEmbeddingStorage.parse_text_query_result(self.collection.query(query_texts='', where={"case_id": {"$in": case_ids}}))
+        return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
 
     def delete_case_chunks(self, case_ids: list[str]):
         return self.collection.delete(ids=case_ids)
