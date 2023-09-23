@@ -1,43 +1,30 @@
-# To get the fresh environment.yml file: conda lock -p linux-64 -f server/environment.yml
+FROM python:3.10-slim as builder
 
-FROM python:3.10-slim as BUILD_STAGE
+RUN pip install poetry 
 
-# Install base utilities
-RUN apt-get update \
-    && apt-get install -y build-essential \
-    && apt-get install -y wget \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
-# Install miniconda
-ENV CONDA_DIR /opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda
+WORKDIR /app
 
-# Put conda in path so we can use conda activate
-ENV PATH=$CONDA_DIR/bin:$PATH
-ENV CONDA_ENV_NAME="bp-server"
+COPY pyproject.toml poetry.lock ./
 
-RUN apt update
-RUN apt install g++ -y
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
-# TODO: Clean up unused shit
-COPY environment.yml .
+FROM python:3.10-slim as runtime
 
-RUN conda create -n $CONDA_ENV_NAME python=3.10
-RUN conda env update -n $CONDA_ENV_NAME --file environment.yml
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
 
-# https://stackoverflow.com/questions/55123637/activate-conda-environment-in-docker
-# Make RUN commands use the new environment:
-SHELL ["conda", "run", "--no-capture-output", "-n", "$CONDA_ENV_NAME", "/bin/bash", "-c"]
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-# RUN echo "source activate CONDA_ENV_NAME" > ~/.bashrc
-# RUN conda init bash
-# RUN conda activate CONDA_ENV_NAME
+# Installs headless browser and deps for case scraping
+RUN playwright install & playwright install-deps
 
-COPY . .
+COPY robojudge ./robojudge
 
-# Install the server directory as a pip module to make imports work
-RUN pip install -e .
+EXPOSE 4000
 
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "$CONDA_ENV_NAME", "python3", "server/main.py"]
+CMD sh -c 'uvicorn robojudge.main:app --host 0.0.0.0 --port 4000'

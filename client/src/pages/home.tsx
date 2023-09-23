@@ -3,16 +3,17 @@ import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import {
-  Alert,
   Button,
   Card,
   CardContent,
-  CircularProgress,
-  Snackbar,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import { css } from '@emotion/react';
 import { CaseCard } from "../components/CaseCard";
+import { LoadingOverlay } from "../components/LoadingOverlay";
+import { FloatingAlert } from "../components/FloatingAlert";
 
 export type Case = {
   id: string;
@@ -22,20 +23,20 @@ export type Case = {
   verdict: string;
 };
 
+// TODO: disuse emotion
 const styles = {
-  searchCard: {
-    padding: "1rem",
-    maxWidth: "750px",
-    minWidth: "50vw",
-  },
-  caseCardsContainer: {
-    display: "flex",
-    gap: "30px",
-    width: "100%",
-  },
-};
+  searchCard: css`
+    padding: "1rem";
+    maxWidth: "750px";
+    minWidth: "50vw";
+  `,
+  caseCardsContainer: css`
+    display: "flex";
+    gap: "30px";
+    width: "100%";
+  `,
 
-// TODO: fix too wide body causing scrollbar
+};
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
                   případy podobné. Nejlepších výsledků dosáhnete zadáním ca. 200
@@ -54,23 +55,29 @@ export function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isErrorAlertShown, setIsErrorAlertShown] = useState(false);
 
-  const [helperText, setHelperText] = useState(DEFAULT_HELPER_TEXT);
+  const [isInputInvalid, setIsInputInvalid] = useState(true);
+  const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
 
   const handleTextInputChange = (value: string) => {
-    if (value.length > 0 && value.length < MIN_DESCRIPTION_LENGTH) {
-      setHelperText(INPUT_TOO_SHORT);
+    if (value.length < MIN_DESCRIPTION_LENGTH) {
+      setIsInputInvalid(true);
+      setTooltipText(INPUT_TOO_SHORT);
     } else if (value.length > MAX_DESCRIPTION_LENGTH) {
-      setHelperText(INPUT_TOO_LONG);
-    } else setHelperText(DEFAULT_HELPER_TEXT);
+      setIsInputInvalid(true);
+      setTooltipText(INPUT_TOO_LONG);
+    } else {
+      setIsInputInvalid(false);
+      setTooltipText('')
+    }
     setCaseDescription(value);
   };
 
   const searchForCases = async () => {
     if (caseDescription.length < MIN_DESCRIPTION_LENGTH) {
-      setHelperText(INPUT_TOO_SHORT);
+      setTooltipText(INPUT_TOO_SHORT);
       return;
     } else if (caseDescription.length > MAX_DESCRIPTION_LENGTH) {
-      setHelperText(INPUT_TOO_LONG);
+      setTooltipText(INPUT_TOO_LONG);
       return;
     }
 
@@ -85,8 +92,6 @@ export function Home() {
         },
       );
 
-      console.log(data.map(convertObjectKeysToCamelCase));
-
       setCases(data.map(convertObjectKeysToCamelCase));
     } catch (err) {
       console.error(err);
@@ -98,52 +103,24 @@ export function Home() {
 
   return (
     <>
-      <Snackbar
-        open={isErrorAlertShown}
-        autoHideDuration={6000}
-        onClose={() => setIsErrorAlertShown(false)}
-      >
-        <Alert
-          onClose={() => setIsErrorAlertShown(false)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.
-        </Alert>
-      </Snackbar>
+      <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text="Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli." />
 
       {isLoading ? (
-        <div
-          style={{
-            position: "absolute",
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-            zIndex: 1,
-          }}
-        >
-          <CircularProgress />
-          <Typography variant="body2" color="text.secondary">
-            Hledám rozhodnutí a připravuji shrnutí...
-          </Typography>
-        </div>
-      ) : null}
+        <LoadingOverlay />
+      ) : null
+      }
       <Grid2
         container
         style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
       >
         <Grid2 xs={12} style={{ display: "flex", justifyContent: "center" }}>
-          <Card style={styles.searchCard}>
+          <Card css={styles.searchCard}>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 RoboJudge
               </Typography>
 
               <Grid2>
-                {/*  TODO: test the optimal number of words */}
                 <TextField
                   fullWidth
                   multiline
@@ -151,17 +128,22 @@ export function Home() {
                   maxRows={5}
                   value={caseDescription}
                   onChange={(e) => handleTextInputChange(e.target.value)}
-                  helperText={helperText}
-                  error={helperText !== DEFAULT_HELPER_TEXT}
+                  helperText={DEFAULT_HELPER_TEXT}
                 ></TextField>
               </Grid2>
-              <Button
-                style={{ float: "right" }}
-                onClick={searchForCases}
-                disabled={isLoading}
-              >
-                Hledat
-              </Button>
+              <Grid2 style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tooltip title={tooltipText} placement="bottom">
+                  {/* The tooltip will not display on disabled elements otherwise */}
+                  <div>
+                    <Button
+                      onClick={searchForCases}
+                      disabled={isLoading || isInputInvalid}
+                    >
+                      Hledat
+                    </Button>
+                  </div>
+                </Tooltip>
+              </Grid2>
             </CardContent>
           </Card>
         </Grid2>
@@ -169,7 +151,7 @@ export function Home() {
       <Grid2
         container
         spacing={3}
-        style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
+        style={{ margin: "1rem", opacity: isLoading ? 0.6 : 1 }}
       >
         {cases.map((courtCase) => (
           <CaseCard key={courtCase.id} courtCase={courtCase} />
