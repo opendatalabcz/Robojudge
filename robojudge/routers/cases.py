@@ -36,7 +36,7 @@ async def get_all_cases():
     return embedding_db.get_all_cases()
 
 
-@router.put("/search", response_model=list[CaseWithSummary])
+@router.post("/search", response_model=list[CaseWithSummary])
 async def search_cases(request: CaseSearchRequest, bg_tasks: BackgroundTasks):
     """
     Given a string, searches for the most similar texts in a vector DB of court cases.
@@ -65,14 +65,11 @@ async def search_cases(request: CaseSearchRequest, bg_tasks: BackgroundTasks):
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
         # Cache the results if the cases are retrieved in the future
         bg_tasks.add_task(document_db.add_document_summaries, cases_with_summary)
-        # Thread(
-        #     target=lambda: document_db.add_document_summaries(cases_with_summary)
-        # ).start()
 
     return cases_with_summary
 
 
-@router.put("/{case_id}/question", response_model=CaseQuestionResponse)
+@router.post("/{case_id}/question", response_model=CaseQuestionResponse)
 async def answer_case_question(case_id: str, request: CaseQuestionRequest):
     """
     Given a `case_id` and a question, an LLM tries to answer that question by searching through the text (reasoning) of the case.
@@ -88,12 +85,11 @@ async def answer_case_question(case_id: str, request: CaseQuestionRequest):
     return CaseQuestionResponse(answer=answer)
 
 
-@router.put("/scrape")
+@router.post("/scrape")
 async def fetch_cases(bg_tasks: BackgroundTasks):
     """
     Manually triggers one instance/batch of scraping cases from the justice ministry's website.
     """
     logger.info("Triggering case scraping based on an API request.")
     bg_tasks.add_task(run_scraping_instance)
-    # Thread(target=lambda: asyncio.run(fetch_new_cases())).start()
     return PlainTextResponse("ok", 202)
