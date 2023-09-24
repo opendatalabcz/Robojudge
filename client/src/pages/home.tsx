@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import {
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Button, Card, CardContent, TextField, Tooltip } from "@mui/material";
 import { CaseCard } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
 
@@ -21,9 +15,7 @@ export type Case = {
   verdict: string;
 };
 
-// TODO: disuse emotion
 const styles = {
-  mainPageContainer: { height: '100%', position: 'relative', flex: 1 },
   searchCard: {
     padding: "1rem",
     maxWidth: "750px",
@@ -33,7 +25,7 @@ const styles = {
     display: "flex",
     gap: "30px",
     width: "100%",
-  }
+  },
 } as Record<string, React.CSSProperties>;
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
@@ -48,14 +40,13 @@ const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} zn
 
 type HomeProps = {
   triggerAlert: (text: string) => void;
-}
+};
 
 export function Home({ triggerAlert }: HomeProps) {
   const [caseDescription, setCaseDescription] = useState("");
   const [cases, setCases] = useState<Case[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
-
 
   const [isInputInvalid, setIsInputInvalid] = useState(true);
   const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
@@ -69,7 +60,7 @@ export function Home({ triggerAlert }: HomeProps) {
       setTooltipText(INPUT_TOO_LONG);
     } else {
       setIsInputInvalid(false);
-      setTooltipText('')
+      setTooltipText("");
     }
     setCaseDescription(value);
   };
@@ -87,7 +78,9 @@ export function Home({ triggerAlert }: HomeProps) {
       setIsLoading(true);
 
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"}/summary/search`,
+        `${
+          process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
+        }/summary/search`,
         {
           query_text: caseDescription,
           limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,
@@ -97,18 +90,17 @@ export function Home({ triggerAlert }: HomeProps) {
       setCases(data.map(convertObjectKeysToCamelCase));
     } catch (err) {
       console.error(err);
-      triggerAlert("Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.");
+      triggerAlert(
+        "Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={styles.mainPageContainer}>
-      {isLoading ? (
-        <LoadingOverlay />
-      ) : null
-      }
+    <>
+      {isLoading ? <LoadingOverlay /> : null}
       <Grid2
         container
         style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
@@ -152,10 +144,13 @@ export function Home({ triggerAlert }: HomeProps) {
         style={{ margin: "1rem", opacity: isLoading ? 0.6 : 1 }}
       >
         {cases.map((courtCase) => (
-          <CaseCard key={courtCase.id} courtCase={courtCase} triggerAlert={triggerAlert} />
+          <CaseCard
+            key={courtCase.id}
+            courtCase={courtCase}
+            triggerAlert={triggerAlert}
+          />
         ))}
       </Grid2>
-
-    </div>
+    </>
   );
 }
