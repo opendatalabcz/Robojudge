@@ -4,17 +4,16 @@ from typing import Dict
 from itertools import zip_longest
 
 from pydantic import BaseModel
-import more_itertools
 import chromadb
 import chromadb.config
 
+from robojudge.components.chunker import split_text_into_embeddable_chunks
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import Case, CaseChunk
 
-PARAGRAPH_BATCH_SIZE = 4
-
 logger = logging.getLogger(__name__)
+
 
 class CasesInChromaDB(BaseModel):
     embeddings: Optional[list[str]] = None
@@ -94,15 +93,9 @@ class CaseEmbeddingStorage:
                 "jednaci_cislo": case.metadata.jednaci_cislo,
             }
 
-            # Create chunks of the case's reasoning and create embeddings of these chunks
-            paragraphs = case.reasoning.split("\n")
-            paragraph_chunks = more_itertools.chunked(paragraphs, PARAGRAPH_BATCH_SIZE)
-            paragraph_chunks = ["\n".join(chunk) for chunk in paragraph_chunks]
+            chunks = split_text_into_embeddable_chunks(case.reasoning)
 
-            # cases_for_db.embeddings.extend(
-            #     embedder.embed_texts(paragraph_chunks))
-
-            for chunk_index, chunk in enumerate(paragraph_chunks):
+            for chunk_index, chunk in enumerate(chunks):
                 cases_for_db.documents.append(chunk)
                 cases_for_db.metadatas.append({**metadata, "chunk_index": chunk_index})
                 cases_for_db.ids.append(
@@ -120,7 +113,9 @@ class CaseEmbeddingStorage:
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
 
     def get_case_chunks_by_case_id(self, case_ids: list[str]):
-        query_result = CaseEmbeddingStorage.parse_text_query_result(self.collection.query(query_texts='', where={"case_id": {"$in": case_ids}}))
+        query_result = CaseEmbeddingStorage.parse_text_query_result(
+            self.collection.query(query_texts="", where={"case_id": {"$in": case_ids}})
+        )
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
 
     def delete_case_chunks(self, case_ids: list[str]):
