@@ -1,13 +1,14 @@
 import asyncio
+from multiprocessing import Process
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from icecream import install
 
+from robojudge.tasks.case_scraping import run_scheduler
 from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
-from robojudge.utils.launch import Server, app as app_rocketry
 import robojudge.routers.cases
 
 if settings.ENVIRONMENT == "dev":
@@ -34,20 +35,9 @@ async def get_health():
     }
 
 
-async def main():
-    "Run Rocketry and FastAPI"
-    server = Server(
-        config=uvicorn.Config(app, workers=1, loop="asyncio", port=settings.SERVER_PORT)
-    )
-
-    api = asyncio.create_task(server.serve())
-    scheduled = asyncio.create_task(app_rocketry.serve())
-
-    await asyncio.wait([scheduled, api])
-
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    Process(target=run_scheduler).start()
+    uvicorn.run(app, host="0.0.0.0", port=settings.SERVER_PORT)
 
 # TODO: Compare summarization with some non-LLM model (if available for Czech)
 # TODO: Mongo password

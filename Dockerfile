@@ -10,8 +10,7 @@ ENV POETRY_NO_INTERACTION=1 \
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
-
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
+RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 
 FROM python:3.10-slim as runtime
 
@@ -27,4 +26,4 @@ COPY robojudge ./robojudge
 
 EXPOSE 4000
 
-CMD sh -c 'poetry run python robojudge/main.py'
+ENTRYPOINT ["python", "-m", "robojudge.main"]

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     EMBEDDING_DB_HOST = "chroma"
     EMBEDDING_DB_PORT = 8000
+    EMBEDDING_CHUNK_SIZE = 500
 
     DOCUMENT_DB_HOST = 'mongo'
     DOCUMENT_DB_PORT: int = 27017

@@ -1,8 +1,11 @@
 import asyncio
+import uvicorn
 from multiprocessing import Queue, Process
 from concurrent.futures import ThreadPoolExecutor
 
 import more_itertools
+from rocketry import Rocketry
+from rocketry.conds import every
 
 from robojudge.utils.settings import settings
 from robojudge.db.chroma_db import embedding_db
@@ -32,6 +35,12 @@ async def determine_case_ids_to_parse():
     return set(range(lower, upper)).difference(case_ids_in_db)
 
 
+app = Rocketry()
+
+
+@app.task(
+    every(f"{settings.SCRAPER_TASK_INTERVAL_IN_SECONDS} seconds"), execution="async"
+)
 async def run_scraping_instance():
     case_ids = await determine_case_ids_to_parse()
 
@@ -95,5 +104,15 @@ def parser_worker(q, worker_id):
             logger.exception(f"Parser #{worker_id} - Error while parsing cases:")
 
 
+async def create_scheduler_async_task():
+    scheduled = asyncio.create_task(app.serve())
+
+    await scheduled
+
+
+def run_scheduler():
+    asyncio.run(create_scheduler_async_task())
+
+
 if __name__ == "__main__":
-    asyncio.run(run_scraping_instance())
+    run_scheduler()
