@@ -3,7 +3,7 @@ import json
 import pytest
 from bs4 import BeautifulSoup
 
-from robojudge.scraper.case_page_scraper import CasePageScraper
+from robojudge.components.case_page_scraper import CasePageScraper
 
 @pytest.fixture(scope='session')
 def html_page():

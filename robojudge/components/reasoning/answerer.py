@@ -12,8 +12,8 @@ from langchain.chains import RefineDocumentsChain, LLMChain
 from robojudge.utils.gpt_tokenizer import tokenizer
 from robojudge.utils.settings import settings, standard_llm
 from robojudge.components.summarizer.langchain_summarizer import CaseSummarizer
-from robojudge.components.reasoning.get_next_text_chunk import create_get_text_tool
-from robojudge.components.reasoning.irrelevant_result import irrelevant_result_tool
+from robojudge.components.reasoning.tools.get_next_text_chunk import create_get_text_tool
+from robojudge.components.reasoning.tools.irrelevant_result import irrelevant_result_tool
 from robojudge.utils.settings import standard_llm
 
 

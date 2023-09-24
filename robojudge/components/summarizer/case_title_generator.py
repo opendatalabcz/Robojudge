@@ -5,7 +5,10 @@ from langchain.prompts.chat import (
 )
 from langchain.chains import LLMChain
 
+from robojudge.utils.logger import logging
 from robojudge.utils.settings import standard_llm
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create a catchy/pithy/funny title for an article about a court ruling based on a summary of that ruling.
@@ -32,7 +35,11 @@ class CaseTitleGenerator:
         self.llm_chain = LLMChain(llm=standard_llm, prompt=prompt)
 
     async def generate_title(self, summary: str) -> str:
-        return await self.llm_chain.arun(summary)
+        try:
+            return await self.llm_chain.arun(summary)
+        except Exception:
+            logger.exception(f"Error while generating title:")
+            return ""
 
 
 title_generator = CaseTitleGenerator()

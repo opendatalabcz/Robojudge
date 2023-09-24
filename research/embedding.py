@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 
 from robojudge.utils.settings import settings
-from robojudge.components.models.tokenizer import retrieve_tokenizer
+from research.tokenizer import retrieve_tokenizer
 
 
 class Embeddder:

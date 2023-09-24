@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from robojudge.components.models.pretokenizer import HuggingFaceCustomCzechPretokenizer
+from research.pretokenizer import HuggingFaceCustomCzechPretokenizer
 from robojudge.utils.logger import logging
 
 from tokenizers.pre_tokenizers import PreTokenizer, BertPreTokenizer

@@ -7,20 +7,17 @@ from pydantic import BaseModel
 import more_itertools
 import chromadb
 import chromadb.config
-from chromadb.utils import embedding_functions
 
-# from robojudge.components.models.embedding import embedder
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import Case, CaseChunk
 
 PARAGRAPH_BATCH_SIZE = 4
 
-# TODO: use lightweight client
-
+logger = logging.getLogger(__name__)
 
 class CasesInChromaDB(BaseModel):
-    # embeddings: list[str] | None = []
+    embeddings: Optional[list[str]] = None
     documents: list[str] = []
     metadatas: list[Dict] | None = []
     ids: list[str] = []
@@ -39,7 +36,7 @@ class CaseEmbeddingStorage:
         self.collection = self.client.get_or_create_collection(
             name=CaseEmbeddingStorage.COLLECTION_NAME
         )
-        logging.info(
+        logger.info(
             f'Connection to established to ChromaDB "{settings.EMBEDDING_DB_HOST}:{settings.EMBEDDING_DB_PORT}".'
         )
 

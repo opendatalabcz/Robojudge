@@ -7,8 +7,11 @@ from langchain.schema import Document
 from langchain.chains import RefineDocumentsChain, LLMChain
 import more_itertools
 
+from robojudge.utils.logger import logging
 from robojudge.utils.gpt_tokenizer import tokenizer
 from robojudge.utils.settings import standard_llm
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create an interesting summary of a court ruling.
@@ -59,9 +62,13 @@ class CaseSummarizer:
         )
 
     async def summarize(self, text: str) -> str:
-        chunks = CaseSummarizer.split_text_into_chunks(text)
-        result, summary_metadata = await self.refiner.acombine_docs(chunks)
-        return result
+        try:
+            chunks = CaseSummarizer.split_text_into_chunks(text)
+            result, summary_metadata = await self.refiner.acombine_docs(chunks)
+            return result
+        except Exception:
+            logger.exception(f'Error while summarizing text:')
+            return ''
 
     @classmethod
     def split_text_into_chunks(cls, text: str):

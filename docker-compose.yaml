@@ -5,7 +5,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - ${MONGO_DB_PORT}:${MONGO_DB_PORT}
+      - ${DOCUMENT_DB_PORT}:${DOCUMENT_DB_PORT}
     volumes:
       - mongo-data:/data/db
     networks:
@@ -18,7 +18,7 @@ services:
     environment:
       - IS_PERSISTENT=TRUE
     ports:
-      - ${CHROMA_DB_PORT}:${CHROMA_DB_PORT}
+      - ${EMBEDDING_DB_PORT}:${EMBEDDING_DB_PORT}
     networks:
       - default
 

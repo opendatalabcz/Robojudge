@@ -27,4 +27,4 @@ COPY robojudge ./robojudge
 
 EXPOSE 4000
 
-CMD sh -c 'uvicorn robojudge.main:app --host 0.0.0.0 --port 4000'
+CMD sh -c 'poetry run python robojudge/main.py'
