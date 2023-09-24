@@ -1,7 +1,7 @@
 import asyncio
-from threading import Thread
+from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import PlainTextResponse
 
 from robojudge.tasks.case_scraping import run_scraping_instance
@@ -12,8 +12,8 @@ from robojudge.utils.api_types import (
     CaseQuestionResponse,
 )
 from robojudge.utils.internal_types import CaseWithSummary
-from robojudge.db.chroma_db import embedding_db
-from robojudge.db.mongo_db import document_db
+from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
+from robojudge.db.mongo_db import document_db, DocumentStorage
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
 from robojudge.components.summarizer.langchain_summarizer import summarizer
 from robojudge.components.summarizer.case_title_generator import title_generator
@@ -21,7 +21,10 @@ from robojudge.components.summarizer.case_title_generator import title_generator
 logger = logging.getLogger(__name__)
 
 
-router = APIRouter(prefix="/cases", tags=["Cases"])
+router = APIRouter(
+    prefix="/cases",
+    tags=["Cases"],
+)
 
 
 async def prepare_summary_and_title(case: CaseWithSummary):
@@ -31,13 +34,20 @@ async def prepare_summary_and_title(case: CaseWithSummary):
         case.title = await title_generator.generate_title(case.summary)
 
 
-@router.get("/")
-async def get_all_cases():
+@router.get("")
+async def get_all_cases(
+    embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
+):
     return embedding_db.get_all_cases()
 
 
 @router.post("/search", response_model=list[CaseWithSummary])
-async def search_cases(request: CaseSearchRequest, bg_tasks: BackgroundTasks):
+async def search_cases(
+    request: CaseSearchRequest,
+    bg_tasks: BackgroundTasks,
+    embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)],
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+):
     """
     Given a string, searches for the most similar texts in a vector DB of court cases.
     If a part of the case is similar, it is returned alongside a summary of the whole case (if requested).
@@ -70,7 +80,11 @@ async def search_cases(request: CaseSearchRequest, bg_tasks: BackgroundTasks):
 
 
 @router.post("/{case_id}/question", response_model=CaseQuestionResponse)
-async def answer_case_question(case_id: str, request: CaseQuestionRequest):
+async def answer_case_question(
+    case_id: str,
+    request: CaseQuestionRequest,
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+):
     """
     Given a `case_id` and a question, an LLM tries to answer that question by searching through the text (reasoning) of the case.
     """

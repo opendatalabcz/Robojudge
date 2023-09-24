@@ -40,6 +40,10 @@ class CaseEmbeddingStorage:
             f'Connection to established to ChromaDB "{settings.EMBEDDING_DB_HOST}:{settings.EMBEDDING_DB_PORT}".'
         )
 
+    # Enables to be used as a FastAPI dependency which needs a callable
+    def __call__(self):
+        return self
+
     @staticmethod
     def generate_id(name: str):
         return str(uuid.uuid5(uuid.NAMESPACE_URL, name))

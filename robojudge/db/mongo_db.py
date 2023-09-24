@@ -22,6 +22,10 @@ class DocumentStorage:
 
         self.collection.create_index("case_id")
 
+    # Enables to be used as a FastAPI dependency which needs a callable
+    def __call__(self):
+        return self
+
     # Searching is done through the collection object directly
     @property
     def collection(self):
