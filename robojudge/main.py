@@ -36,7 +36,8 @@ async def get_health():
 
 
 if __name__ == "__main__":
-    Process(target=run_scheduler).start()
+    if settings.ENABLE_SCRAPING:
+        Process(target=run_scheduler).start()
     uvicorn.run(app, host="0.0.0.0", port=settings.SERVER_PORT)
 
 # TODO: Compare summarization with some non-LLM model (if available for Czech)

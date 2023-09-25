@@ -11,7 +11,7 @@ from robojudge.utils.api_types import (
     CaseSearchRequest,
     CaseQuestionResponse,
 )
-from robojudge.utils.internal_types import CaseWithSummary
+from robojudge.utils.internal_types import Case, CaseChunk
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
 from robojudge.db.mongo_db import document_db, DocumentStorage
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
@@ -27,21 +27,33 @@ router = APIRouter(
 )
 
 
-async def prepare_summary_and_title(case: CaseWithSummary):
+async def prepare_summary_and_title(case: Case):
     if not case.summary:
         case.summary = await summarizer.summarize(case.reasoning)
     if not case.title:
         case.title = await title_generator.generate_title(case.summary)
 
 
-@router.get("")
-async def get_all_cases(
+@router.get("/chunks", response_model=list[CaseChunk])
+async def get_all_case_chunks(
     embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
 ):
     return embedding_db.get_all_cases()
 
 
-@router.post("/search", response_model=list[CaseWithSummary])
+@router.get("", response_model=list[Case])
+async def get_all_cases(
+    document_db: Annotated[CaseEmbeddingStorage, Depends(document_db)]
+):
+    db_documents = document_db.collection.find({})
+    response_documents: list[Case] = []
+    for db_doc in db_documents:
+        response_documents.append(Case(**db_doc))
+
+    return response_documents
+
+
+@router.post("/search", response_model=list[Case])
 async def search_cases(
     request: CaseSearchRequest,
     bg_tasks: BackgroundTasks,
@@ -60,16 +72,14 @@ async def search_cases(
     )
     case_ids = set(case.case_id for case in case_chunks)
 
-    cases_with_summary = []
+    cases_with_summary: list[Case] = []
 
     # Find the whole cases in document DB
     cases_in_document_db = list(
         document_db.collection.find({"case_id": {"$in": list(case_ids)}})
     )
     for case_in_doc_db in cases_in_document_db:
-        cases_with_summary.append(
-            CaseWithSummary(**case_in_doc_db, id=case_in_doc_db["case_id"])
-        )
+        cases_with_summary.append(Case(**case_in_doc_db))
 
     if request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
@@ -90,10 +100,10 @@ async def answer_case_question(
     """
     logger.info(f'Answering question about case "{case_id}": "{request.question}".')
 
-    case = document_db.collection.find_one({"case_id": case_id})
+    case = Case(**document_db.collection.find_one({"case_id": case_id}))
 
     answer = await CaseQuestionAnswerer.answer_question(
-        request.question, case["reasoning"]
+        request.question, case.reasoning
     )
 
     return CaseQuestionResponse(answer=answer)

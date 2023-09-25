@@ -2,7 +2,7 @@ from pymongo import MongoClient, ReplaceOne, UpdateOne
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
-from robojudge.utils.internal_types import Case, CaseWithSummary
+from robojudge.utils.internal_types import Case
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class DocumentStorage:
         except Exception:
             logging.exception(f'Error while upserting metadata: "{cases}":')
 
-    def add_document_summaries(self, summaries: list[CaseWithSummary]):
+    def add_document_summaries(self, summaries: list[Case]):
         if len(summaries) < 1:
             return
 
