@@ -1,5 +1,5 @@
 from pydantic import BaseSettings
-from langchain.chat_models import AzureChatOpenAI
+from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 
 
 class Settings(BaseSettings):
@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     EMBEDDING_DB_PORT = 8000
     EMBEDDING_CHUNK_SIZE = 500
 
-    DOCUMENT_DB_HOST = 'mongo'
+    DOCUMENT_DB_HOST = "mongo"
     DOCUMENT_DB_PORT: int = 27017
 
     SCRAPER_MAX_RUN_CASE_COUNT = 30
@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     TOKENIZER_URL = "http://lindat.mff.cuni.cz/services/morphodita/api/tag"
 
     # App summarizing
-    SUMMARIZE_LLM_MODEL = 'chatgpt'
+    SUMMARIZE_LLM_MODEL = "chatgpt"
     AGENT_MAX_EXECUTION_TIME = 120
 
     class Config:
@@ -51,14 +51,20 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-LLM_BASIC_SETTINGS = {
-    "openai_api_key": settings.OPENAI_API_KEY,
-    "openai_api_base": settings.OPENAI_API_BASE,
-    "openai_api_version": settings.OPENAI_API_VERSION,
-    "openai_api_type": settings.OPENAI_API_TYPE,
-}
 
-
-standard_llm = AzureChatOpenAI(
-    **LLM_BASIC_SETTINGS, deployment_name=settings.SUMMARIZE_LLM_MODEL, temperature=0
+standard_llm = (
+    AzureChatOpenAI(
+        openai_api_key=settings.OPENAI_API_KEY,
+        openai_api_base=settings.OPENAI_API_BASE,
+        openai_api_version=settings.OPENAI_API_VERSION,
+        openai_api_type=settings.OPENAI_API_TYPE,
+        deployment_name=settings.SUMMARIZE_LLM_MODEL,
+        temperature=0,
+    )
+    if settings.OPENAI_API_TYPE == "azure"
+    else ChatOpenAI(
+        openai_api_key=settings.OPENAI_API_KEY,
+        deployment_name=settings.SUMMARIZE_LLM_MODEL,
+        temperature=0,
+    )
 )
