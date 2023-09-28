@@ -89,7 +89,7 @@ class CaseEmbeddingStorage:
             # Only the most important metadata are stored here
             # For more details, MongoDB is queried
             metadata = {
-                "case_id": case.id,
+                "case_id": case.case_id,
                 "jednaci_cislo": case.metadata.jednaci_cislo,
             }
 
@@ -99,7 +99,7 @@ class CaseEmbeddingStorage:
                 cases_for_db.documents.append(chunk)
                 cases_for_db.metadatas.append({**metadata, "chunk_index": chunk_index})
                 cases_for_db.ids.append(
-                    CaseEmbeddingStorage.generate_id(f"{case.id}_{chunk_index}")
+                    CaseEmbeddingStorage.generate_id(f"{case.case_id}_{chunk_index}")
                 )
 
         self.collection.upsert(**cases_for_db.dict())

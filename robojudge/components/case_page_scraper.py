@@ -39,7 +39,7 @@ class CasePageScraper:
 
             logging.debug(f'Scraped case: {self.case_id}')
 
-            return Case(id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
+            return Case(case_id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
         except Exception:
             logging.exception(f'Error while scraping case "{self.case_id}":')
 

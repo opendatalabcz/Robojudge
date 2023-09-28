@@ -7,6 +7,7 @@ import more_itertools
 from rocketry import Rocketry
 from rocketry.conds import every
 
+from robojudge.utils.internal_types import Case
 from robojudge.utils.settings import settings
 from robojudge.db.chroma_db import embedding_db
 from robojudge.db.mongo_db import document_db
@@ -94,11 +95,11 @@ def parser_worker(q, worker_id):
             break
         try:
             # Get rid of None's
-            filtered_cases = [case for case in cases if case]
+            filtered_cases: list[Case] = [case for case in cases if case]
             embedding_db.upsert_cases(filtered_cases)
             document_db.upsert_documents(filtered_cases)
             logger.info(
-                f'{worker_id} - Upserted cases "{[case.id for case in filtered_cases]}".'
+                f'{worker_id} - Upserted cases "{[case.case_id for case in filtered_cases]}".'
             )
         except Exception:
             logger.exception(f"Parser #{worker_id} - Error while parsing cases:")

@@ -1,4 +1,5 @@
 from typing import Optional
+import datetime
 
 from strenum import StrEnum
 from pydantic import BaseModel, Field
@@ -38,8 +39,8 @@ class Metadata(BaseModel):
     court: str
     subject_matter: str
     judge_name: str
-    sentence_date: str
-    publication_date: str
+    sentence_date: datetime.datetime
+    publication_date: datetime.datetime
     ecli_id: str = ""
     keywords: list[str] = []
     regulations_mentioned: list[str] = []
@@ -47,10 +48,7 @@ class Metadata(BaseModel):
 
 
 class Case(BaseModel):
-    id: str = Field(
-        description="This ID corresponds to an integer used by the Justice Ministry's website",
-        alias="case_id",
-    )
+    case_id: str = Field(description="This ID corresponds to an integer used by the Justice Ministry's website")
     metadata: Metadata
     verdict: str = Field(default="", description='"výrok" in Czech')
     reasoning: str = Field(default="", description='"odůvodnění" in Czech')

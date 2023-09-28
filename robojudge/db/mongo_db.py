@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class DocumentStorage:
     client: MongoClient
-    DB_NAME = "cases"
-    COLLECTION_NAME = "metadata"
+    DB_NAME = "robojudge_case_db"
+    COLLECTION_NAME = "cases"
 
     def __init__(self) -> None:
         self.client = MongoClient(
@@ -50,8 +50,8 @@ class DocumentStorage:
         try:
             updates = [
                 ReplaceOne(
-                    {"case_id": case.id},
-                    {"case_id": case.id, **case.dict(exclude={"id"})},
+                    {"case_id": case.case_id},
+                    case.dict(),
                     upsert=True,
                 )
                 for case in cases
@@ -61,22 +61,22 @@ class DocumentStorage:
         except Exception:
             logging.exception(f'Error while upserting metadata: "{cases}":')
 
-    def add_document_summaries(self, summaries: list[Case]):
-        if len(summaries) < 1:
+    def add_document_summaries(self, summaried_cases: list[Case]):
+        if len(summaried_cases) < 1:
             return
 
         try:
             logger.info('Saving generated summaries.')
             updates = [
                 UpdateOne(
-                    {"case_id": summary.id}, {"$set": {"summary": summary.summary}}
+                    {"case_id": summaried_case.case_id}, {"$set": {"summary": summaried_case.summary}}
                 )
-                for summary in summaries
+                for summaried_case in summaried_cases
             ]
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(f"Error while adding summaries {summaries}:")
+            logging.exception(f"Error while adding summaries {summaried_cases}:")
 
     def delete_documents(self, case_ids: list[str]):
         try:
