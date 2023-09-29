@@ -67,3 +67,8 @@ class CaseChunk(BaseModel):
     case_id: str
     chunk_text: str
     metadata: dict
+
+class ScrapingInformation(BaseModel):
+    last_case_id: str
+    timestamp: datetime.datetime
+    unsuccessful_case_count: int

@@ -2,7 +2,7 @@ from pymongo import MongoClient, ReplaceOne, UpdateOne
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
-from robojudge.utils.internal_types import Case
+from robojudge.utils.internal_types import Case, ScrapingInformation
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +11,7 @@ class DocumentStorage:
     client: MongoClient
     DB_NAME = "robojudge_case_db"
     COLLECTION_NAME = "cases"
+    SCRAPING_INFORMATION_COLLECTION_NAME = 'scraping'
 
     def __init__(self) -> None:
         self.client = MongoClient(
@@ -30,17 +31,34 @@ class DocumentStorage:
     @property
     def collection(self):
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
+    
+    @property
+    def scraping_collection(self):
+        return self.client[self.DB_NAME][self.SCRAPING_INFORMATION_COLLECTION_NAME]
 
     def find_latest_case_id(self):
         try:
+            cases = self.scraping_collection.find().sort("$natural", -1).limit(1)
+            cases = list(cases)
+            if len(cases) > 0:
+                return int(list(cases)[0]["last_case_id"])
+
+            # Try to deduce last case from cases themselves if scraping metadata are missing
             cases = self.collection.find().sort("$natural", -1).limit(1)
             cases = list(cases)
-            if len(cases) < 1:
-                return settings.OLDEST_KNOWN_CASE_ID
+            if len(cases) > 0:
+                return int(list(cases)[0]["case_id"])
+            
+            return settings.OLDEST_KNOWN_CASE_ID
 
-            return int(list(cases)[0]["case_id"])
         except Exception:
             logging.exception(f"Error while searching for latest case_id:")
+
+    def insert_scraping_instance_information(self, scraping_information: ScrapingInformation):
+        try:
+            self.scraping_collection.insert_one(scraping_information.dict())
+        except Exception:
+            logging.exception(f'Error while inserting scraping information: "{scraping_information}":')
 
     def upsert_documents(self, cases: list[Case]):
         if len(cases) < 1:

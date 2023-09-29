@@ -1,3 +1,5 @@
+import datetime
+
 import asyncio
 import uvicorn
 from multiprocessing import Queue, Process
@@ -5,9 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import more_itertools
 from rocketry import Rocketry
-from rocketry.conds import every
 
-from robojudge.utils.internal_types import Case
+from robojudge.utils.internal_types import Case, ScrapingInformation
 from robojudge.utils.settings import settings
 from robojudge.db.chroma_db import embedding_db
 from robojudge.db.mongo_db import document_db
@@ -33,15 +34,18 @@ async def determine_case_ids_to_parse():
     lower = latest_id_in_db + 1
     upper = min(latest_id_in_db + settings.SCRAPER_MAX_RUN_CASE_COUNT, latest_id) + 1
 
-    return set(range(lower, upper)).difference(case_ids_in_db)
+    return sorted(set(range(lower, upper)).difference(case_ids_in_db), key=int)
 
 
 app = Rocketry()
 
 
-@app.task(
-    every(f"{settings.SCRAPER_TASK_INTERVAL_IN_SECONDS} seconds"), execution="async"
-)
+LAST_SCRAPING_EMPTY = False
+@app.cond('last_scraping_empty')
+def last_scraping_empty():
+    return LAST_SCRAPING_EMPTY
+
+@app.task(f"last_scraping_empty | every {settings.SCRAPER_TASK_INTERVAL_IN_SECONDS} seconds")
 async def run_scraping_instance():
     case_ids = await determine_case_ids_to_parse()
 
@@ -54,6 +58,7 @@ async def run_scraping_instance():
         parser.start()
         parsers.append(parser)
 
+    unsuccessful_case_count = 0
     # Scraping is IO bound (waiting for the network to return), so asyncio with threads is enough
     case_id_chunks = more_itertools.chunked(case_ids, BATCH_SIZE)
     with ThreadPoolExecutor(
@@ -63,15 +68,29 @@ async def run_scraping_instance():
             (scrape_cases(chunk), index) for index, chunk in enumerate(case_id_chunks)
         ]
         for index, result in enumerate(executor.map(scraper_worker, coroutines)):
-            logger.info(f"Finished scraping case batch #{index}")
-            q.put(result)
+            # Get rid of None's
+            filtered_cases: list[Case] = [case for case in result if case]
+
+            logger.info(f"Finished scraping case batch #{index} ({len(filtered_cases)}/{len(result)})")
+            q.put(filtered_cases)
+            unsuccessful_case_count+= (len(result) - len(filtered_cases))
 
     q.put("DONE")
 
     for parser in parsers:
         parser.join()
 
-    logger.info("All provided case_ids fetched.")
+    scraping_information = ScrapingInformation(last_case_id=case_ids[-1], timestamp=datetime.datetime.now(), unsuccessful_case_count=unsuccessful_case_count)
+    document_db.insert_scraping_instance_information(scraping_information)
+
+    global LAST_SCRAPING_EMPTY
+    if len(case_ids) == unsuccessful_case_count:
+        logger.warning(f'No case_ids fetched, repeating task immediately.')
+        LAST_SCRAPING_EMPTY = True
+    else:
+        logger.info(f"Fetched {(len(case_ids) - unsuccessful_case_count)}/{len(case_ids)} case_ids.")
+        LAST_SCRAPING_EMPTY = False
+        
 
 
 # Has to be wrapped because of its async nature
@@ -94,12 +113,10 @@ def parser_worker(q, worker_id):
             q.put("DONE")
             break
         try:
-            # Get rid of None's
-            filtered_cases: list[Case] = [case for case in cases if case]
-            embedding_db.upsert_cases(filtered_cases)
-            document_db.upsert_documents(filtered_cases)
+            embedding_db.upsert_cases(cases)
+            document_db.upsert_documents(cases)
             logger.info(
-                f'{worker_id} - Upserted cases "{[case.case_id for case in filtered_cases]}".'
+                f'{worker_id} - Upserted cases "{[case.case_id for case in cases]}".'
             )
         except Exception:
             logger.exception(f"Parser #{worker_id} - Error while parsing cases:")
@@ -110,6 +127,8 @@ async def create_scheduler_async_task():
 
     await scheduled
 
+
+# TODO: add immediate repeat if no cases were fetched in the batch
 
 def run_scheduler():
     asyncio.run(create_scheduler_async_task())
