@@ -14,7 +14,7 @@ services:
   chroma:
     image: ghcr.io/chroma-core/chroma:latest
     volumes:
-      - chroma-data2:/chroma
+      - chroma-data:/chroma
     environment:
       - IS_PERSISTENT=TRUE
     ports:
@@ -25,6 +25,8 @@ services:
   server:
     build: ./
     restart: unless-stopped
+    volumes:
+      - embedder-cache:/root/.cache/chroma/
     depends_on:
       - mongo
       - chroma
@@ -48,8 +50,9 @@ services:
       - default
 
 volumes:
+  embedder-cache:
   mongo-data:
-  chroma-data2:
+  chroma-data:
 
 networks:
   default:

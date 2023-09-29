@@ -80,7 +80,7 @@ export function Home({ triggerAlert }: HomeProps) {
       const { data } = await axios.post(
         `${
           process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
-        }/summary/search`,
+        }/cases/search`,
         {
           query_text: caseDescription,
           limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,

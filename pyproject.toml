@@ -23,6 +23,10 @@ async-lru = "^2.0.4"
 pytest = "^7.4.2"
 rocketry = "^2.5.1"
 
+[tool.poetry.group.dev.dependencies]
+llama-cpp-python = "^0.2.7"
+googlebard = "^2.1.0"
+
 
 [build-system]
 requires = ["poetry-core"]
