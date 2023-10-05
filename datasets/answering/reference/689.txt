@@ -1,0 +1,7 @@
+Předmětem řízení byl nárok žalobkyně na zaplacení částky 1 598 Kč jako příspěvku za provozování vozidla [registrační značka], [VIN kód] bez pojištění odpovědnosti z provozu osobního vozidla žalovaným v období od [datum] do [datum]. Dále byl předmětem řízení nárok žalobkyně na zaplacení částky 300 Kč jako nákladů spojených s mimosoudním uplatněním práva na příspěvek.
+
+Z listinných důkazů soud zjistil, že žalovaný byl v předmětném období vlastníkem předmětného motorového vozidla, přesto však nehradil pojistné z titulu pojištění odpovědnosti z provozu uvedeného vozidla. Výš příspěvku odpovídá součinu počtu dní žalovaného období a částky 34 Kč jako denní sazby, jejíž výše je dána druhem vozidla, v tomto případě osobního vozidla se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm ³.
+<SEP>
+Jak se vypočítá příspěvek za provozování vozidla?
+<SEP>
+Příspěvek se vypočítá jako součin počtu dní provozu vozidla a částky 34 Kč jakožto denní sazby.
