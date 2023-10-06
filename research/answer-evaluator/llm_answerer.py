@@ -8,10 +8,11 @@ from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
 
-class LLM_TYPES(SimpleNamespace):
-    LLM_TYPE_BARD = 'bard'
-    LLM_TYPE_GPT = 'gpt'
-    LLM_TYPE_LLAMA = 'llama'
+LLM_TYPE_BARD = 'bard'
+LLM_TYPE_GPT = 'gpt'
+LLM_TYPE_LLAMA = 'llama'
+
+LLM_TYPES = [LLM_TYPE_GPT]
 
 
 BARD_ANSWER_PROMPT = """
@@ -24,11 +25,11 @@ Question: {question}
 class ResearchLLMAnswerer:
     @classmethod
     async def generate_answer(cls, llm_type: str, question: str, text: str):
-        if llm_type ==LLM_TYPES.LLM_TYPE_GPT:
+        if llm_type ==LLM_TYPE_GPT:
             return await CaseQuestionAnswerer.answer_question(question, text)
-        elif llm_type == LLM_TYPES.LLM_TYPE_BARD:
+        elif llm_type == LLM_TYPE_BARD:
             return await cls.answer_bard(question, text)
-        elif llm_type == LLM_TYPES.LLM_TYPE_LLAMA:
+        elif llm_type == LLM_TYPE_LLAMA:
             return cls.answer_llama(question, text)
 
     @classmethod

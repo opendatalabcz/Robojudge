@@ -26,6 +26,11 @@ rocketry = "^2.5.1"
 [tool.poetry.group.dev.dependencies]
 llama-cpp-python = "^0.2.7"
 googlebard = "^2.1.0"
+evaluate = "^0.4.0"
+bert-score = "^0.3.13"
+torch = "^2.1.0"
+torchvision = "^0.16.0"
+torchaudio = "^2.1.0"
 
 
 [build-system]
