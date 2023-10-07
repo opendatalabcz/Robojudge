@@ -7,7 +7,7 @@ from langchain.prompts.chat import (
 )
 from langchain.chains import LLMChain
 
-from robojudge.utils.settings import settings, standard_llm
+from robojudge.utils.settings import settings, advanced_llm
 
 
 COMPARE_SYSTEM_MESSAGE = """
@@ -20,11 +20,11 @@ If the candidate answer is correct, output 1, otherwise output 0. Do not output 
 class AutoEvaluator:
     @classmethod
     async def get_score_for_llm_type(
-        cls, llm_answers: dict[str, str], human_answers: dict[str, str]
+        cls, llm_answers: dict[str, str], human_answers: dict[str, str], llm_type: str
     ):
-        logging.info("Auto-evaluating llm answers.")
+        logging.info(f"Auto-evaluating llm answers for '{llm_type}'.")
 
-        total_score = 0
+        output = {}
 
         for file_name, llm_answer in llm_answers.items():
             try:
@@ -34,14 +34,18 @@ class AutoEvaluator:
                     human_answer=human_answer, llm_answer=llm_answer
                 )
 
-                total_score += int(result)
+                # Prevent circular ipmort
+                from base_evaluator import ScoreResult
+                output[file_name] = ScoreResult(
+                    human_answer=human_answer, llm_answer=llm_answer, score=result
+                )
 
             except Exception:
                 logging.exception(
                     f'Error while evaluating llm answer "{llm_answer}" in "{file_name}".'
                 )
 
-        return total_score
+        return output
 
     @classmethod
     async def compare_human_llm_answers(cls, human_answer: str, llm_answer: str):
@@ -59,6 +63,6 @@ class AutoEvaluator:
             [system_message_prompt, human_message_prompt]
         )
 
-        llm_chain = LLMChain(llm=standard_llm, prompt=initial_prompt)
+        llm_chain = LLMChain(llm=advanced_llm, prompt=initial_prompt)
 
         return await llm_chain.arun(human_answer=human_answer, llm_answer=llm_answer)

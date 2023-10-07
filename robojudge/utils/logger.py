@@ -11,3 +11,5 @@ logging.basicConfig(
 logging.getLogger("asyncio").setLevel(logging.WARNING)
 openai.util.logger.setLevel(logging.WARNING)
 logging.getLogger("rocketry").setLevel(logging.INFO)
+logging.getLogger("httpcore").setLevel(logging.INFO)
+logging.getLogger("httpx").setLevel(logging.ERROR)

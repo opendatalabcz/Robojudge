@@ -1,0 +1,89 @@
+file_name,question,human_answer,llm_answer,score
+1927.txt,"
+Kolik ústních jednání ve věci proběhlo?
+","
+Ve věci žádné ústní jednání neproběhlo, účastníci souhlasi s rozhodnutím bez nařízení ústního jednání."," Answer in Czech:
+
+Žádného ústního jednání ve věci neproběhlo.",0.7309988141059875
+968.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 3344,95 Kč."," Celkem by Žalovaný měl zaplatit 3 344,95 Kč (1 855,95 Kč + 1 489 Kč).",0.765364944934845
+125.txt,"
+O co se v této věci vedl spor? (jednou větou)
+","
+Žalobkyně požadavala zaplacení částky za odběr krve po žalovaném."," O plátění částky 8 246 Kč, které bylo vyúčtované žalovanému jako kompenzace za údajnou újmu způsobenou ovlivněním návykovou látkou.",0.6755325198173523
+829.txt,"
+Ohledně čeho spolu strany uzavřely pojištění?
+","
+Šlo o pojištění odpovědnosti za škodu způsobenou provozem vozidla.", Škody způsobené provozem vozidla.,0.842772901058197
+1912.txt,"
+Jak často mělo být placeno pojistné?
+","
+Pojistné bylo sjednáno s jednou roční splátkou."," Pojistné bylo sjednáno na dobu neurčitou, ale hrazení pojistného pro příslušné pojistné období bylo sjednáno v jedné roční splátce.",0.8271779417991638
+666.txt,"
+Kolik činila přirážka k jízdnému při jízdě načerno?
+","
+Jednorázová přirážka je 1 500 Kč.", Answer: 1 500 Kč,0.7753580808639526
+474.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 4535 Kč + úrok z prodlení z částky 1523 za 2 nespecifikovaná období.", Žalovaný musí zaplatit celkem 4 617 Kč (3 046 Kč + 1 523 Kč + 1 489 Kč).,0.7317796349525452
+1952.txt,"
+Jaký typ právního výkladu soud zmiňuje v rozhodnutí?
+","
+Soud hovoří o gramatickém a logickém výkladu.", Gramatický a logický výklad.,0.8001449108123779
+1988_2.txt,"
+Podle jakého zákona soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 89/2012 Sb., občanského zákoníku (OZ)."," Podle zákona č. 89/2012 Sb., občanský zákoník (dále jen ""o.z."").",0.7878156900405884
+1988.txt,"
+Jaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?
+","
+Žalobkyně a žalovaný spolu uzavřeli smlouvu o úvěru.", Smlouva o úvěru.,0.7978146076202393
+595.txt,"
+V jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?
+","
+Přirážka může být maximálně 1 500 Kč a stanovena je dopravcem v přepravních podmínkách."," Answer:
+Podle § 37 odst. 6 zák. č. 266/1994 Sb. může být přirážka stanovena až do výše 1 500 Kč. Dopravce stanoví výši přirážky v přepravních podmínkách.",0.7809581756591797
+689.txt,"
+Jak se vypočítá příspěvek za provozování vozidla?
+","
+Příspěvek se vypočítá jako součin počtu dní provozu vozidla a částky 34 Kč jakožto denní sazby."," Příspěvek za provozování vozidla se vypočítá jako součin počtu dní období, ve kterém bylo vozidlo provozováno, a denní sazby, která činí 34 Kč pro osobní vozidlo se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm³.",0.8061184287071228
+1970.txt,"
+Jak soud ve věci postupoval?
+","
+Soud nejprve vydal platební rozkaz, ale ten se nepodařilo žalované doručit, a tak jej zrušil usnesením. Poté projednal věc bez nařízení jednání, protože se účastníci tohoto práva vzdali. Soud provedl dokazování na základě listin ve spise."," Okresní soud v Kladně svě chezel platební rozkaz, ale jeliko se nepodařilo doručit do rukou žalovaného, byla tato usnesením zrušena. Poté soud použil § 115a zákona č. 99/1963 Sb. a projednal věc bez nařízení jednání, protože účastníci se vzdali práva účasti na projednání věci. Soud provedl listinami",0.7935304045677185
+949_2.txt,"
+Které právní předpisy soud použil při rozhodování?
+","
+Soud použil občanský zákoník, energetických zákon a cenové rozhodnutí ERÚ"," Soud použil ustanovení §§ 497, 1746 odst. 2 a ustanovení § 1828 a násl. zák. č. 89/2012 Sb., občanský zákoník, dále podle dopadajících ustanovení zák. č. 458/2000 Sb. o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změ",0.684270977973938
+1898.txt,"
+Jakými dopravními prostředky cestovala žalovaná?
+","
+Žalovaná cestovala autobusem MHD a trolejbusem MHD.", Žalovaná cestovala autobusem MHD a trolejbusem MHD.,1.0000001192092896
+949.txt,"
+Čeho se týkala smlouva mezi žalobkyní a žalovanou?
+","
+Smlouva se týkala dodávky zemního plynu do odběrného místa."," Šlo Between the plaintiff and the defendant was a contract for the supply of natural gas, according to which the plaintiff delivered gas to the defendant's address at [street and number] between [date] and [date] for an unpaid amount of CZK 1,124. The debt became due on [date]. The defendant also failed to pay for the gas supply for the period from [date] to [date] in the amount of CZK 594. The debt became due on [date]. In addition, the plaintiff",0.6083735823631287
+807.txt,"
+Co je to exponenciální časová složitost?
+","
+Bohužel není možné odpovědět na základě poskytnutých informací."," Exponenciální časová složitost je situace, když právník poskytne službu klientovi prostřednictvím telefonické konzultace a následně klient souhlasí s uhradením nákladů, ale neuhradí je. Tato situace je možná i v jiných oborech, než jsou právní služby, napříkle v oboru informační technologie, kde může být složitost nabyta pomocí exponenci",0.6186715364456177
+663.txt,"
+Které zákony soud použil při svém rozhodování?
+","
+Soud postupoval podle občanského zákoníku a podle občanského soudního řádu."," Soud použil při svém rozhodování následující zákony:
+
+* Občanský zákoník (§ 2758 odst. 1 a § 2782 odst. 1)
+* Zákon o dlužnících (§ 1970)
+* Vyhláška č. 351/2013 Sb., ve znění pozdějších předpisů
+* Advokátní tarif (§ 6 odst. 1 a § ",0.6670931577682495
+697.txt,"
+Jaké číslo má zákon, podle kterého soud postupoval?
+","
+Číslo zákona je 348/2005 Sb.", Zákon č. 348/2005 Sb.,0.7335205078125
+12521.txt,"
+Jakou smlouvu spolu strany uzavřely?
+","
+Strany spolu uzavřely smlouvu o revolvingovém/spotřebitelském úvěru.", Smlouvu o postoupení pohledávek a smlouvu o revolvingovém úvěru.,0.788527250289917

@@ -1,0 +1,1 @@
+ Příspěvek za provozování vozidla se vypočítá jako součin počtu dní období, ve kterém bylo vozidlo provozováno, a denní sazby, která činí 34 Kč pro osobní vozidlo se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm³.

@@ -1,0 +1,1 @@
+ Exponenciální časová složitost je situace, když právník poskytne službu klientovi prostřednictvím telefonické konzultace a následně klient souhlasí s uhradením nákladů, ale neuhradí je. Tato situace je možná i v jiných oborech, než jsou právní služby, napříkle v oboru informační technologie, kde může být složitost nabyta pomocí exponenci

@@ -11,7 +11,9 @@ build
 myproject.egg-info
 bp_server.egg-info
 
-llama/
+llama
+!research/**/llama
+
 fiqa
 embedding_training
 

@@ -4,4 +4,4 @@ Právní posouzení vychází z ust. § 2430 zák. č. 89/2012 Sb., občanský z
 <SEP>
 Co je to exponenciální časová složitost?
 <SEP>
-Bohužel není možné odpovědět na základě poskytnutých informací.
+Bohužel není možné odpovědět na základě poskytnutých informací, ty se týkají soudních rozhodnutí.

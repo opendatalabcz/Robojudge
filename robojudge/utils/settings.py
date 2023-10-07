@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     SERVER_PORT = 4000
     SERVER_VERSION = "0.1.0"
     ENVIRONMENT = "dev"
-    LOG_LEVEL = "DEBUG"
+    LOG_LEVEL = "INFO"
 
     CLIENT_HOST = "http://localhost"
     CLIENT_PORT = 3000
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY = ""
     OPENAI_API_BASE = ""
     OPENAI_API_TYPE = "azure"
-    OPENAI_API_VERSION = "2023-05-15"
+    OPENAI_API_VERSION = "2023-08-01-preview"
 
     # Research summarizing
     GPT_MODEL_NAME = "gpt-35-turbo-16k"
@@ -38,14 +38,19 @@ class Settings(BaseSettings):
     SUMMARIZE_MAX_PARALLEL_REQUESTS = 1
     DEFAULT_SUMMARIZE_LLM = "chatgpt"
 
+    # Research answering
+    AUTO_EVALUATOR_NAME = 'gpt4'
+
     TOKENIZER_INPUT_LENGTH = 600
     TOKENIZER_MODEL = "czech-morfflex2.0-pdtc1.0-220710"
     TOKENIZER_URL = "http://lindat.mff.cuni.cz/services/morphodita/api/tag"
 
     # App summarizing
-    SUMMARIZE_LLM_MODEL = "chatgpt"
+    SUMMARIZE_LLM_MODEL = "gpt-35-turbo-16k"
     AGENT_MAX_EXECUTION_TIME = 120
 
+    REPLICATE_API_TOKEN: str = ''
+    COHERE_API_TOKEN: str = ''
     class Config:
         env_file = ".env"
 
@@ -59,13 +64,30 @@ standard_llm = (
         openai_api_base=settings.OPENAI_API_BASE,
         openai_api_version=settings.OPENAI_API_VERSION,
         openai_api_type=settings.OPENAI_API_TYPE,
-        deployment_name=settings.SUMMARIZE_LLM_MODEL,
+        deployment_name=settings.GPT_MODEL_NAME,
         temperature=0,
     )
     if settings.OPENAI_API_TYPE == "azure"
     else ChatOpenAI(
         openai_api_key=settings.OPENAI_API_KEY,
-        deployment_name=settings.SUMMARIZE_LLM_MODEL,
+        deployment_name=settings.GPT_MODEL_NAME,
+        temperature=0,
+    )
+)
+
+advanced_llm = (
+    AzureChatOpenAI(
+        openai_api_key=settings.OPENAI_API_KEY,
+        openai_api_base=settings.OPENAI_API_BASE,
+        openai_api_version=settings.OPENAI_API_VERSION,
+        openai_api_type=settings.OPENAI_API_TYPE,
+        deployment_name=settings.AUTO_EVALUATOR_NAME,
+        temperature=0,
+    )
+    if settings.OPENAI_API_TYPE == "azure"
+    else ChatOpenAI(
+        openai_api_key=settings.OPENAI_API_KEY,
+        deployment_name=settings.AUTO_EVALUATOR_NAME,
         temperature=0,
     )
 )

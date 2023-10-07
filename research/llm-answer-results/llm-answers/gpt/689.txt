@@ -1,0 +1,1 @@
+Příspěvek za provozování vozidla se vypočítá jako součin počtu dní žalovaného období a denní sazby. Denní sazba je stanovena na částku 34 Kč a je určena druhem vozidla, v tomto případě osobního vozidla se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm³.

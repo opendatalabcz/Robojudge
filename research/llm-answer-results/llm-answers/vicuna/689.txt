@@ -1,0 +1,1 @@
+Příspěvekza provozování vozidla se vypočítá součinem počtu dní žalovaného období a částky 34 Kč jako denní sazby, jejíž výše je dána druhem vozidla. V tomto případě byl žalovaný vlastníkem vozidla, přesto však nehradil pojistné z titulu pojištění odpovědnosti z
