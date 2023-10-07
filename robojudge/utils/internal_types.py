@@ -5,6 +5,16 @@ from strenum import StrEnum
 from pydantic import BaseModel, Field
 
 
+class ScrapingFilters(BaseModel):
+    judge_firstname: Optional[str] = ""
+    judge_lastname: Optional[str] = ""
+    court: Optional[str] = ""
+    fulltext_search: Optional[str] = ""
+    # keyword: Optional[str] = '' # Does not work on the website
+    publication_date_from: Optional[str] = Field(default="", description="YYYY-MM-DD")
+    publication_date_to: Optional[str] = Field(default="", description="YYYY-MM-DD")
+
+
 class CaseMetadataAttributes(StrEnum):
     JEDNACI_CISLO = "jednaci_cislo"
     COURT = "court"
@@ -48,7 +58,9 @@ class Metadata(BaseModel):
 
 
 class Case(BaseModel):
-    case_id: str = Field(description="This ID corresponds to an integer used by the Justice Ministry's website")
+    case_id: str = Field(
+        description="This ID corresponds to an integer used by the Justice Ministry's website"
+    )
     metadata: Metadata
     verdict: str = Field(default="", description='"výrok" in Czech')
     reasoning: str = Field(default="", description='"odůvodnění" in Czech')
@@ -67,6 +79,7 @@ class CaseChunk(BaseModel):
     case_id: str
     chunk_text: str
     metadata: dict
+
 
 class ScrapingInformation(BaseModel):
     last_case_id: str
