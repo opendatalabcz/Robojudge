@@ -1,4 +1,5 @@
 from pymongo import MongoClient, ReplaceOne, UpdateOne
+from pymongo.collection import Collection
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
@@ -29,7 +30,7 @@ class DocumentStorage:
 
     # Searching is done through the collection object directly
     @property
-    def collection(self):
+    def collection(self) -> Collection[Case]:
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
     
     @property

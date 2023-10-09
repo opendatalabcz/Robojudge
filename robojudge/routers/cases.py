@@ -1,7 +1,7 @@
 import asyncio
-from typing import Annotated
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import PlainTextResponse
 
 from robojudge.tasks.case_scraping import run_scraping_instance
@@ -43,14 +43,23 @@ async def get_all_case_chunks(
 
 @router.get("", response_model=list[Case])
 async def get_all_cases(
-    document_db: Annotated[CaseEmbeddingStorage, Depends(document_db)]
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+    offset: Annotated[int, Query()] = 0,
+    limit: Annotated[int, Query()] = 100,
 ):
-    db_documents = document_db.collection.find({})
+    db_documents = document_db.collection.find({}).skip(offset).limit(limit)
     response_documents: list[Case] = []
     for db_doc in db_documents:
         response_documents.append(Case(**db_doc))
 
     return response_documents
+
+
+@router.post("/fetch", response_model=list[Case])
+async def get_all_cases(
+    document_db: Annotated[DocumentStorage, Depends(document_db)]
+):
+    ...
 
 
 @router.post("/search", response_model=list[Case])
