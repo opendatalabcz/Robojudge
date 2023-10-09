@@ -16,7 +16,7 @@ LLM_TYPE_LLAMA = "llama"
 LLM_TYPE_COHERE = "cohere"
 LLM_TYPE_VICUNA = "vicuna"
 
-MEASURED_LLM_TYPES = [LLM_TYPE_GPT, LLM_TYPE_LLAMA, LLM_TYPE_VICUNA]
+MEASURED_LLM_TYPES = [LLM_TYPE_GPT, LLM_TYPE_LLAMA, LLM_TYPE_VICUNA, LLM_TYPE_COHERE]
 
 
 BARD_PROMPT = """
@@ -39,9 +39,9 @@ Question: {question}
 
 COHERE_PROMPT = """
 You are a legal assistant who answers a question based on the provided text.
-Create the answer ONLY in Czech!
 Text: {text}
 Question: {question}
+Create the answer ONLY in Czech! Answer:
 """
 
 VICUNA_PROMPT = """
@@ -120,3 +120,7 @@ class ResearchLLMAnswerer:
 
         result = "".join(list(output))
         return result
+
+
+if __name__ == "__main__":
+    ...
