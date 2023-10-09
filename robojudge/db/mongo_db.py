@@ -13,6 +13,7 @@ class DocumentStorage:
     DB_NAME = "robojudge_case_db"
     COLLECTION_NAME = "cases"
     SCRAPING_INFORMATION_COLLECTION_NAME = 'scraping'
+    FETCH_JOB_COLLECTION_NAME = 'fetch_jobs'
 
     def __init__(self) -> None:
         self.client = MongoClient(
@@ -36,6 +37,10 @@ class DocumentStorage:
     @property
     def scraping_collection(self):
         return self.client[self.DB_NAME][self.SCRAPING_INFORMATION_COLLECTION_NAME]
+    
+    @property
+    def fetch_job_collection(self):
+        return self.client[self.DB_NAME][self.FETCH_JOB_COLLECTION_NAME]
 
     def find_latest_case_id(self):
         try:

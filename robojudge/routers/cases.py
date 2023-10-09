@@ -1,8 +1,17 @@
 import asyncio
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
-from fastapi.responses import PlainTextResponse
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    Query,
+    status,
+    Request,
+    Path,
+    HTTPException,
+)
+from fastapi.responses import PlainTextResponse, JSONResponse
 
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
@@ -10,7 +19,10 @@ from robojudge.utils.api_types import (
     CaseQuestionRequest,
     CaseSearchRequest,
     CaseQuestionResponse,
+    FetchCasesRequest,
+    FetchCasesStatusResponse,
 )
+from robojudge.utils.functional import generate_uuid
 from robojudge.utils.internal_types import Case, CaseChunk
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
 from robojudge.db.mongo_db import document_db, DocumentStorage
@@ -55,11 +67,38 @@ async def get_all_cases(
     return response_documents
 
 
-@router.post("/fetch", response_model=list[Case])
-async def get_all_cases(
-    document_db: Annotated[DocumentStorage, Depends(document_db)]
+@router.post("/fetch")
+async def fetch_specified_cases(
+    request: FetchCasesRequest,
+    bg_tasks: BackgroundTasks,
 ):
-    ...
+    fetch_job_token = generate_uuid()
+    payload = {
+        "url": router.url_path_for("fetch_specified_cases") + f"/{fetch_job_token}"
+    }
+
+    # bg_tasks.add_task() # TODO: add token and requeste
+
+    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=payload)
+
+
+@router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse)
+async def get_cases_by_fetch_job_token(
+    fetch_job_token: Annotated[str, Path()],
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+):
+    fetch_job = document_db.fetch_job_collection.find_one({"token": fetch_job_token})
+
+    if not fetch_job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Fetch job with token "{fetch_job_token}" was not found.',
+        )
+
+    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
+    response = FetchCasesStatusResponse(status=fetch_job["status"], content=cases)
+
+    return response
 
 
 @router.post("/search", response_model=list[Case])

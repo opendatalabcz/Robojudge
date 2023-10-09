@@ -10,11 +10,26 @@ from robojudge.components.case_page_scraper import CasePageScraper
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import ScrapingFilters
+from robojudge.utils.api_types import FetchCasesRequest
 
 logger = logging.getLogger(__name__)
 
 
 class PaginatingScraper:
+    @classmethod
+    async def scrape_cases(cls, filters: FetchCasesRequest):
+        case_ids = await cls.extract_case_ids(ScrapingFilters(**filters))
+
+        ... # Minus cases which are in DB
+
+        if filters.limit:
+            ... # Truncate to max size
+
+        ... # run scraping and save into DB
+
+        ... # save ids under token and update status to ready.
+
+
     @classmethod
     async def extract_case_ids(cls, filters: ScrapingFilters) -> list[str]:
         async with async_playwright() as pw:

@@ -2,6 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from robojudge.utils.internal_types import ScrapingFilters, Case
 
 class CaseSearchRequest(BaseModel):
     query_text: str = Field(
@@ -23,3 +24,10 @@ class CaseQuestionRequest(BaseModel):
 
 class CaseQuestionResponse(BaseModel):
     answer: str
+
+class FetchCasesRequest(ScrapingFilters):
+    limit: Optional[int]
+
+class FetchCasesStatusResponse(BaseModel):
+    status: str
+    content: Optional[list[Case]] = None
