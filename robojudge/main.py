@@ -9,6 +9,7 @@ from icecream import install
 from robojudge.tasks.case_scraping import run_scheduler
 from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
+
 import robojudge.routers.cases
 
 if settings.ENVIRONMENT == "dev":
@@ -36,9 +37,9 @@ async def get_health():
 
 
 if __name__ == "__main__":
-    if settings.ENABLE_SCRAPING:
+    if settings.ENABLE_AUTOMATIC_SCRAPING:
         Process(target=run_scheduler).start()
-    uvicorn.run(app, host="0.0.0.0", port=settings.SERVER_PORT)
+    uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
 # TODO: Compare summarization with some non-LLM model (if available for Czech)
 # TODO: Mongo password

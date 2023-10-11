@@ -41,13 +41,19 @@ app = Rocketry()
 
 
 LAST_SCRAPING_EMPTY = False
-@app.cond('last_scraping_empty')
+
+
+@app.cond("last_scraping_empty")
 def last_scraping_empty():
     return LAST_SCRAPING_EMPTY
 
-@app.task(f"last_scraping_empty | every {settings.SCRAPER_TASK_INTERVAL_IN_SECONDS} seconds")
-async def run_scraping_instance():
-    case_ids = await determine_case_ids_to_parse()
+
+@app.task(
+    f"last_scraping_empty | every {settings.SCRAPER_TASK_INTERVAL_IN_SECONDS} seconds"
+)
+async def run_scraping_instance(case_ids: list[str] = None):
+    if not case_ids:
+        case_ids = await determine_case_ids_to_parse()
 
     q = Queue()
 
@@ -71,26 +77,33 @@ async def run_scraping_instance():
             # Get rid of None's
             filtered_cases: list[Case] = [case for case in result if case]
 
-            logger.info(f"Finished scraping case batch #{index} ({len(filtered_cases)}/{len(result)})")
+            logger.info(
+                f"Finished scraping case batch #{index} ({len(filtered_cases)}/{len(result)})"
+            )
             q.put(filtered_cases)
-            unsuccessful_case_count+= (len(result) - len(filtered_cases))
+            unsuccessful_case_count += len(result) - len(filtered_cases)
 
     q.put("DONE")
 
     for parser in parsers:
         parser.join()
 
-    scraping_information = ScrapingInformation(last_case_id=case_ids[-1], timestamp=datetime.datetime.now(), unsuccessful_case_count=unsuccessful_case_count)
+    scraping_information = ScrapingInformation(
+        last_case_id=case_ids[-1],
+        timestamp=datetime.datetime.now(),
+        unsuccessful_case_count=unsuccessful_case_count,
+    )
     document_db.insert_scraping_instance_information(scraping_information)
 
     global LAST_SCRAPING_EMPTY
     if len(case_ids) == unsuccessful_case_count:
-        logger.warning(f'No case_ids fetched, repeating task immediately.')
+        logger.warning(f"No case_ids fetched, repeating task immediately.")
         LAST_SCRAPING_EMPTY = True
     else:
-        logger.info(f"Fetched {(len(case_ids) - unsuccessful_case_count)}/{len(case_ids)} case_ids.")
+        logger.info(
+            f"Fetched {(len(case_ids) - unsuccessful_case_count)}/{len(case_ids)} case_ids."
+        )
         LAST_SCRAPING_EMPTY = False
-        
 
 
 # Has to be wrapped because of its async nature
@@ -127,8 +140,6 @@ async def create_scheduler_async_task():
 
     await scheduled
 
-
-# TODO: add immediate repeat if no cases were fetched in the batch
 
 def run_scheduler():
     asyncio.run(create_scheduler_async_task())

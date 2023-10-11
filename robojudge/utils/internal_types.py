@@ -1,8 +1,19 @@
 from typing import Optional
 import datetime
+from enum import auto
 
 from strenum import StrEnum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+
+class ScrapingFilters(BaseModel):
+    judge_firstname: Optional[str] = ""
+    judge_lastname: Optional[str] = ""
+    court: Optional[str] = ""
+    fulltext_search: Optional[str] = ""
+    # keyword: Optional[str] = '' # Does not work on the website
+    publication_date_from: Optional[str] = Field(default="", description="YYYY-MM-DD")
+    publication_date_to: Optional[str] = Field(default="", description="YYYY-MM-DD")
 
 
 class CaseMetadataAttributes(StrEnum):
@@ -48,7 +59,9 @@ class Metadata(BaseModel):
 
 
 class Case(BaseModel):
-    case_id: str = Field(description="This ID corresponds to an integer used by the Justice Ministry's website")
+    case_id: str = Field(
+        description="This ID corresponds to an integer used by the Justice Ministry's website"
+    )
     metadata: Metadata
     verdict: str = Field(default="", description='"výrok" in Czech')
     reasoning: str = Field(default="", description='"odůvodnění" in Czech')
@@ -68,7 +81,23 @@ class CaseChunk(BaseModel):
     chunk_text: str
     metadata: dict
 
+
 class ScrapingInformation(BaseModel):
     last_case_id: str
     timestamp: datetime.datetime
     unsuccessful_case_count: int
+
+
+class CaseFetchJobStatus(StrEnum):
+    RUNNING = auto()
+    FINISHED = auto()
+    ERROR = auto()
+
+
+class CaseFetchJob(BaseModel):
+    token: str
+    filters: Optional[ScrapingFilters] = None
+    status: CaseFetchJobStatus = CaseFetchJobStatus.RUNNING
+    case_ids: list[str] = []
+
+    model_config = ConfigDict(use_enum_values=True)

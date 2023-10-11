@@ -1,4 +1,5 @@
 from pymongo import MongoClient, ReplaceOne, UpdateOne
+from pymongo.collection import Collection
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
@@ -12,6 +13,7 @@ class DocumentStorage:
     DB_NAME = "robojudge_case_db"
     COLLECTION_NAME = "cases"
     SCRAPING_INFORMATION_COLLECTION_NAME = 'scraping'
+    FETCH_JOB_COLLECTION_NAME = 'fetch_jobs'
 
     def __init__(self) -> None:
         self.client = MongoClient(
@@ -29,12 +31,16 @@ class DocumentStorage:
 
     # Searching is done through the collection object directly
     @property
-    def collection(self):
+    def collection(self) -> Collection[Case]:
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
     
     @property
     def scraping_collection(self):
         return self.client[self.DB_NAME][self.SCRAPING_INFORMATION_COLLECTION_NAME]
+    
+    @property
+    def fetch_job_collection(self):
+        return self.client[self.DB_NAME][self.FETCH_JOB_COLLECTION_NAME]
 
     def find_latest_case_id(self):
         try:

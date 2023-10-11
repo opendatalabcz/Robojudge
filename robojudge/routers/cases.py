@@ -1,8 +1,17 @@
 import asyncio
-from typing import Annotated
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends
-from fastapi.responses import PlainTextResponse
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    Query,
+    status,
+    Request,
+    Path,
+    HTTPException,
+)
+from fastapi.responses import PlainTextResponse, JSONResponse
 
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
@@ -10,8 +19,14 @@ from robojudge.utils.api_types import (
     CaseQuestionRequest,
     CaseSearchRequest,
     CaseQuestionResponse,
+    FetchCasesRequest,
+    FetchCasesStatusResponse,
 )
-from robojudge.utils.internal_types import Case, CaseChunk
+from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
+from robojudge.tasks.scraper_pool import pool
+from robojudge.components.paginating_scraper import PaginatingScraper
+from robojudge.utils.settings import settings
+from robojudge.utils.functional import generate_uuid, construct_server_url
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
 from robojudge.db.mongo_db import document_db, DocumentStorage
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
@@ -43,14 +58,50 @@ async def get_all_case_chunks(
 
 @router.get("", response_model=list[Case])
 async def get_all_cases(
-    document_db: Annotated[CaseEmbeddingStorage, Depends(document_db)]
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+    offset: Annotated[int, Query()] = 0,
+    limit: Annotated[int, Query()] = 100,
 ):
-    db_documents = document_db.collection.find({})
+    db_documents = document_db.collection.find({}).skip(offset).limit(limit)
     response_documents: list[Case] = []
     for db_doc in db_documents:
         response_documents.append(Case(**db_doc))
 
     return response_documents
+
+
+# TODO: docs for request filter params
+# TODO: notify about errored case_ids (save info into DB)
+@router.post("/fetch")
+async def fetch_specified_cases(
+    request: FetchCasesRequest,
+):
+    fetch_job_token = generate_uuid()
+    payload = {"token": fetch_job_token}
+
+    pool.queue.put({"token": fetch_job_token, "request": request})
+
+    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=payload)
+
+
+# TODO: add token expiration?
+@router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse)
+async def get_cases_by_fetch_job_token(
+    fetch_job_token: Annotated[str, Path()],
+    document_db: Annotated[DocumentStorage, Depends(document_db)],
+):
+    fetch_job = document_db.fetch_job_collection.find_one({"token": fetch_job_token})
+
+    if not fetch_job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Fetch job with token "{fetch_job_token}" was not found.',
+        )
+
+    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
+    response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
+
+    return response
 
 
 @router.post("/search", response_model=list[Case])

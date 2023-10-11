@@ -13,6 +13,7 @@ services:
 
   chroma:
     image: ghcr.io/chroma-core/chroma:latest
+    restart: unless-stopped
     volumes:
       - chroma-data:/chroma
     environment:
