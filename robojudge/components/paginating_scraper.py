@@ -6,8 +6,12 @@ from playwright.async_api import (
     TimeoutError as PlaywrightTimeoutError,
     Page,
 )
+
 from robojudge.components.case_page_scraper import CasePageScraper
+from robojudge.utils.internal_types import CaseFetchJob, CaseFetchJobStatus
 from robojudge.utils.settings import settings
+from robojudge.db.mongo_db import document_db
+from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import ScrapingFilters
 from robojudge.utils.api_types import FetchCasesRequest
@@ -16,19 +20,54 @@ logger = logging.getLogger(__name__)
 
 
 class PaginatingScraper:
+    MAX_SCAPE_SIZE = 2000
+
     @classmethod
-    async def scrape_cases(cls, filters: FetchCasesRequest):
-        case_ids = await cls.extract_case_ids(ScrapingFilters(**filters))
+    async def run_fetch_job(cls, token: str, request: FetchCasesRequest):
+        try:
+            filters = ScrapingFilters(**request.filters.dict())
+            fetch_job = CaseFetchJob(token=token, filters=filters)
 
-        ... # Minus cases which are in DB
+            document_db.fetch_job_collection.insert_one(fetch_job.dict(exclude='model_config'))
+            logger.info(f'Start extracting case_ids for token "{token}".')
 
-        if filters.limit:
-            ... # Truncate to max size
+            case_ids = await cls.extract_case_ids(filters)
 
-        ... # run scraping and save into DB
+            cases_in_db = document_db.collection.find({"case_id": {"$in": case_ids}})
+            all_case_ids = case_ids[:]
+            for db_case in cases_in_db:
+                case_ids.remove(db_case["case_id"])
 
-        ... # save ids under token and update status to ready.
+            if request.limit:
+                case_ids = case_ids[: request.limit]
 
+            # TODO: embedding and stuff should be done separately ...
+            if len(case_ids):
+                logger.info(
+                    f'Starting scraping missing cases for token "{token}": {case_ids}'
+                )
+                await run_scraping_instance(case_ids)
+
+            document_db.fetch_job_collection.find_one_and_update(
+                {"token": token},
+                {
+                    "$set": {
+                        "case_ids": all_case_ids,
+                        "status": CaseFetchJobStatus.FINISHED.value,
+                    }
+                },
+            )
+            logger.info(f'Finished scraping cases for token "{token}".')
+        except Exception:
+            logger.exception(f'Error while processing fetch job for token "{token}":')
+            document_db.fetch_job_collection.find_one_and_update(
+                {"token": token},
+                {
+                    "$set": {
+                        "status": CaseFetchJobStatus.FINISHED.value,
+                    }
+                },
+            )
 
     @classmethod
     async def extract_case_ids(cls, filters: ScrapingFilters) -> list[str]:
@@ -38,7 +77,10 @@ class PaginatingScraper:
             case_ids = []
 
             is_next_button_enabled = True
-            while is_next_button_enabled:
+            while (
+                is_next_button_enabled
+                and len(case_ids) <= PaginatingScraper.MAX_SCAPE_SIZE
+            ):
                 case_ids.extend(await cls.extract_case_links_from_page(page))
                 is_next_button_enabled = await cls.navigate_forward(page)
 
@@ -48,7 +90,7 @@ class PaginatingScraper:
     async def apply_filters_on_main_page(
         cls, playwright_instance, filters: ScrapingFilters
     ):
-        browser = await playwright_instance.chromium.launch(headless=False)
+        browser = await playwright_instance.chromium.launch()
         page = await browser.new_page()
         # Disable timeout by setting it to 0
         await page.goto(url=CasePageScraper.MAIN_PAGE_URL, timeout=0)

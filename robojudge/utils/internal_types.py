@@ -1,8 +1,9 @@
 from typing import Optional
 import datetime
+from enum import auto
 
 from strenum import StrEnum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class ScrapingFilters(BaseModel):
@@ -85,3 +86,18 @@ class ScrapingInformation(BaseModel):
     last_case_id: str
     timestamp: datetime.datetime
     unsuccessful_case_count: int
+
+
+class CaseFetchJobStatus(StrEnum):
+    RUNNING = auto()
+    FINISHED = auto()
+    ERROR = auto()
+
+
+class CaseFetchJob(BaseModel):
+    token: str
+    filters: Optional[ScrapingFilters] = None
+    status: CaseFetchJobStatus = CaseFetchJobStatus.RUNNING
+    case_ids: list[str] = []
+
+    model_config = ConfigDict(use_enum_values=True)

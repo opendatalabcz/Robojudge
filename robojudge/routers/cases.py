@@ -22,8 +22,11 @@ from robojudge.utils.api_types import (
     FetchCasesRequest,
     FetchCasesStatusResponse,
 )
-from robojudge.utils.functional import generate_uuid
-from robojudge.utils.internal_types import Case, CaseChunk
+from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
+from robojudge.tasks.scraper_pool import pool
+from robojudge.components.paginating_scraper import PaginatingScraper
+from robojudge.utils.settings import settings
+from robojudge.utils.functional import generate_uuid, construct_server_url
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
 from robojudge.db.mongo_db import document_db, DocumentStorage
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
@@ -67,21 +70,21 @@ async def get_all_cases(
     return response_documents
 
 
+# TODO: docs for request filter params
+# TODO: notify about errored case_ids (save info into DB)
 @router.post("/fetch")
 async def fetch_specified_cases(
     request: FetchCasesRequest,
-    bg_tasks: BackgroundTasks,
 ):
     fetch_job_token = generate_uuid()
-    payload = {
-        "url": router.url_path_for("fetch_specified_cases") + f"/{fetch_job_token}"
-    }
+    payload = {"token": fetch_job_token}
 
-    # bg_tasks.add_task() # TODO: add token and requeste
+    pool.queue.put({"token": fetch_job_token, "request": request})
 
     return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=payload)
 
 
+# TODO: add token expiration?
 @router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse)
 async def get_cases_by_fetch_job_token(
     fetch_job_token: Annotated[str, Path()],
@@ -96,7 +99,7 @@ async def get_cases_by_fetch_job_token(
         )
 
     cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
-    response = FetchCasesStatusResponse(status=fetch_job["status"], content=cases)
+    response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
 
     return response
 

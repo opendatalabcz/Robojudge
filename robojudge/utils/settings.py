@@ -3,6 +3,7 @@ from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 
 
 class Settings(BaseSettings):
+    SERVER_HOST = "0.0.0.0"
     SERVER_PORT = 4000
     SERVER_VERSION = "0.1.0"
     ENVIRONMENT = "dev"
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
     DOCUMENT_DB_HOST = "mongo"
     DOCUMENT_DB_PORT: int = 27017
 
-    ENABLE_SCRAPING: bool = True
+    ENABLE_AUTOMATIC_SCRAPING: bool = True
     SCRAPER_MAX_RUN_CASE_COUNT = 30
     SCRAPER_TIMEOUT = 10_000
     SCRAPER_TASK_INTERVAL_IN_SECONDS = 3600
