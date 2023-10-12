@@ -22,7 +22,7 @@ def case_scraper(html_page: str):
 
 @pytest.fixture(scope="session")
 def parsed_case():
-    with open("tests/assets/case.json", "r") as rf:
+    with open('tests/assets/scraped_case.json', 'r') as rf:
         return json.load(rf)
 
 

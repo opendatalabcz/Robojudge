@@ -1,5 +1,9 @@
-from pymongo import MongoClient, ReplaceOne, UpdateOne
+import os
+
+import pymongo
+from pymongo import ReplaceOne, UpdateOne
 from pymongo.collection import Collection
+import mongomock
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
@@ -9,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 class DocumentStorage:
-    client: MongoClient
+    client: pymongo.MongoClient
     DB_NAME = "robojudge_case_db"
     COLLECTION_NAME = "cases"
-    SCRAPING_INFORMATION_COLLECTION_NAME = 'scraping'
-    FETCH_JOB_COLLECTION_NAME = 'fetch_jobs'
+    SCRAPING_INFORMATION_COLLECTION_NAME = "scraping"
+    FETCH_JOB_COLLECTION_NAME = "fetch_jobs"
 
     def __init__(self) -> None:
-        self.client = MongoClient(
+        self.client = pymongo.MongoClient(
             host=settings.DOCUMENT_DB_HOST, port=settings.DOCUMENT_DB_PORT
         )
         logger.info(
@@ -33,11 +37,11 @@ class DocumentStorage:
     @property
     def collection(self) -> Collection[Case]:
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
-    
+
     @property
     def scraping_collection(self):
         return self.client[self.DB_NAME][self.SCRAPING_INFORMATION_COLLECTION_NAME]
-    
+
     @property
     def fetch_job_collection(self):
         return self.client[self.DB_NAME][self.FETCH_JOB_COLLECTION_NAME]
@@ -54,17 +58,21 @@ class DocumentStorage:
             cases = list(cases)
             if len(cases) > 0:
                 return int(list(cases)[0]["case_id"])
-            
+
             return settings.OLDEST_KNOWN_CASE_ID
 
         except Exception:
             logging.exception(f"Error while searching for latest case_id:")
 
-    def insert_scraping_instance_information(self, scraping_information: ScrapingInformation):
+    def insert_scraping_instance_information(
+        self, scraping_information: ScrapingInformation
+    ):
         try:
             self.scraping_collection.insert_one(scraping_information.dict())
         except Exception:
-            logging.exception(f'Error while inserting scraping information: "{scraping_information}":')
+            logging.exception(
+                f'Error while inserting scraping information: "{scraping_information}":'
+            )
 
     def upsert_documents(self, cases: list[Case]):
         if len(cases) < 1:
@@ -90,10 +98,11 @@ class DocumentStorage:
             return
 
         try:
-            logger.info('Saving generated summaries.')
+            logger.info("Saving generated summaries.")
             updates = [
                 UpdateOne(
-                    {"case_id": summaried_case.case_id}, {"$set": {"summary": summaried_case.summary}}
+                    {"case_id": summaried_case.case_id},
+                    {"$set": {"summary": summaried_case.summary}},
                 )
                 for summaried_case in summaried_cases
             ]
@@ -110,3 +119,13 @@ class DocumentStorage:
 
 
 document_db = DocumentStorage()
+
+
+@mongomock.patch(servers=((settings.DOCUMENT_DB_HOST, settings.DOCUMENT_DB_PORT),))
+def create_test_db():
+    return DocumentStorage()
+
+
+if os.environ.get("ENV") == "test":
+    print("Detected testing environment -> creating test MongoDB.")
+    document_db = create_test_db()

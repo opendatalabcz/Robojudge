@@ -26,7 +26,7 @@ class CaseQuestionResponse(BaseModel):
     answer: str
 
 class FetchCasesRequest(BaseModel):
-    limit: Optional[int]
+    limit: Optional[int] = None
     filters: ScrapingFilters
 
 class FetchCasesStatusResponse(BaseModel):

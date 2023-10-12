@@ -3,7 +3,7 @@ import datetime
 from enum import auto
 
 from strenum import StrEnum
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 
 
 class ScrapingFilters(BaseModel):
@@ -100,4 +100,5 @@ class CaseFetchJob(BaseModel):
     status: CaseFetchJobStatus = CaseFetchJobStatus.RUNNING
     case_ids: list[str] = []
 
-    model_config = ConfigDict(use_enum_values=True)
+    class Config:
+        use_enum_values = True

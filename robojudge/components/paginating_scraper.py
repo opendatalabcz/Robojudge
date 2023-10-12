@@ -3,7 +3,6 @@ import asyncio
 
 from playwright.async_api import (
     async_playwright,
-    TimeoutError as PlaywrightTimeoutError,
     Page,
 )
 
@@ -28,7 +27,9 @@ class PaginatingScraper:
             filters = ScrapingFilters(**request.filters.dict())
             fetch_job = CaseFetchJob(token=token, filters=filters)
 
-            document_db.fetch_job_collection.insert_one(fetch_job.dict(exclude='model_config'))
+            document_db.fetch_job_collection.insert_one(
+                fetch_job.dict()
+            )
             logger.info(f'Start extracting case_ids for token "{token}".')
 
             case_ids = await cls.extract_case_ids(filters)
@@ -72,7 +73,10 @@ class PaginatingScraper:
     @classmethod
     async def extract_case_ids(cls, filters: ScrapingFilters) -> list[str]:
         async with async_playwright() as pw:
-            page = await cls.apply_filters_on_main_page(pw, filters)
+            browser = await pw.chromium.launch()
+            page = await browser.new_page()
+
+            await cls.apply_filters_on_main_page(page, filters)
 
             case_ids = []
 
@@ -87,11 +91,7 @@ class PaginatingScraper:
             return case_ids
 
     @classmethod
-    async def apply_filters_on_main_page(
-        cls, playwright_instance, filters: ScrapingFilters
-    ):
-        browser = await playwright_instance.chromium.launch()
-        page = await browser.new_page()
+    async def apply_filters_on_main_page(cls, page, filters: ScrapingFilters):
         # Disable timeout by setting it to 0
         await page.goto(url=CasePageScraper.MAIN_PAGE_URL, timeout=0)
 
@@ -105,8 +105,6 @@ class PaginatingScraper:
         await page.wait_for_selector(
             'table[class="table table-striped dataTable bg-white rounded"]',
         )
-
-        return page
 
     @classmethod
     async def input_filter_values(cls, page: Page, filters: ScrapingFilters):
