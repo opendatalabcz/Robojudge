@@ -33,6 +33,7 @@ torchvision = "^0.16.0"
 torchaudio = "^2.1.0"
 replicate = "^0.15.3"
 cohere = "^4.27"
+pytest = "^7.4.2"
 
 
 [build-system]
