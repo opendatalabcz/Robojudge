@@ -39,7 +39,9 @@ services:
       - default
 
   client:
-    build: ./client
+    build: 
+      context: ./
+      dockerfile: ./client/Dockerfile
     restart: unless-stopped
     depends_on:
       - server

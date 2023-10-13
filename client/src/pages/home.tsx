@@ -7,7 +7,7 @@ import { CaseCard } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
 
 export type Case = {
-  id: string;
+  caseId: string;
   summary: string;
   title: string;
   metadata: Record<string, unknown>;
@@ -84,6 +84,7 @@ export function Home({ triggerAlert }: HomeProps) {
         {
           query_text: caseDescription,
           limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,
+          generate_summaries: true,
         },
       );
 
@@ -145,7 +146,7 @@ export function Home({ triggerAlert }: HomeProps) {
       >
         {cases.map((courtCase) => (
           <CaseCard
-            key={courtCase.id}
+            key={courtCase.caseId}
             courtCase={courtCase}
             triggerAlert={triggerAlert}
           />

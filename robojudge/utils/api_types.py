@@ -8,7 +8,7 @@ class CaseSearchRequest(BaseModel):
     query_text: str = Field(
         description="Any string of text which should have similar cases in the DB. Longer texts have more accurate results."
     )
-    max_results: Optional[int] = Field(
+    limit: Optional[int] = Field(
         default=3,
         description="The number of results may be lower if the most similar text chunks belong to the same court case(s).",
     )

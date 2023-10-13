@@ -1,0 +1,9 @@
+client/node_modules
+client/build
+client/.eslintrc.json
+client/.gitignore
+client/.prettierignore
+client/.prettierc.json
+
+.gitignore
+LICENSE
