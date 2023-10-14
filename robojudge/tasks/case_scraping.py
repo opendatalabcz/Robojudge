@@ -88,6 +88,7 @@ async def run_scraping_instance(case_ids: list[str] = None):
     for parser in parsers:
         parser.join()
 
+    # TODO: fix empty case_ids
     scraping_information = ScrapingInformation(
         last_case_id=case_ids[-1],
         timestamp=datetime.datetime.now(),
