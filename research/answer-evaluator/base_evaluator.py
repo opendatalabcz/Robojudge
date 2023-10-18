@@ -16,7 +16,7 @@ HUMAN_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/reference")
 AUTO_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/only-auto-evaluation-reference")
 BASE_RESULTS_PATH = Path("research/llm-answer-results/")
 BASE_LLM_ANSWERS_PATH = BASE_RESULTS_PATH / "llm-answers"
-BASE_LLM_SUMMARY_PATH = BASE_RESULTS_PATH / "summaries"
+BASE_LLM_RESULT_REPORT_PATH = BASE_RESULTS_PATH / "reports"
 
 
 class ScoreResult(BaseModel):
@@ -54,33 +54,33 @@ class BaseEvaluator:
         for llm_type in MEASURED_LLM_TYPES:
             logging.info(f'Generating evaluation summary for "{llm_type}".')
             evaluation_summary_path: Path = (
-                BASE_LLM_SUMMARY_PATH / datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
+                BASE_LLM_RESULT_REPORT_PATH / datetime.datetime.now().strftime("%Y-%m-%d")
             )
             evaluation_summary_path.mkdir(parents=True, exist_ok=True)
 
-            # llm_auto_score = await AutoEvaluator.get_score_for_llm_type(
-            #     llm_answers=self.llm_answers[llm_type],
-            #     human_answers=self.human_answers,
-            #     llm_type=llm_type,
-            # )
-            # for file_name, result in llm_auto_score.items():
-            #     result.question = self.reference_questions[file_name]
-            # self.save_score_results(
-            #     results=llm_auto_score,
-            #     path=evaluation_summary_path / f"{llm_type}_llm_auto_score.csv",
-            # )
+            llm_auto_score = await AutoEvaluator.get_score_for_llm_type(
+                llm_answers=self.llm_answers[llm_type],
+                human_answers=self.human_answers,
+                llm_type=llm_type,
+            )
+            for file_name, result in llm_auto_score.items():
+                result.question = self.reference_questions[file_name]
+            self.save_score_results(
+                results=llm_auto_score,
+                path=evaluation_summary_path / f"{llm_type}_llm_auto_score.csv",
+            )
 
-            # bert_score = BertScoreEvaluator.get_score_for_llm_type(
-            #     llm_answers=self.llm_answers[llm_type],
-            #     human_answers=self.human_answers,
-            #     llm_type=llm_type,
-            # )
-            # for file_name, result in bert_score.items():
-            #     result.question = self.reference_questions[file_name]
-            # self.save_score_results(
-            #     results=bert_score,
-            #     path=evaluation_summary_path / f"{llm_type}_bert_score.csv",
-            # )
+            bert_score = BertScoreEvaluator.get_score_for_llm_type(
+                llm_answers=self.llm_answers[llm_type],
+                human_answers=self.human_answers,
+                llm_type=llm_type,
+            )
+            for file_name, result in bert_score.items():
+                result.question = self.reference_questions[file_name]
+            self.save_score_results(
+                results=bert_score,
+                path=evaluation_summary_path / f"{llm_type}_bert_score.csv",
+            )
 
     async def generate_llm_answers(self):
         logging.info("Generating missing LLM answers.")

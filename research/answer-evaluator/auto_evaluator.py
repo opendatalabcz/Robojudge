@@ -1,4 +1,5 @@
 import logging
+import asyncio
 
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -11,9 +12,10 @@ from robojudge.utils.settings import settings, advanced_llm
 
 
 COMPARE_SYSTEM_MESSAGE = """
-Your task is to determine if a candidate answer is correct by comparing it to the correct answer.
+Your task is to score a candidate answer based on how similar it is to the correct answer.
 The candidate answer does not have to have the same wording, but it should include the same information as the correct answer.
-If the candidate answer is correct, output 1, otherwise output 0. Do not output anything else.
+Give 0 to 10 points to the candidate answer based on how useful and relevant it is (compared to the correct answer).
+Output ONLY the number of points, for example: "6".
 """
 
 
@@ -26,24 +28,32 @@ class AutoEvaluator:
 
         output = {}
 
+        comparison_requests = []
+        comparison_file_names = []
         for file_name, llm_answer in llm_answers.items():
-            try:
-                human_answer = human_answers[file_name]
-
-                result = await cls.compare_human_llm_answers(
+            human_answer = human_answers[file_name]
+            comparison_file_names.append(file_name)
+            comparison_requests.append(
+                cls.compare_human_llm_answers(
                     human_answer=human_answer, llm_answer=llm_answer
                 )
+            )
 
-                # Prevent circular ipmort
-                from base_evaluator import ScoreResult
+        try:
+            results = await asyncio.gather(*comparison_requests)
+
+            # Prevent circular ipmort
+            from base_evaluator import ScoreResult
+
+            for file_name, result in zip(comparison_file_names, results):
                 output[file_name] = ScoreResult(
                     human_answer=human_answer, llm_answer=llm_answer, score=result
                 )
 
-            except Exception:
-                logging.exception(
-                    f'Error while evaluating llm answer "{llm_answer}" in "{file_name}".'
-                )
+        except Exception:
+            logging.exception(
+                f'Error while evaluating llm answer "{llm_answer}" in "{file_name}".'
+            )
 
         return output
 
@@ -66,3 +76,20 @@ class AutoEvaluator:
         llm_chain = LLMChain(llm=advanced_llm, prompt=initial_prompt)
 
         return await llm_chain.arun(human_answer=human_answer, llm_answer=llm_answer)
+
+
+if __name__ == "__main__":
+    human_answers = {
+        "1": "Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",
+        "2": "Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",
+    }
+    llm_answers = {
+        "1": "Žalobkyně vyhrála tento soudní spor.",
+        "2": "Žalobkyně vyhrála tento soudní spor.",
+    }
+    res = asyncio.run(
+        AutoEvaluator.get_score_for_llm_type(
+            llm_answers=llm_answers, human_answers=human_answers, llm_type="llama"
+        )
+    )
+    print(res)

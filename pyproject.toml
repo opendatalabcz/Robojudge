@@ -6,7 +6,7 @@ authors = ["Miroslav Rehounek <rehounek.miroslav@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.13"
 fastapi = "0.98.0"
 uvicorn = "^0.23.2"
 openai = "^0.28.0"
@@ -24,8 +24,6 @@ rocketry = "^2.5.1"
 mongomock = "^4.1.2"
 
 [tool.poetry.group.dev.dependencies]
-llama-cpp-python = "^0.2.7"
-googlebard = "^2.1.0"
 evaluate = "^0.4.0"
 bert-score = "^0.3.13"
 torch = "^2.1.0"
@@ -36,6 +34,8 @@ cohere = "^4.27"
 pytest = "^7.4.2"
 pytest-asyncio = "^0.21.1"
 pytest-env = "^1.0.1"
+pandas = "^2.1.1"
+numpy = "^1.26.1"
 
 
 [build-system]
