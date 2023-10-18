@@ -12,7 +12,8 @@ from bert_score_evaluator import BertScoreEvaluator
 from llm_answerer import MEASURED_LLM_TYPES, ResearchLLMAnswerer
 
 ANSWER_FILE_SEPARATOR = "<SEP>"
-HUMAN_ANSWERS_PATH = Path("datasets/answering/reference")
+HUMAN_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/reference")
+AUTO_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/only-auto-evaluation-reference")
 BASE_RESULTS_PATH = Path("research/llm-answer-results/")
 BASE_LLM_ANSWERS_PATH = BASE_RESULTS_PATH / "llm-answers"
 BASE_LLM_SUMMARY_PATH = BASE_RESULTS_PATH / "summaries"
@@ -33,7 +34,7 @@ class BaseEvaluator:
         self.reference_texts = {}
         self.reference_questions = {}
 
-        for reference_file_path in HUMAN_ANSWERS_PATH.iterdir():
+        for reference_file_path in [*HUMAN_EVALUATED_ANSWERS_REFERENCE_PATH.iterdir(), *AUTO_EVALUATED_ANSWERS_REFERENCE_PATH.iterdir()]:
             self.reference_files[
                 reference_file_path.name
             ] = reference_file_path.read_text()
