@@ -3,8 +3,6 @@ from types import SimpleNamespace
 
 import replicate
 import cohere
-from Bard import AsyncChatbot
-from llama_cpp import Llama
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
