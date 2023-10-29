@@ -9,7 +9,7 @@ import more_itertools
 
 from robojudge.utils.logger import logging
 from robojudge.utils.gpt_tokenizer import tokenizer
-from robojudge.utils.settings import standard_llm
+from robojudge.components.reasoning.llm_definitions import standard_llm
 
 logger = logging.getLogger(__name__)
 

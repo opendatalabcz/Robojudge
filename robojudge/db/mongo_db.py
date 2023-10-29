@@ -109,16 +109,15 @@ class DocumentStorage:
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(f"Error while adding summaries {summaried_cases}:")
+            logging.exception(
+                f"Error while adding summaries {summaried_cases}:")
 
     def delete_documents(self, case_ids: list[str]):
         try:
             self.collection.delete_many({"case_id": {"$in": case_ids}})
         except Exception:
-            logging.exception(f"Error while deleting metadata with ids {case_ids}:")
-
-
-document_db = DocumentStorage()
+            logging.exception(
+                f"Error while deleting metadata with ids {case_ids}:")
 
 
 @mongomock.patch(servers=((settings.DOCUMENT_DB_HOST, settings.DOCUMENT_DB_PORT),))
@@ -129,3 +128,5 @@ def create_test_db():
 if os.environ.get("ENV") == "test":
     print("Detected testing environment -> creating test MongoDB.")
     document_db = create_test_db()
+else:
+    document_db = DocumentStorage()

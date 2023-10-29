@@ -27,8 +27,8 @@ class Settings(BaseSettings):
         450  # Based on manual testing, this is one of the first available cases
     )
 
-    OPENAI_API_KEY = ""
-    OPENAI_API_BASE = ""
+    OPENAI_API_KEY = "dummykey"
+    OPENAI_API_BASE = "dummybase"
     OPENAI_API_TYPE = "azure"
     OPENAI_API_VERSION = "2023-08-01-preview"
 
@@ -52,43 +52,9 @@ class Settings(BaseSettings):
 
     REPLICATE_API_TOKEN: str = ''
     COHERE_API_TOKEN: str = ''
+
     class Config:
         env_file = ".env"
 
 
 settings = Settings()
-
-
-standard_llm = (
-    AzureChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        openai_api_base=settings.OPENAI_API_BASE,
-        openai_api_version=settings.OPENAI_API_VERSION,
-        openai_api_type=settings.OPENAI_API_TYPE,
-        deployment_name=settings.GPT_MODEL_NAME,
-        temperature=0,
-    )
-    if settings.OPENAI_API_TYPE == "azure"
-    else ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        deployment_name=settings.GPT_MODEL_NAME,
-        temperature=0,
-    )
-)
-
-advanced_llm = (
-    AzureChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        openai_api_base=settings.OPENAI_API_BASE,
-        openai_api_version=settings.OPENAI_API_VERSION,
-        openai_api_type=settings.OPENAI_API_TYPE,
-        deployment_name=settings.AUTO_EVALUATOR_NAME,
-        temperature=0,
-    )
-    if settings.OPENAI_API_TYPE == "azure"
-    else ChatOpenAI(
-        openai_api_key=settings.OPENAI_API_KEY,
-        deployment_name=settings.AUTO_EVALUATOR_NAME,
-        temperature=0,
-    )
-)

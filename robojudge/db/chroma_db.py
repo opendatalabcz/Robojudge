@@ -1,7 +1,9 @@
 from typing import Optional
 import uuid
+import os
 from typing import Dict
 from itertools import zip_longest
+import unittest.mock
 
 from pydantic import BaseModel
 import chromadb
@@ -135,4 +137,10 @@ class CaseEmbeddingStorage:
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
 
 
-embedding_db = CaseEmbeddingStorage()
+if os.environ.get("ENV") == "test":
+    print("Detected testing environment -> creating test ChromaDB.")
+    embedding_db = unittest.mock.Mock(spec=CaseEmbeddingStorage)
+else:
+    embedding_db = CaseEmbeddingStorage()
+
+

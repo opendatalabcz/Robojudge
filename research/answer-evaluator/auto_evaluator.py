@@ -8,7 +8,7 @@ from langchain.prompts.chat import (
 )
 from langchain.chains import LLMChain
 
-from robojudge.utils.settings import settings, advanced_llm
+from robojudge.components.reasoning.llm_definitions import advanced_llm
 
 
 COMPARE_SYSTEM_MESSAGE = """
@@ -76,6 +76,7 @@ class AutoEvaluator:
         llm_chain = LLMChain(llm=advanced_llm, prompt=initial_prompt)
 
         return await llm_chain.arun(human_answer=human_answer, llm_answer=llm_answer)
+<<<<<<< HEAD
 
 
 if __name__ == "__main__":
@@ -93,3 +94,5 @@ if __name__ == "__main__":
         )
     )
     print(res)
+=======
+>>>>>>> ffe9745 (Fix tests)

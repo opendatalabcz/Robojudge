@@ -7,7 +7,7 @@ from langchain.chains import LLMChain
 from langchain.tools import StructuredTool
 from pydantic import BaseModel, Field
 
-from robojudge.utils.settings import standard_llm
+from robojudge.components.reasoning.llm_definitions import standard_llm
 
 template = """\
     You are a legal assistant who should formulate a polite answer that you cannot answer the question based on the provided information.

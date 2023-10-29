@@ -6,7 +6,7 @@ from langchain.prompts.chat import (
 from langchain.chains import LLMChain
 
 from robojudge.utils.logger import logging
-from robojudge.utils.settings import standard_llm
+from robojudge.components.reasoning.llm_definitions import standard_llm
 
 logger = logging.getLogger(__name__)
 
