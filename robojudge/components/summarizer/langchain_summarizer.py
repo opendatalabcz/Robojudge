@@ -44,7 +44,7 @@ class CaseSummarizer:
         prompt_refine = HumanMessagePromptTemplate.from_template(
             "Here's your previous summary: {prev_response}. "
             "Update the summary based on the following part."
-            "Ignore any mentions of litigation costs and fees, they are irrelevant"
+            "Ignore any mentions of litigation costs and fees, they are irrelevant."
             "Create your summary ONLY in Czech and use a maximum of 7 sentences."
             "{context}"
         )

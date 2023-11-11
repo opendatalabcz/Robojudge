@@ -76,23 +76,3 @@ class AutoEvaluator:
         llm_chain = LLMChain(llm=advanced_llm, prompt=initial_prompt)
 
         return await llm_chain.arun(human_answer=human_answer, llm_answer=llm_answer)
-<<<<<<< HEAD
-
-
-if __name__ == "__main__":
-    human_answers = {
-        "1": "Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",
-        "2": "Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",
-    }
-    llm_answers = {
-        "1": "Žalobkyně vyhrála tento soudní spor.",
-        "2": "Žalobkyně vyhrála tento soudní spor.",
-    }
-    res = asyncio.run(
-        AutoEvaluator.get_score_for_llm_type(
-            llm_answers=llm_answers, human_answers=human_answers, llm_type="llama"
-        )
-    )
-    print(res)
-=======
->>>>>>> ffe9745 (Fix tests)
