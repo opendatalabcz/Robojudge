@@ -13,7 +13,8 @@ from llm_answerer import MEASURED_LLM_TYPES, ResearchLLMAnswerer
 
 ANSWER_FILE_SEPARATOR = "<SEP>"
 HUMAN_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/reference")
-AUTO_EVALUATED_ANSWERS_REFERENCE_PATH = Path("datasets/answering/only-auto-evaluation-reference")
+AUTO_EVALUATED_ANSWERS_REFERENCE_PATH = Path(
+    "datasets/answering/only-auto-evaluation-reference")
 BASE_RESULTS_PATH = Path("research/llm-answer-results/")
 BASE_LLM_ANSWERS_PATH = BASE_RESULTS_PATH / "llm-answers"
 BASE_LLM_RESULT_REPORT_PATH = BASE_RESULTS_PATH / "reports"
@@ -23,7 +24,7 @@ class ScoreResult(BaseModel):
     question: Optional[str] = ""
     human_answer: str
     llm_answer: str
-    score: str
+    score: Optional[str] = ''
 
 
 class BaseEvaluator:
@@ -67,20 +68,21 @@ class BaseEvaluator:
                 result.question = self.reference_questions[file_name]
             self.save_score_results(
                 results=llm_auto_score,
-                path=evaluation_summary_path / f"{llm_type}_llm_auto_score.csv",
+                path=evaluation_summary_path /
+                f"{llm_type}_llm_auto_score.csv",
             )
 
-            bert_score = BertScoreEvaluator.get_score_for_llm_type(
-                llm_answers=self.llm_answers[llm_type],
-                human_answers=self.human_answers,
-                llm_type=llm_type,
-            )
-            for file_name, result in bert_score.items():
-                result.question = self.reference_questions[file_name]
-            self.save_score_results(
-                results=bert_score,
-                path=evaluation_summary_path / f"{llm_type}_bert_score.csv",
-            )
+            # bert_score = BertScoreEvaluator.get_score_for_llm_type(
+            #     llm_answers=self.llm_answers[llm_type],
+            #     human_answers=self.human_answers,
+            #     llm_type=llm_type,
+            # )
+            # for file_name, result in bert_score.items():
+            #     result.question = self.reference_questions[file_name]
+            # self.save_score_results(
+            #     results=bert_score,
+            #     path=evaluation_summary_path / f"{llm_type}_bert_score.csv",
+            # )
 
     async def generate_llm_answers(self):
         logging.info("Generating missing LLM answers.")

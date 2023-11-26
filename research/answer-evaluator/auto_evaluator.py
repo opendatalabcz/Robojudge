@@ -14,7 +14,7 @@ from robojudge.components.reasoning.llm_definitions import advanced_llm
 COMPARE_SYSTEM_MESSAGE = """
 Your task is to score a candidate answer based on how similar it is to the correct answer.
 The candidate answer does not have to have the same wording, but it should include the same information as the correct answer.
-Give 0 to 10 points to the candidate answer based on how useful and relevant it is (compared to the correct answer).
+Give 1 to 10 points to the candidate answer based on how useful and relevant it is (compared to the correct answer).
 Output ONLY the number of points, for example: "6".
 """
 
@@ -26,12 +26,16 @@ class AutoEvaluator:
     ):
         logging.info(f"Auto-evaluating llm answers for '{llm_type}'.")
 
-        output = {}
-
+        # Prevent circular ipmort
+        from base_evaluator import ScoreResult
+        output: dict[ScoreResult] = {}
         comparison_requests = []
         comparison_file_names = []
+
         for file_name, llm_answer in llm_answers.items():
             human_answer = human_answers[file_name]
+            output[file_name] = ScoreResult(
+                human_answer=human_answer, llm_answer=llm_answer)
             comparison_file_names.append(file_name)
             comparison_requests.append(
                 cls.compare_human_llm_answers(
@@ -42,13 +46,8 @@ class AutoEvaluator:
         try:
             results = await asyncio.gather(*comparison_requests)
 
-            # Prevent circular ipmort
-            from base_evaluator import ScoreResult
-
             for file_name, result in zip(comparison_file_names, results):
-                output[file_name] = ScoreResult(
-                    human_answer=human_answer, llm_answer=llm_answer, score=result
-                )
+                output[file_name].score = result
 
         except Exception:
             logging.exception(

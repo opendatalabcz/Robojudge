@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     )
 
     OPENAI_API_KEY = "dummykey"
-    OPENAI_API_BASE = "dummybase"
+    OPENAI_API_BASE = "https://api.openai.com/v1"
     OPENAI_API_TYPE = "azure"
     OPENAI_API_VERSION = "2023-08-01-preview"
 
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     DEFAULT_SUMMARIZE_LLM = "chatgpt"
 
     # Research answering
-    AUTO_EVALUATOR_NAME = 'gpt4'
+    AUTO_EVALUATOR_NAME = 'gpt-4-1106-preview'
 
     TOKENIZER_INPUT_LENGTH = 600
     TOKENIZER_MODEL = "czech-morfflex2.0-pdtc1.0-220710"

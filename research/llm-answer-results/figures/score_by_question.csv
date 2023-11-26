@@ -1,144 +1,144 @@
 question_id,score,question
-16,0,"['\nCo je to exponenciální časová složitost?\n'
+16,3,"['\nCo je to exponenciální časová složitost?\n'
  '\nCo je to exponenciální časová složitost?\n'
  '\nCo je to exponenciální časová složitost?\n']"
-45,0,"['\nJakou částku (už) žalovaný žalobkyni uhradil?\n'
+45,3,"['\nJakou částku (už) žalovaný žalobkyni uhradil?\n'
  '\nJakou částku (už) žalovaný žalobkyni uhradil?\n'
  '\nJakou částku (už) žalovaný žalobkyni uhradil?\n']"
-39,5,"['\nKolik titulů má soudce, který věc řešil?\n'
- '\nKolik titulů má soudce, který věc řešil?\n'
- '\nKolik titulů má soudce, který věc řešil?\n']"
-28,8,"['\nKdo tento soudní spor vyhrál?\n' '\nKdo tento soudní spor vyhrál?\n'
- '\nKdo tento soudní spor vyhrál?\n']"
-41,9,"['\nKdo se chtěl rozvést s kým?\n' '\nKdo se chtěl rozvést s kým?\n'
- '\nKdo se chtěl rozvést s kým?\n']"
-19,9,"['\nJakou smlouvu spolu strany uzavřely?\n'
- '\nJakou smlouvu spolu strany uzavřely?\n'
- '\nJakou smlouvu spolu strany uzavřely?\n']"
-35,9,"['\nCo v tomto případu učinil žalovaný za právní kroky?\n'
+35,4,"['\nCo v tomto případu učinil žalovaný za právní kroky?\n'
  '\nCo v tomto případu učinil žalovaný za právní kroky?\n'
  '\nCo v tomto případu učinil žalovaný za právní kroky?\n']"
-32,11,"['\nNa koho se soud v rozhodnutí odvolává?\n'
- '\nNa koho se soud v rozhodnutí odvolává?\n'
- '\nNa koho se soud v rozhodnutí odvolává?\n']"
-0,11,"['\nKolik ústních jednání ve věci proběhlo?\n'
- '\nKolik ústních jednání ve věci proběhlo?\n'
- '\nKolik ústních jednání ve věci proběhlo?\n']"
-31,12,"['\nJaká úroková sazba byla mezi stranami sjednána?\n'
+41,5,"['\nKdo se chtěl rozvést s kým?\n' '\nKdo se chtěl rozvést s kým?\n'
+ '\nKdo se chtěl rozvést s kým?\n']"
+19,6,"['\nJakou smlouvu spolu strany uzavřely?\n'
+ '\nJakou smlouvu spolu strany uzavřely?\n'
+ '\nJakou smlouvu spolu strany uzavřely?\n']"
+6,7,"['\nKdo a kolik celkem musí zaplatit?\n'
+ '\nKdo a kolik celkem musí zaplatit?\n'
+ '\nKdo a kolik celkem musí zaplatit?\n']"
+25,8,"['\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n'
+ '\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n'
+ '\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n']"
+31,8,"['\nJaká úroková sazba byla mezi stranami sjednána?\n'
  '\nJaká úroková sazba byla mezi stranami sjednána?\n'
  '\nJaká úroková sazba byla mezi stranami sjednána?\n']"
+28,9,"['\nKdo tento soudní spor vyhrál?\n' '\nKdo tento soudní spor vyhrál?\n'
+ '\nKdo tento soudní spor vyhrál?\n']"
+26,9,"['\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n'
+ '\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n'
+ '\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n']"
+0,10,"['\nKolik ústních jednání ve věci proběhlo?\n'
+ '\nKolik ústních jednání ve věci proběhlo?\n'
+ '\nKolik ústních jednání ve věci proběhlo?\n']"
+42,11,"['\nProč se manželé rozvedli?\n' '\nProč se manželé rozvedli?\n'
+ '\nProč se manželé rozvedli?\n']"
+22,12,"['\nKteré měsíce žalovaný poplatek zaplatil?\n'
+ '\nKteré měsíce žalovaný poplatek zaplatil?\n'
+ '\nKteré měsíce žalovaný poplatek zaplatil?\n']"
+17,12,"['\nKteré zákony soud použil při svém rozhodování?\n'
+ '\nKteré zákony soud použil při svém rozhodování?\n'
+ '\nKteré zákony soud použil při svém rozhodování?\n']"
+9,12,"['\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n'
+ '\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n'
+ '\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n']"
 38,12,"['\nJaký typ pojištění byl mezi stranami uzavřen?\n'
  '\nJaký typ pojištění byl mezi stranami uzavřen?\n'
  '\nJaký typ pojištění byl mezi stranami uzavřen?\n']"
-17,13,"['\nKteré zákony soud použil při svém rozhodování?\n'
- '\nKteré zákony soud použil při svém rozhodování?\n'
- '\nKteré zákony soud použil při svém rozhodování?\n']"
-22,14,"['\nKteré měsíce žalovaný poplatek zaplatil?\n'
- '\nKteré měsíce žalovaný poplatek zaplatil?\n'
- '\nKteré měsíce žalovaný poplatek zaplatil?\n']"
-3,14,"['\nOhledně čeho spolu strany uzavřely pojištění?\n'
- '\nOhledně čeho spolu strany uzavřely pojištění?\n'
- '\nOhledně čeho spolu strany uzavřely pojištění?\n']"
-9,15,"['\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n'
- '\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n'
- '\nJaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?\n']"
-14,15,"['\nJakými dopravními prostředky cestovala žalovaná?\n'
- '\nJakými dopravními prostředky cestovala žalovaná?\n'
- '\nJakými dopravními prostředky cestovala žalovaná?\n']"
-42,16,"['\nProč se manželé rozvedli?\n' '\nProč se manželé rozvedli?\n'
- '\nProč se manželé rozvedli?\n']"
-47,16,"['\nKolikrát žalovaný použil dopravní prostředek žalobkyně?\n'
+32,12,"['\nNa koho se soud v rozhodnutí odvolává?\n'
+ '\nNa koho se soud v rozhodnutí odvolává?\n'
+ '\nNa koho se soud v rozhodnutí odvolává?\n']"
+39,12,"['\nKolik titulů má soudce, který věc řešil?\n'
+ '\nKolik titulů má soudce, který věc řešil?\n'
+ '\nKolik titulů má soudce, který věc řešil?\n']"
+47,13,"['\nKolikrát žalovaný použil dopravní prostředek žalobkyně?\n'
  '\nKolikrát žalovaný použil dopravní prostředek žalobkyně?\n'
  '\nKolikrát žalovaný použil dopravní prostředek žalobkyně?\n']"
-20,16,"['\nKdo nesl ve věci důkazní břemeno?\n'
- '\nKdo nesl ve věci důkazní břemeno?\n'
- '\nKdo nesl ve věci důkazní břemeno?\n']"
-12,16,"['\nJak soud ve věci postupoval?\n' '\nJak soud ve věci postupoval?\n'
+3,13,"['\nOhledně čeho spolu strany uzavřely pojištění?\n'
+ '\nOhledně čeho spolu strany uzavřely pojištění?\n'
+ '\nOhledně čeho spolu strany uzavřely pojištění?\n']"
+12,13,"['\nJak soud ve věci postupoval?\n' '\nJak soud ve věci postupoval?\n'
  '\nJak soud ve věci postupoval?\n']"
-26,17,"['\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n'
- '\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n'
- '\nKde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?\n']"
-29,17,"['\nO jakou neplatnost smlouvy se v tomto případě jednalo?\n'
+14,13,"['\nJakými dopravními prostředky cestovala žalovaná?\n'
+ '\nJakými dopravními prostředky cestovala žalovaná?\n'
+ '\nJakými dopravními prostředky cestovala žalovaná?\n']"
+29,13,"['\nO jakou neplatnost smlouvy se v tomto případě jednalo?\n'
  '\nO jakou neplatnost smlouvy se v tomto případě jednalo?\n'
  '\nO jakou neplatnost smlouvy se v tomto případě jednalo?\n']"
-7,17,"['\nJaký typ právního výkladu soud zmiňuje v rozhodnutí?\n'
+15,14,"['\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n'
+ '\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n'
+ '\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n']"
+7,14,"['\nJaký typ právního výkladu soud zmiňuje v rozhodnutí?\n'
  '\nJaký typ právního výkladu soud zmiňuje v rozhodnutí?\n'
  '\nJaký typ právního výkladu soud zmiňuje v rozhodnutí?\n']"
-46,18,"['\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n'
- '\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n'
- '\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n']"
-21,18,"['\nZ jakých důkazů soud vyšel?\n' '\nZ jakých důkazů soud vyšel?\n'
+21,15,"['\nZ jakých důkazů soud vyšel?\n' '\nZ jakých důkazů soud vyšel?\n'
  '\nZ jakých důkazů soud vyšel?\n']"
-8,18,"['\nPodle jakého zákona soud věc posoudil?\n'
+2,15,"['\nO co se v této věci vedl spor? (jednou větou)\n'
+ '\nO co se v této věci vedl spor? (jednou větou)\n'
+ '\nO co se v této věci vedl spor? (jednou větou)\n']"
+40,15,"['\nČeho se dopustil žalovaný?\n' '\nČeho se dopustil žalovaný?\n'
+ '\nČeho se dopustil žalovaný?\n']"
+8,17,"['\nPodle jakého zákona soud věc posoudil?\n'
  '\nPodle jakého zákona soud věc posoudil?\n'
  '\nPodle jakého zákona soud věc posoudil?\n']"
-40,18,"['\nČeho se dopustil žalovaný?\n' '\nČeho se dopustil žalovaný?\n'
- '\nČeho se dopustil žalovaný?\n']"
-48,18,"['\nProč je žalovaný povinen něco platit žalobci?\n'
- '\nProč je žalovaný povinen něco platit žalobci?\n'
- '\nProč je žalovaný povinen něco platit žalobci?\n']"
-27,18,"['\nV jakém složení soud rozhodl ve věci?\n'
- '\nV jakém složení soud rozhodl ve věci?\n'
- '\nV jakém složení soud rozhodl ve věci?\n']"
+20,17,"['\nKdo nesl ve věci důkazní břemeno?\n'
+ '\nKdo nesl ve věci důkazní břemeno?\n'
+ '\nKdo nesl ve věci důkazní břemeno?\n']"
 4,18,"['\nJak často mělo být placeno pojistné?\n'
  '\nJak často mělo být placeno pojistné?\n'
  '\nJak často mělo být placeno pojistné?\n']"
-33,18,"['\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n'
- '\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n'
- '\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n']"
-34,19,"['\nOdkdy dokdy nebylo vozidlo pojištěno?\n'
- '\nOdkdy dokdy nebylo vozidlo pojištěno?\n'
- '\nOdkdy dokdy nebylo vozidlo pojištěno?\n']"
-5,19,"['\nKolik činila přirážka k jízdnému při jízdě načerno?\n'
+5,18,"['\nKolik činila přirážka k jízdnému při jízdě načerno?\n'
  '\nKolik činila přirážka k jízdnému při jízdě načerno?\n'
  '\nKolik činila přirážka k jízdnému při jízdě načerno?\n']"
-44,19,"['\nPodle kterého zákona soud posoudil skutkový stav?\n'
- '\nPodle kterého zákona soud posoudil skutkový stav?\n'
- '\nPodle kterého zákona soud posoudil skutkový stav?\n']"
-6,19,"['\nKdo a kolik celkem musí zaplatit?\n'
+48,18,"['\nProč je žalovaný povinen něco platit žalobci?\n'
+ '\nProč je žalovaný povinen něco platit žalobci?\n'
+ '\nProč je žalovaný povinen něco platit žalobci?\n']"
+1,20,"['\nKdo a kolik celkem musí zaplatit?\n'
  '\nKdo a kolik celkem musí zaplatit?\n'
  '\nKdo a kolik celkem musí zaplatit?\n']"
-37,19,"['\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n'
- '\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n'
- '\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n']"
-43,20,"['\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n'
- '\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n'
- '\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n']"
-24,20,"['\nKolik toho žalovaná splatila?\n' '\nKolik toho žalovaná splatila?\n'
- '\nKolik toho žalovaná splatila?\n']"
-18,20,"['\nJaké číslo má zákon, podle kterého soud postupoval?\n'
- '\nJaké číslo má zákon, podle kterého soud postupoval?\n'
- '\nJaké číslo má zákon, podle kterého soud postupoval?\n']"
-15,20,"['\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n'
- '\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n'
- '\nČeho se týkala smlouva mezi žalobkyní a žalovanou?\n']"
-2,20,"['\nO co se v této věci vedl spor? (jednou větou)\n'
- '\nO co se v této věci vedl spor? (jednou větou)\n'
- '\nO co se v této věci vedl spor? (jednou větou)\n']"
 36,20,"['\nPodle jakých zákonů soud věc posoudil?\n'
  '\nPodle jakých zákonů soud věc posoudil?\n'
  '\nPodle jakých zákonů soud věc posoudil?\n']"
-49,20,"['\nK jakému soudu je možné podat ve věci odvolání?\n'
- '\nK jakému soudu je možné podat ve věci odvolání?\n'
- '\nK jakému soudu je možné podat ve věci odvolání?\n']"
-25,21,"['\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n'
- '\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n'
- '\nKolik požadovala žalobkyně a kolik jí soud přiznal?\n']"
+33,21,"['\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n'
+ '\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n'
+ '\nJak dlouho jezdil žalovaný bez pojištění odpovědnosti?\n']"
+18,21,"['\nJaké číslo má zákon, podle kterého soud postupoval?\n'
+ '\nJaké číslo má zákon, podle kterého soud postupoval?\n'
+ '\nJaké číslo má zákon, podle kterého soud postupoval?\n']"
 10,21,"['\nV jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?\n'
  '\nV jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?\n'
  '\nV jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?\n']"
-1,21,"['\nKdo a kolik celkem musí zaplatit?\n'
- '\nKdo a kolik celkem musí zaplatit?\n'
- '\nKdo a kolik celkem musí zaplatit?\n']"
-30,27,"['\nJak se žalovaný bránil proti žalobě?\n'
- '\nJak se žalovaný bránil proti žalobě?\n'
- '\nJak se žalovaný bránil proti žalobě?\n']"
-23,27,"['\nJakým způsobem se žalovaný bránil proti žalobě?\n'
- '\nJakým způsobem se žalovaný bránil proti žalobě?\n'
- '\nJakým způsobem se žalovaný bránil proti žalobě?\n']"
-11,27,"['\nJak se vypočítá příspěvek za provozování vozidla?\n'
+24,21,"['\nKolik toho žalovaná splatila?\n' '\nKolik toho žalovaná splatila?\n'
+ '\nKolik toho žalovaná splatila?\n']"
+27,21,"['\nV jakém složení soud rozhodl ve věci?\n'
+ '\nV jakém složení soud rozhodl ve věci?\n'
+ '\nV jakém složení soud rozhodl ve věci?\n']"
+46,21,"['\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n'
+ '\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n'
+ '\nJakou smlouvu spolu uzavřeli žalobci a žalovaný?\n']"
+49,21,"['\nK jakému soudu je možné podat ve věci odvolání?\n'
+ '\nK jakému soudu je možné podat ve věci odvolání?\n'
+ '\nK jakému soudu je možné podat ve věci odvolání?\n']"
+44,21,"['\nPodle kterého zákona soud posoudil skutkový stav?\n'
+ '\nPodle kterého zákona soud posoudil skutkový stav?\n'
+ '\nPodle kterého zákona soud posoudil skutkový stav?\n']"
+34,21,"['\nOdkdy dokdy nebylo vozidlo pojištěno?\n'
+ '\nOdkdy dokdy nebylo vozidlo pojištěno?\n'
+ '\nOdkdy dokdy nebylo vozidlo pojištěno?\n']"
+37,21,"['\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n'
+ '\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n'
+ '\nJak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?\n']"
+43,21,"['\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n'
+ '\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n'
+ '\nJak se jmenuje společnost, která poskytla spotřebitelský úvěr?\n']"
+11,24,"['\nJak se vypočítá příspěvek za provozování vozidla?\n'
  '\nJak se vypočítá příspěvek za provozování vozidla?\n'
  '\nJak se vypočítá příspěvek za provozování vozidla?\n']"
-13,28,"['\nKteré právní předpisy soud použil při rozhodování?\n'
+13,24,"['\nKteré právní předpisy soud použil při rozhodování?\n'
  '\nKteré právní předpisy soud použil při rozhodování?\n'
  '\nKteré právní předpisy soud použil při rozhodování?\n']"
+30,26,"['\nJak se žalovaný bránil proti žalobě?\n'
+ '\nJak se žalovaný bránil proti žalobě?\n'
+ '\nJak se žalovaný bránil proti žalobě?\n']"
+23,30,"['\nJakým způsobem se žalovaný bránil proti žalobě?\n'
+ '\nJakým způsobem se žalovaný bránil proti žalobě?\n'
+ '\nJakým způsobem se žalovaný bránil proti žalobě?\n']"

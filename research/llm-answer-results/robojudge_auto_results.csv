@@ -1,0 +1,648 @@
+,index,file_name,question,human_answer,llm_answer,score,llm_type,question_id
+0,0,1927.txt,"
+Kolik ústních jednání ve věci proběhlo?
+","
+Ve věci žádné ústní jednání neproběhlo, účastníci souhlasi s rozhodnutím bez nařízení ústního jednání.","Z textu rozhodnutí není možné zjistit, kolik ústních jednání ve věci proběhlo.",1,gpt,0
+1,1,968.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 3344,95 Kč.","Žalovaný musí zaplatit žalobkyni celkem 1 855,95 Kč do tří dnů od právní moci tohoto rozsudku.",1,gpt,1
+2,2,125.txt,"
+O co se v této věci vedl spor? (jednou větou)
+","
+Žalobkyně požadavala zaplacení částky za odběr krve po žalovaném.","V této věci se vedl spor o zaplacení předmětné částky peněz, kterou žalobkyně požadovala od žalovaného za provedení odběru krve a následné vyšetření, které prokázalo přítomnost metamfetaminu a jeho metabolitu v krvi žalovaného.",7,gpt,2
+3,3,829.txt,"
+Ohledně čeho spolu strany uzavřely pojištění?
+","
+Šlo o pojištění odpovědnosti za škodu způsobenou provozem vozidla.","Strany uzavřely pojištění odpovědnosti za škodu způsobenou provozem vozidla tovární značky [anonymizována dvě slova], [registrační značka] a pojištění odpovědnosti za škodu způsobenou provozem vozidla tovární značky [příjmení] [jméno], [registrační značka].",10,gpt,3
+4,4,1912.txt,"
+Jak často mělo být placeno pojistné?
+","
+Pojistné bylo sjednáno s jednou roční splátkou.",Pojistné mělo být placeno jednou ročně.,10,gpt,4
+5,5,666.txt,"
+Kolik činila přirážka k jízdnému při jízdě načerno?
+","
+Jednorázová přirážka je 1 500 Kč.",Podle uvedené části rozsudku činila přirážka k jízdnému při jízdě načerno 1 500 Kč.,10,gpt,5
+6,6,474.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 4535 Kč + úrok z prodlení z částky 1523 za 2 nespecifikovaná období.","Žalovaný musí zaplatit žalobkyni celkem částku 3 046 Kč s úrokem z prodlení ve výši 8,05 % ročně z částky 1 523 Kč od [datum] do zaplacení. Dále musí zaplatit žalobkyni náhradu nákladů řízení v částce 1 489 Kč. Celková částka, kterou žalovaný musí zaplatit, je tedy 4 535 Kč.",4,gpt,6
+7,7,1952.txt,"
+Jaký typ právního výkladu soud zmiňuje v rozhodnutí?
+","
+Soud hovoří o gramatickém a logickém výkladu.","Soud v rozhodnutí zmiňuje gramatický a logický výklad § 9 odst. 1 zákona o spotřebitelském úvěru. Podle tohoto výkladu není dostatečné získat informace pouze od spotřebitele, ale je nutné ověřit a objektivně podložit tyto informace. Soud také zdůrazňuje, že věřitel by měl využívat veřejně dostupné informace, jako jsou údaje o životním a existenčním minimu, a porovnávat je se známými informacemi o příjmech a výdajích spotřebitele.",4,gpt,7
+8,8,1988_2.txt,"
+Podle jakého zákona soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 89/2012 Sb., občanského zákoníku (OZ).","Soud věc posoudil podle § 2395 zákona č. 89/2012 Sb., občanský zákoník (dále jen „o.z.“). Tento zákon stanovuje, že smlouvou o úvěru se úvěrující zavazuje poskytnout úvěrovanému peněžní prostředky do určité částky na jeho požádání a v jeho prospěch, zatímco úvěrovaný se zavazuje vrátit poskytnuté peněžní prostředky a zaplatit úroky.",8,gpt,8
+9,9,1988.txt,"
+Jaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?
+","
+Žalobkyně a žalovaný spolu uzavřeli smlouvu o úvěru.",Žalobkyně a žalovaný uzavřeli smlouvu o úvěru.,10,gpt,9
+10,10,595.txt,"
+V jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?
+","
+Přirážka může být maximálně 1 500 Kč a stanovena je dopravcem v přepravních podmínkách.",Výši přirážky stanoví dopravce v přepravních podmínkách. Přirážka za porušení podmínek stanovených přepravním řádem činí nejvýše 1 500 Kč.,10,gpt,10
+11,11,689.txt,"
+Jak se vypočítá příspěvek za provozování vozidla?
+","
+Příspěvek se vypočítá jako součin počtu dní provozu vozidla a částky 34 Kč jakožto denní sazby.","Příspěvek za provozování vozidla se vypočítá jako součin počtu dní žalovaného období a denní sazby. Denní sazba je stanovena na částku 34 Kč a je určena druhem vozidla, v tomto případě osobního vozidla se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm³.",9,gpt,11
+12,12,1970.txt,"
+Jak soud ve věci postupoval?
+","
+Soud nejprve vydal platební rozkaz, ale ten se nepodařilo žalované doručit, a tak jej zrušil usnesením. Poté projednal věc bez nařízení jednání, protože se účastníci tohoto práva vzdali. Soud provedl dokazování na základě listin ve spise.","Soud ve věci postupoval tak, že žalobkyně předložila do spisu několik důkazů, včetně pojistné smlouvy, vyúčtování pojistné smlouvy, pokusu o smír, oznámení o zániku pojistné smlouvy, sazebníku poplatků a předžalobní výzvy. Okresní soud vydal platební rozkaz, kterým vyhověl žalobkyni, ale protože se nepodařilo doručit platební rozkaz žalované do vlastních rukou, byl zrušen. Soud poté projednal věc bez nařízení jednání, protože účastníci se práva účasti na projednání věci vzdali. Soud vzal za prokázané, že účastníci uzavřeli smlouvu, podle které žalovaná měla platit řádně pojistné. Žalovaná však řádně neplatila a pojistná smlouva zanikla ke dni [datum]. Žalovaná dlužila pojistné ve výši [částka] do konce pojistného období a nezaplatila ho ani na základě upomínky a předžalobní výzvy.",4,gpt,12
+13,13,949_2.txt,"
+Které právní předpisy soud použil při rozhodování?
+","
+Soud použil občanský zákoník, energetických zákon a cenové rozhodnutí ERÚ","Soud při rozhodování použil následující právní předpisy:
+- Občanský zákoník (zákon č. 89/2012 Sb.), konkrétně §§ 497, 1746 odst. 2 a § 1828 a násl.
+- Zákon č. 458/2000 Sb. o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změně některých zákonů (energetický zákon), ve spojení s dopadajícími ustanoveními cenového rozhodnutí ERU pro daná období
+- § 1968 a násl. občanského zákoníku.",10,gpt,13
+14,14,1898.txt,"
+Jakými dopravními prostředky cestovala žalovaná?
+","
+Žalovaná cestovala autobusem MHD a trolejbusem MHD.",Žalovaná cestovala vozidlem na právním předchůdcem žalobce provozované lince veřejné osobní dopravy.,2,gpt,14
+15,15,949.txt,"
+Čeho se týkala smlouva mezi žalobkyní a žalovanou?
+","
+Smlouva se týkala dodávky zemního plynu do odběrného místa.",Smlouva mezi žalobkyní a žalovanou se týkala dodávky zemního plynu. Žalobkyně dodala žalované plyn do odběrného místa. Dodávka plynu zůstala nezaplacená v částce 1 124 Kč za období od [datum] do [datum]. Dlužná částka byla splatná dne [datum]. Žalovaná dále nezaplatila dodávku plynu za období od [datum] do [datum] v částce 594 Kč. Dlužná částka byla splatná dne [datum]. Vedle toho žalobkyně vyúčtovala smluvené poplatky za výzvy k zaplacení ve výši 300 Kč celkem.,7,gpt,15
+16,16,807.txt,"
+Co je to exponenciální časová složitost?
+","
+Bohužel není možné odpovědět na základě poskytnutých informací, ty se týkají soudních rozhodnutí.","Exponenciální časová složitost je matematický termín, který se používá k popisu algoritmů nebo výpočetních problémů, jejichž časová složitost roste exponenciálně s velikostí vstupních dat. To znamená, že čím větší jsou vstupní data, tím déle trvá algoritmu nebo problému vyřešit. V tomto konkrétním případě se však nejedná o exponenciální časovou složitost, ale o právní posouzení smluvních povinností a nároků žalobce na odměnu za poskytnutou právní službu.",1,gpt,16
+17,17,663.txt,"
+Které zákony soud použil při svém rozhodování?
+","
+Soud postupoval podle občanského zákoníku a podle občanského soudního řádu.","Soud při svém rozhodování použil následující zákony:
+
+- Zákon č. 89/2012 Sb., občanský zákoník, konkrétně § 2758 odst. 1, který stanoví, že pojistitel se zavazuje poskytnout pojistníkovi nebo třetí osobě pojistné plnění v případě nastání pojistné události.
+- Zákon č. 89/2012 Sb., občanský zákoník, konkrétně § 2782 odst. 1, který stanoví, že pojistitel má právo na pojistné za dobu trvání pojištění.
+- Zákon č. 89/2012 Sb., občanský zákoník, konkrétně § 1970, který stanoví, že věřitel, který řádně splnil své povinnosti, může požadovat zaplacení úroku z prodlení od dlužníka, který je v prodlení se splácením peněžitého dluhu.
+
+Těmito zákony soud posoudil věc po právní stránce.",9,gpt,17
+18,18,697.txt,"
+Jaké číslo má zákon, podle kterého soud postupoval?
+","
+Číslo zákona je 348/2005 Sb.","Zákon, podle kterého soud postupoval, je zákon č. 348/2005 Sb.",10,gpt,18
+19,19,12521.txt,"
+Jakou smlouvu spolu strany uzavřely?
+","
+Strany spolu uzavřely smlouvu o revolvingovém/spotřebitelském úvěru.",Strany uzavřely smlouvu o postoupení pohledávek.,1,gpt,19
+20,20,450001.txt,"
+Kdo nesl ve věci důkazní břemeno?
+","
+Důkazní břemeno přešlo na žalovanou, protože žalobkyně nemůže prokazovat, že žalovaná něco neučinila.","Důkazní břemeno ohledně skutečnosti, že žalovaná nezaplatila žalovanou částku, přechází na žalovanou. Je na žalované, aby soudu prokázala, že zaplatila řádně a včas.",7,gpt,20
+21,21,449857.txt,"
+Z jakých důkazů soud vyšel?
+","
+Zjištěné údaje o vozidle [registrační značka], druhá upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 19.8.2020, předžalobní upomínka ze dne 24.11.2020, zjištěné údaje o vozidle [registrační značka], výzva k zaplacení dlužné částky ze dne 29.9.2022, předžalobní upomínka ze dne 29.11.2022, výzva k zaplacení dlužné částky ze dne 3.10.2022 včetně sledování zásilek, upomínka o úhradu nedoplatku ze dne 9.7.2022, výzva k úhradě příspěvku do garančního fondu ze dne 11.3.2022, upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 11.2.2021.","Soud vyšel z následujících důkazů: zjištěné údaje o vozidle (registrační značka), druhá upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 19.8.2020, předžalobní upomínka ze dne 24.11.2020, zjištěné údaje o vozidle (registrační značka), výzva k zaplacení dlužné částky ze dne 29.9.2022, předžalobní upomínka ze dne 29.11.2022, výzva k zaplacení dlužné částky ze dne 3.10.2022 včetně sledování zásilek, upomínka o úhradu nedoplatku ze dne 9.7.2022, výzva k úhradě příspěvku do garančního fondu ze dne 11.3.2022, upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 11.2.2021. Na základě těchto důkazů soud dospěl k závěru, že žalovaný neuzavřel smlouvu o pojištění odpovědnosti za škodu způsobenou vozidlem, které vlastnil v určitém období, a neprovedl platbu za nepojištěné vozidlo, přestože byl k tomu vyzván a upomínán.",10,gpt,21
+22,22,895.txt,"
+Které měsíce žalovaný poplatek zaplatil?
+","
+Žalovaný zaplatil za leden až duben 2018.",Žalovaný zaplatil televizní poplatek za měsíce duben 2017 až červenec 2019 (vyjma měsíců leden 2018 až duben 2018). Celkem tedy zaplatil 3 240 Kč.,1,gpt,22
+23,23,454305.txt,"
+Jakým způsobem se žalovaný bránil proti žalobě?
+","
+Žalovaný se vůbec nevyjádřil.",Žalovaný se k žalobě nevyjádřil.,10,gpt,23
+24,24,449826.txt,"
+Kolik toho žalovaná splatila?
+","
+Žalovaná splatila částku 22.910 Kč, tedy 9 splátek.","Žalovaná splatila celkem 22.910 Kč, což odpovídá 9 splátkám.",10,gpt,24
+25,25,454304.txt,"
+Kolik požadovala žalobkyně a kolik jí soud přiznal?
+","
+Soud přiznal žalobkyni částku 129 328,71 Kč se zákonným úrokem z prodlení ve výši 7,75% ročně z částky 105 049,77 Kč. Žalobkyně navíc požadovala zaplacení úroku ve výši 14,2 % ročně z částky 102 232,13 Kč od [datum] do zaplacení a zákonného úroku z prodlení ve výši 7,75 % ročně z částky 10 603,36 Kč od [datum] do zaplacení.","Žalobkyně požadovala částku 129 328,71 Kč. Soud jí přiznal tuto částku.",2,gpt,25
+26,26,454243.txt,"
+Kde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?
+","
+Denní sazba je uvedena v ust. § 2 odst. 1 vyhlášky Ministerstva financí č. 205/1999 Sb.","Denní sazba příspěvku pojištění odpovědnosti při provozu osobního automobilu je stanovena vyhláškou Ministerstva financí č. 205/1999 Sb. Podle této vyhlášky se výše denní sazby příspěvku liší podle zdvihového objemu válců motoru. Pro osobní automobil se zdvihovým objemem válců motoru do 1 000 cm3 včetně je denní sazba 30 Kč, pro automobil s objemem nad 1 000 cm3 do 1 350 cm3 včetně je denní sazba 35 Kč, pro automobil s objemem nad 1 350 cm3 do určitého čísla cm3 včetně je denní sazba 47 Kč, pro automobil s objemem nad 1 850 cm3 do určitého čísla cm3 včetně je denní sazba 65 Kč a pro automobil s objemem nad 2 500 cm3 je denní sazba 93 Kč.",4,gpt,26
+27,27,449749.txt,"
+V jakém složení soud rozhodl ve věci?
+","
+Věc posuzovala samosoudkyně.",Soud ve věci rozhodl v složení samosoudkyně Mgr. Zuzana Lasotová Brabcová.,10,gpt,27
+28,28,449644.txt,"
+Kdo tento soudní spor vyhrál?
+","
+Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",Žalobkyně vyhrála tento soudní spor.,7,gpt,28
+29,29,449893.txt,"
+O jakou neplatnost smlouvy se v tomto případě jednalo?
+","
+Neplatnost absolutní.","V tomto případě se jednalo o neplatnost smlouvy o spotřebitelském úvěru. Soud dospěl k závěru, že smlouva je neplatná pro rozpor se zákonem (§ 588 o. z.) a zároveň zjevně narušuje veřejný pořádek. Jedná se o neplatnost absolutní, což znamená, že smlouva je neplatná od samého počátku a na právní úkon se hledí jako by nikdy nevznikl.",10,gpt,29
+30,30,454226.txt,"
+Jak se žalovaný bránil proti žalobě?
+","
+Žalovaný se nijak nevyjádřil.","Žalovaný se proti žalobě nevyjádřil a neinformoval soud o žádném vážném důvodu, který by mu v tom bránil. Soud proto měl za to, že nárok, který byl proti němu žalobou uplatněn, uznává a na základě toho rozhodl rozsudkem pro uznání dle § 153a odst. 3 občanského soudního řádu.",9,gpt,30
+31,31,449948.txt,"
+Jaká úroková sazba byla mezi stranami sjednána?
+","
+Úroková sazba byla 2,90 % p.a. a 20% p.a. v případě úroku z prodlení.","Úroková sazba mezi stranami sjednaná byla fixní úroková sazba 2,90 % p.a. v období ode dne prvního čerpání úvěru do [datum].",2,gpt,31
+32,32,449878.txt,"
+Na koho se soud v rozhodnutí odvolává?
+","
+Soud se odvolává na rozhodnutí Soudního dvora EU z roku 2020.","Soud se v rozhodnutí odvolává na Soudní dvůr, který ve věci C (OPR- [právnická osoba] proti GK) vyslovil výklad článků 8 a 23 směrnice, který stanovuje, že vnitrostátní soud musí zkoumat, zda došlo k porušení předsmluvní povinnosti věřitele posoudit úvěruschopnost spotřebitele a vyvodit důsledky, které z tohoto porušení vyplývají ve vnitrostátním právu. Soudní dvůr také uvedl, že sankce za porušení této povinnosti musí splňovat požadavky článku 23 směrnice. Dále Soudní dvůr stanovil, že články 8 a 23 směrnice brání vnitrostátní úpravě, která stanovuje sankce za porušení předsmluvní povinnosti věřitele posoudit úvěruschopnost spotřebitele, a to pouze za podmínky, že spotřebitel tuto neplatnost namítne v tříleté promlčecí době.",10,gpt,32
+33,33,449787.txt,"
+Jak dlouho jezdil žalovaný bez pojištění odpovědnosti?
+","
+Žalovaný po 70 dní neměl sjednáno pojištění.","Žalovaný jezdil bez pojištění odpovědnosti 70 dní, a to od [datum] do [datum].",10,gpt,33
+34,34,449829.txt,"
+Odkdy dokdy nebylo vozidlo pojištěno?
+","
+Od 1. 6. 2021 do 30. 9. 2021 a od 1. 10. do 1. 11. 2021.","Vozidlo nebylo pojištěno od 1. 6. 2021 do 30. 9. 2021, což je celkem 122 dní. Dále nebylo pojištěno od 1. 10. 2021 do 1. 11. 2021, což je celkem 32 dní.",10,gpt,34
+35,35,454398.txt,"
+Co v tomto případu učinil žalovaný za právní kroky?
+","
+Žalovaný písemně uznal svůj dluh, ale k žalobě se nevyjádřil.","Žalovaný v tomto případě nevyjádřil souhlas s projednáním věci a rozhodnutím bez nařízení jednání. Soud vyzval žalovaného, aby se vyjádřil k této výzvě, avšak žalovaný se nevyjádřil. Soud proto předpokládal, že žalovaný souhlasí s projednáním věci a rozhodnutím bez nařízení jednání.",2,gpt,35
+36,36,454274.txt,"
+Podle jakých zákonů soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 458/2000 Sb., o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změně některých zákonů (energetický zákon), ve spojení se zákonem č. 89/2012 Sb., občanský zákoník (dále jen„ OZ“).","Soud věc posoudil podle zákona č. 458/2000 Sb., o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změně některých zákonů (energetický zákon), ve spojení se zákonem č. 89/2012 Sb., občanský zákoník (OZ). Konkrétně se soud odvolával na § 72 odst. 2 větu první energetického zákona, který stanoví, že smlouvou o sdružených službách dodávky plynu se výrobce plynu nebo obchodník s plynem zavazuje dodávat zákazníkovi plyn a zajistit související služby v plynárenství na vlastní jméno a na vlastní účet. Zákazník se naopak zavazuje zaplatit za dodávku plynu cenu a za související služby cenu uplatňovanou v souladu s cenovou regulací.",9,gpt,36
+37,37,449683.txt,"
+Jak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?
+","
+Povinné ručení","V případě šlo o pojištění odpovědnosti z provozu vozidla, které je také známé jako tzv. povinné ručení.",10,gpt,37
+38,38,449698.txt,"
+Jaký typ pojištění byl mezi stranami uzavřen?
+","
+Životní pojištění s pojistnou dobou 29 let.",Mezi stranami byla uzavřena Pojistná smlouva na životní pojištění.,2,gpt,38
+39,39,450226.txt,"
+Kolik titulů má soudce, který věc řešil?
+","
+Má 2 tituly: Mgr. a Bc.","Na základě poskytnuté části rozhodnutí nelze určit, kolik titulů má soudce, který věc řešil.",1,gpt,39
+40,40,449702.txt,"
+Čeho se dopustil žalovaný?
+","
+Žalovaný se dopustil bezdůvodného obohacení.","Žalovaný se dopustil bezdůvodného obohacení tím, že přijal peněžní prostředky ve výši 10 000 Kč na svůj bankovní účet, které mu byly poskytnuty společností [právnická osoba]. Pohledávka byla následně postoupena na žalobkyni a žalovaný, přes výzvu, částku nevrátil.",7,gpt,40
+41,41,1018.txt,"
+Kdo se chtěl rozvést s kým?
+","
+Návrh podal manžel, avšak manželka se k němu připojila rozvést se tedy chtěli oba dva manželé.",Manžel se chtěl rozvést se svou manželkou.,2,gpt,41
+42,42,744.txt,"
+Proč se manželé rozvedli?
+","
+Důvodem bylo neplnění společenské funkce manželství.","Manželé se rozvedli, protože manželka podala návrh na rozvod manželství s argumentem, že manželství neplní svoji společenskou funkci. Manžel s návrhem souhlasil. Soud zjistil, že manželství bylo uzavřeno po roční známosti z důvodu vzájemné citové náklonnosti. Oba manželé uvedli, že manželství bylo spokojené asi po dobu jednoho roku, ale poté mezi nimi vznikaly neshody ve finančních záležitostech a ve všech oblastech společného soužití. Manželé žijí odděleně asi čtyři roky a společné hospodaření a intimní soužití bylo ukončeno přibližně před čtyřmi lety. V současné době žádný z manželů není citově vázán k jinému partnerovi.",8,gpt,42
+43,43,1925.txt,"
+Jak se jmenuje společnost, která poskytla spotřebitelský úvěr?
+","
+Provident","Společnost, která poskytla spotřebitelský úvěr, se jmenuje Provident.",10,gpt,43
+44,44,449935.txt,"
+Podle kterého zákona soud posoudil skutkový stav?
+","
+Podle zák. č. 168/1999 Sb., o pojištění odpovědnosti z provozu vozidla.","Soud posoudil skutkový stav podle zákona č. 168/1999 Sb., o pojištění odpovědnosti z provozu vozidla, ve znění účinném v době tvrzeného provozování vozidla bez uzavřeného pojištění odpovědnosti.",10,gpt,44
+45,45,449892.txt,"
+Jakou částku (už) žalovaný žalobkyni uhradil?
+","
+Žalovaný neuhradil žádnou částku, proto byl žalován.","Žalovaný žalobkyni uhradil částku ve výši 69 848,18 Kč.",1,gpt,45
+46,46,449861.txt,"
+Jakou smlouvu spolu uzavřeli žalobci a žalovaný?
+","
+Smlouvu o nájmu nebytových prostor.","Žalobci a žalovaný uzavřeli smlouvu o nájmu nebytových prostor v ulici [příjmení] [anonymizováno] v přízemí budovy [adresa]. Žalovaný se zavázal platit žalobcům nájemné do 25. dne měsíce předcházejícího. Byla také sjednána smluvní pokuta ve výši 0,05 % z dlužné částky za každý den prodlení s úhradou nájemného. Nájemné za období od 1. 1. 2020 do 31. 3. 2020 činilo 25 000 Kč měsíčně a od 1. 4. 2020 činilo nájemné 20 000 Kč měsíčně. Dne 22. 11. 2021 byla mezi žalobci a žalovaným uzavřena dohoda o ukončení nájmu.",10,gpt,46
+47,47,12502.txt,"
+Kolikrát žalovaný použil dopravní prostředek žalobkyně?
+","
+Žalovený takto cestoval jednou a to tramvají.",Žalovaný použil dopravní prostředek žalobkyně jednou.,4,gpt,47
+48,48,449869.txt,"
+Proč je žalovaný povinen něco platit žalobci?
+","
+Protože žalovaný užíval byt žalobce bez právního důvodu a bezdůvodně se tak obohatil.","Žalovaný je povinen něco platit žalobci, protože se bez spravedlivého důvodu obohatil na jeho úkor. Žalovaný získal majetkový prospěch tím, že užíval byt bez právního důvodu a za to žalobci nehradil. Vzhledem k tomu, že vydání předmětu bezdůvodného obohacení není dobře možné, má žalobce právo na peněžitou náhradu ve výši obvyklé ceny. Obvyklou cenou je částka, kterou by žalovaný byl povinen za obvyklých okolností platit za nájem předmětného bytu. Soud určil tuto částku dle předpisu nájemného. Splatnost bezdůvodného obohacení nastala po uplynutí lhůty k plnění ve výzvě, kterou zaslal žalobce žalovanému. Žalovaný je tedy v prodlení a soud přiznal žalobci zákonný úrok z prodlení.",9,gpt,48
+49,49,450042.txt,"
+K jakému soudu je možné podat ve věci odvolání?
+","
+Ke Krajskému soudu v Brně prostřednictvím Okresního soudu v Jihlavě.",Ve věci odvolání je možné podat odvolání ke Krajskému soudu v Brně prostřednictvím Okresního soudu v Jihlavě.,10,gpt,49
+50,0,1927.txt,"
+Kolik ústních jednání ve věci proběhlo?
+","
+Ve věci žádné ústní jednání neproběhlo, účastníci souhlasi s rozhodnutím bez nařízení ústního jednání."," Answer in Czech:
+
+Žádného ústního jednání ve věci neproběhlo.",8,llama,0
+51,1,968.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 3344,95 Kč."," Celkem by Žalovaný měl zaplatit 3 344,95 Kč (1 855,95 Kč + 1 489 Kč).",10,llama,1
+52,2,125.txt,"
+O co se v této věci vedl spor? (jednou větou)
+","
+Žalobkyně požadavala zaplacení částky za odběr krve po žalovaném."," O plátění částky 8 246 Kč, které bylo vyúčtované žalovanému jako kompenzace za údajnou újmu způsobenou ovlivněním návykovou látkou.",1,llama,2
+53,3,829.txt,"
+Ohledně čeho spolu strany uzavřely pojištění?
+","
+Šlo o pojištění odpovědnosti za škodu způsobenou provozem vozidla.", Škody způsobené provozem vozidla.,2,llama,3
+54,4,1912.txt,"
+Jak často mělo být placeno pojistné?
+","
+Pojistné bylo sjednáno s jednou roční splátkou."," Pojistné bylo sjednáno na dobu neurčitou, ale hrazení pojistného pro příslušné pojistné období bylo sjednáno v jedné roční splátce.",7,llama,4
+55,5,666.txt,"
+Kolik činila přirážka k jízdnému při jízdě načerno?
+","
+Jednorázová přirážka je 1 500 Kč.", Answer: 1 500 Kč,8,llama,5
+56,6,474.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 4535 Kč + úrok z prodlení z částky 1523 za 2 nespecifikovaná období.", Žalovaný musí zaplatit celkem 4 617 Kč (3 046 Kč + 1 523 Kč + 1 489 Kč).,1,llama,6
+57,7,1952.txt,"
+Jaký typ právního výkladu soud zmiňuje v rozhodnutí?
+","
+Soud hovoří o gramatickém a logickém výkladu.", Gramatický a logický výklad.,9,llama,7
+58,8,1988_2.txt,"
+Podle jakého zákona soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 89/2012 Sb., občanského zákoníku (OZ)."," Podle zákona č. 89/2012 Sb., občanský zákoník (dále jen ""o.z."").",8,llama,8
+59,9,1988.txt,"
+Jaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?
+","
+Žalobkyně a žalovaný spolu uzavřeli smlouvu o úvěru.", Smlouva o úvěru.,1,llama,9
+60,10,595.txt,"
+V jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?
+","
+Přirážka může být maximálně 1 500 Kč a stanovena je dopravcem v přepravních podmínkách."," Answer:
+Podle § 37 odst. 6 zák. č. 266/1994 Sb. může být přirážka stanovena až do výše 1 500 Kč. Dopravce stanoví výši přirážky v přepravních podmínkách.",10,llama,10
+61,11,689.txt,"
+Jak se vypočítá příspěvek za provozování vozidla?
+","
+Příspěvek se vypočítá jako součin počtu dní provozu vozidla a částky 34 Kč jakožto denní sazby."," Příspěvek za provozování vozidla se vypočítá jako součin počtu dní období, ve kterém bylo vozidlo provozováno, a denní sazby, která činí 34 Kč pro osobní vozidlo se zdvihovým objemem válců motoru nad 1 350 cm³ do 1 850 cm³.",10,llama,11
+62,12,1970.txt,"
+Jak soud ve věci postupoval?
+","
+Soud nejprve vydal platební rozkaz, ale ten se nepodařilo žalované doručit, a tak jej zrušil usnesením. Poté projednal věc bez nařízení jednání, protože se účastníci tohoto práva vzdali. Soud provedl dokazování na základě listin ve spise."," Okresní soud v Kladně svě chezel platební rozkaz, ale jeliko se nepodařilo doručit do rukou žalovaného, byla tato usnesením zrušena. Poté soud použil § 115a zákona č. 99/1963 Sb. a projednal věc bez nařízení jednání, protože účastníci se vzdali práva účasti na projednání věci. Soud provedl listinami",8,llama,12
+63,13,949_2.txt,"
+Které právní předpisy soud použil při rozhodování?
+","
+Soud použil občanský zákoník, energetických zákon a cenové rozhodnutí ERÚ"," Soud použil ustanovení §§ 497, 1746 odst. 2 a ustanovení § 1828 a násl. zák. č. 89/2012 Sb., občanský zákoník, dále podle dopadajících ustanovení zák. č. 458/2000 Sb. o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změ",10,llama,13
+64,14,1898.txt,"
+Jakými dopravními prostředky cestovala žalovaná?
+","
+Žalovaná cestovala autobusem MHD a trolejbusem MHD.", Žalovaná cestovala autobusem MHD a trolejbusem MHD.,10,llama,14
+65,15,949.txt,"
+Čeho se týkala smlouva mezi žalobkyní a žalovanou?
+","
+Smlouva se týkala dodávky zemního plynu do odběrného místa."," Šlo Between the plaintiff and the defendant was a contract for the supply of natural gas, according to which the plaintiff delivered gas to the defendant's address at [street and number] between [date] and [date] for an unpaid amount of CZK 1,124. The debt became due on [date]. The defendant also failed to pay for the gas supply for the period from [date] to [date] in the amount of CZK 594. The debt became due on [date]. In addition, the plaintiff",2,llama,15
+66,16,807.txt,"
+Co je to exponenciální časová složitost?
+","
+Bohužel není možné odpovědět na základě poskytnutých informací, ty se týkají soudních rozhodnutí."," Exponenciální časová složitost je situace, když právník poskytne službu klientovi prostřednictvím telefonické konzultace a následně klient souhlasí s uhradením nákladů, ale neuhradí je. Tato situace je možná i v jiných oborech, než jsou právní služby, napříkle v oboru informační technologie, kde může být složitost nabyta pomocí exponenci",1,llama,16
+67,17,663.txt,"
+Které zákony soud použil při svém rozhodování?
+","
+Soud postupoval podle občanského zákoníku a podle občanského soudního řádu."," Soud použil při svém rozhodování následující zákony:
+
+* Občanský zákoník (§ 2758 odst. 1 a § 2782 odst. 1)
+* Zákon o dlužnících (§ 1970)
+* Vyhláška č. 351/2013 Sb., ve znění pozdějších předpisů
+* Advokátní tarif (§ 6 odst. 1 a § ",2,llama,17
+68,18,697.txt,"
+Jaké číslo má zákon, podle kterého soud postupoval?
+","
+Číslo zákona je 348/2005 Sb.", Zákon č. 348/2005 Sb.,10,llama,18
+69,19,12521.txt,"
+Jakou smlouvu spolu strany uzavřely?
+","
+Strany spolu uzavřely smlouvu o revolvingovém/spotřebitelském úvěru.", Smlouvu o postoupení pohledávek a smlouvu o revolvingovém úvěru.,4,llama,19
+70,20,450001.txt,"
+Kdo nesl ve věci důkazní břemeno?
+","
+Důkazní břemeno přešlo na žalovanou, protože žalobkyně nemůže prokazovat, že žalovaná něco neučinila."," Žalovaná nesla důkazní břemeno, neboť žalobkyně nemohla prokazat negativní skutečnost, že žalovaná neučinila úhradu.",9,llama,20
+71,21,449857.txt,"
+Z jakých důkazů soud vyšel?
+","
+Zjištěné údaje o vozidle [registrační značka], druhá upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 19.8.2020, předžalobní upomínka ze dne 24.11.2020, zjištěné údaje o vozidle [registrační značka], výzva k zaplacení dlužné částky ze dne 29.9.2022, předžalobní upomínka ze dne 29.11.2022, výzva k zaplacení dlužné částky ze dne 3.10.2022 včetně sledování zásilek, upomínka o úhradu nedoplatku ze dne 9.7.2022, výzva k úhradě příspěvku do garančního fondu ze dne 11.3.2022, upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 11.2.2021."," Soud vyšel z následujících důkazů:
+
+* Listiny: zjištěné údaje o vozidle (registrační značka), druhá upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 19.8.2020, předžalobní upomínka ze dne 24.11.2020, zjištěné údaje o vozidle (registrační značka), výzva k",4,llama,21
+72,22,895.txt,"
+Které měsíce žalovaný poplatek zaplatil?
+","
+Žalovaný zaplatil za leden až duben 2018."," Answer:
+Žalovaný poplatek zaplatil pouze za měsíce leden 2018 až duben 2018.",10,llama,22
+73,23,454305.txt,"
+Jakým způsobem se žalovaný bránil proti žalobě?
+","
+Žalovaný se vůbec nevyjádřil.", Žalovaný se nevyjádřil ke žalobě.,10,llama,23
+74,24,449826.txt,"
+Kolik toho žalovaná splatila?
+","
+Žalovaná splatila částku 22.910 Kč, tedy 9 splátek."," Žalovaná splatila 22.910 Kč, tzn. 9 splátek.",10,llama,24
+75,25,454304.txt,"
+Kolik požadovala žalobkyně a kolik jí soud přiznal?
+","
+Soud přiznal žalobkyni částku 129 328,71 Kč se zákonným úrokem z prodlení ve výši 7,75% ročně z částky 105 049,77 Kč. Žalobkyně navíc požadovala zaplacení úroku ve výši 14,2 % ročně z částky 102 232,13 Kč od [datum] do zaplacení a zákonného úroku z prodlení ve výši 7,75 % ročně z částky 10 603,36 Kč od [datum] do zaplacení."," Answer:
+Žalobkyně požadovala 105 049,77 Kč + 10 603,36 Kč = 115 653,13 Kč.
+Soud jí přiznal 129 328,71 Kč.",2,llama,25
+76,26,454243.txt,"
+Kde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?
+","
+Denní sazba je uvedena v ust. § 2 odst. 1 vyhlášky Ministerstva financí č. 205/1999 Sb.", Denní sazba příspěvku pojištění odpovědnosti při provozu osobního automobilu je stanovena Ministerstvem financí vyhláškou č. 205/1999 Sb.,4,llama,26
+77,27,449749.txt,"
+V jakém složení soud rozhodl ve věci?
+","
+Věc posuzovala samosoudkyně.", Ve věci rozhodl soud v složení samosoudkyně Mgr. Zuzany Lasotové Brabcové.,10,llama,27
+78,28,449644.txt,"
+Kdo tento soudní spor vyhrál?
+","
+Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).", I. Žalovaný,1,llama,28
+79,29,449893.txt,"
+O jakou neplatnost smlouvy se v tomto případě jednalo?
+","
+Neplatnost absolutní.", Šlo o neplatnost smlouvy o spotřebitelském úvěru z důvodu rozporu se zákonem (§ 588 občanského zákoníku) a současně zjevného narušování veřejného pořádku.,2,llama,29
+80,30,454226.txt,"
+Jak se žalovaný bránil proti žalobě?
+","
+Žalovaný se nijak nevyjádřil.", Žalovaný se nevyjádřil vůbec.,10,llama,30
+81,31,449948.txt,"
+Jaká úroková sazba byla mezi stranami sjednána?
+","
+Úroková sazba byla 2,90 % p.a. a 20% p.a. v případě úroku z prodlení."," Answer:
+2,90 % p.a.",5,llama,31
+82,32,449878.txt,"
+Na koho se soud v rozhodnutí odvolává?
+","
+Soud se odvolává na rozhodnutí Soudního dvora EU z roku 2020."," Soud se v rozhodnutí odvolává na spotřebitele, kteří mají podezření, že nedostatečné posouzení úvěruschopnosti způsobuje neplatnost absolutní nebo relativní úvěrové smlouvy.",1,llama,32
+83,33,449787.txt,"
+Jak dlouho jezdil žalovaný bez pojištění odpovědnosti?
+","
+Žalovaný po 70 dní neměl sjednáno pojištění.", Žalovaný jel bez pojištění odpovědnosti celkem 70 dní.,10,llama,33
+84,34,449829.txt,"
+Odkdy dokdy nebylo vozidlo pojištěno?
+","
+Od 1. 6. 2021 do 30. 9. 2021 a od 1. 10. do 1. 11. 2021.", Od 1. 6. 2021 do 30. 9. 2021 (celkem 122 dní) a od 1. 10. 2021 do 1. 11. 2021 (celkem 32 dní).,10,llama,34
+85,35,454398.txt,"
+Co v tomto případu učinil žalovaný za právní kroky?
+","
+Žalovaný písemně uznal svůj dluh, ale k žalobě se nevyjádřil."," Žalovaný se nevyjádřil ke žalobě a neuznal částku 11 500 Kč, kterou mu žalobkyně byla nucena uhradit za úhradu nákladů spojených s jeho ošetřením a pobytem na protialkoholní záchytné stanici. Žalovaný tak porušil svou povinnost platit úhradu a nebyl schopen splnit své závazky. Proto byl soudním roz",1,llama,35
+86,36,454274.txt,"
+Podle jakých zákonů soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 458/2000 Sb., o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změně některých zákonů (energetický zákon), ve spojení se zákonem č. 89/2012 Sb., občanský zákoník (dále jen„ OZ“)."," According to the provided text, the court assessed the case based on the following laws:
+
+* Act No. 458/2000 Coll., on the conditions for business activities and the exercise of state administration in energy industries, and on the amendment of certain acts (Energy Act)
+* Act No. 89/2012 Coll., Civil Code (OBČANSKÝ ZÁKONÍK)",10,llama,36
+87,37,449683.txt,"
+Jak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?
+","
+Povinné ručení"," Český termín pro označení druhu pojištění odpovědnosti, o němž šlo v daném případě, je ""povinné ručení"".",10,llama,37
+88,38,449698.txt,"
+Jaký typ pojištění byl mezi stranami uzavřen?
+","
+Životní pojištění s pojistnou dobou 29 let.", Životní pojištění na 29 let s počátkem pojištění [datum].,9,llama,38
+89,39,450226.txt,"
+Kolik titulů má soudce, který věc řešil?
+","
+Má 2 tituly: Mgr. a Bc.", Mgr. Bc. Petr Závadský je samosoudcem.,10,llama,39
+90,40,449702.txt,"
+Čeho se dopustil žalovaný?
+","
+Žalovaný se dopustil bezdůvodného obohacení."," Žalovaný se dopustil nevrátení částky 10 000 Kč, která mu byla poskytnuta společností [právnická osoba] na jeho bankovní účet, ačkoliv mu bylo vyrozuměno, že musí tuto částku vrátit. Tento čin je considрован jako bezdůvodné obohacení.",7,llama,40
+91,41,1018.txt,"
+Kdo se chtěl rozvést s kým?
+","
+Návrh podal manžel, avšak manželka se k němu připojila rozvést se tedy chtěli oba dva manželé."," Answer:
+Manžel se chtěl rozvést s manželkou.",2,llama,41
+92,42,744.txt,"
+Proč se manželé rozvedli?
+","
+Důvodem bylo neplnění společenské funkce manželství."," Answer:
+Manželé se rozvedli kvůli vzniku neshod mezi nimi, zejména v oblasti financí a následného všech oblastí společného soužití, které vedly ke ztrátě vzájemné citové náklonnosti.",2,llama,42
+93,43,1925.txt,"
+Jak se jmenuje společnost, která poskytla spotřebitelský úvěr?
+","
+Provident", Provident.,10,llama,43
+94,44,449935.txt,"
+Podle kterého zákona soud posoudil skutkový stav?
+","
+Podle zák. č. 168/1999 Sb., o pojištění odpovědnosti z provozu vozidla."," Podle zákona č. 168/1999 Sb., o pojištění odpovědnosti z provozu vozidla, ve znění účinném v době tvrzeného provozování vozidla bez uzavřeného pojištění odpovědnosti.",10,llama,44
+95,45,449892.txt,"
+Jakou částku (už) žalovaný žalobkyni uhradil?
+","
+Žalovaný neuhradil žádnou částku, proto byl žalován.", Žalovaný žalobkyni uhradil částku 60 000 Kč.,1,llama,45
+96,46,449861.txt,"
+Jakou smlouvu spolu uzavřeli žalobci a žalovaný?
+","
+Smlouvu o nájmu nebytových prostor."," Žalobci a žalovaný uzavřeli smlouvu o nájmu nebytových prostor v ulici [příjmení] [anonymizováno] v přízemí budovy [adresa] pro obchodní prostory – jedna místnost a zázemí, šatna, WC.",10,llama,46
+97,47,12502.txt,"
+Kolikrát žalovaný použil dopravní prostředek žalobkyně?
+","
+Žalovený takto cestoval jednou a to tramvají."," Žalovaný použil dopravní prostředek žalobkyně jednou, a to dne [datum], kdy cestoval tramvají linkou 1 v [obec].",8,llama,47
+98,48,449869.txt,"
+Proč je žalovaný povinen něco platit žalobci?
+","
+Protože žalovaný užíval byt žalobce bez právního důvodu a bezdůvodně se tak obohatil."," Žalovaný je povinen zaplatit žalobci náhradu ve výši obvyklé ceny (obvyklé nájemné) za užívání předmětného bytu bez právního důvodu, jelikož se bezdůvodně obohatil na úkor žalobce. Tento případ se řídí ust. § 2991 a násl. o.z., které stanovují, že kdo se na úkor jiného bez spravedlivého důvod",8,llama,48
+99,49,450042.txt,"
+K jakému soudu je možné podat ve věci odvolání?
+","
+Ke Krajskému soudu v Brně prostřednictvím Okresního soudu v Jihlavě.", Možné je podat odvolání k Krajskému soudu v Brně prostřednictvím Okresního soudu v Jihlavě.,10,llama,49
+100,0,1927.txt,"
+Kolik ústních jednání ve věci proběhlo?
+","
+Ve věci žádné ústní jednání neproběhlo, účastníci souhlasi s rozhodnutím bez nařízení ústního jednání.",V,1,vicuna,0
+101,1,968.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 3344,95 Kč.","Answer:Žalovaný musí zaplatit žalobkyni celkově částku 3 344,9 Kč - částku za první přílohu v částce 1 855,95 Kč a druhou přílohu v částce 1 489 Kč.",9,vicuna,1
+102,2,125.txt,"
+O co se v této věci vedl spor? (jednou větou)
+","
+Žalobkyně požadavala zaplacení částky za odběr krve po žalovaném.","Answer:
+Ozaplacení částky peněz za odběr krve s odůvodněním, že se žalovaný dne [datum] podrobil odběru krve na žádost [anonymizována čtyři slova], pro podezření z ovlivněním návykovou látkou.
+
+Note: I have translated the question and the answer from Czech to English for your reference.",7,vicuna,2
+103,3,829.txt,"
+Ohledně čeho spolu strany uzavřely pojištění?
+","
+Šlo o pojištění odpovědnosti za škodu způsobenou provozem vozidla.","Answer:
+Soudrozhodl soud ve věci bez nařízení jednání, bez provedení dokazování s tím, že před rozhodnutím vycházel z důkazů, které mu byly předloženy. Soud zjistil, že mezi účastníky byly uzav",1,vicuna,3
+104,4,1912.txt,"
+Jak často mělo být placeno pojistné?
+","
+Pojistné bylo sjednáno s jednou roční splátkou.",S,1,vicuna,4
+105,5,666.txt,"
+Kolik činila přirážka k jízdnému při jízdě načerno?
+","
+Jednorázová přirážka je 1 500 Kč.","""",0,vicuna,5
+106,6,474.txt,"
+Kdo a kolik celkem musí zaplatit?
+","
+Platit musí žalovaný a to celkem 4535 Kč + úrok z prodlení z částky 1523 za 2 nespecifikovaná období.","A)Žalovaný 3 046 Kč s úrokem z prodlení
+B) Žalovaný 1 489 Kč a 3 046 Kč s úrokem z prodlení
+C) Žalobkyně 3 046 Kč a 1 489 Kč
+D) Žalobkyně 4 535 Kč
+
+Answer: B) Žalovaný 1 489 Kč a 3 046 Kč s úrokem z prodlení",2,vicuna,6
+107,7,1952.txt,"
+Jaký typ právního výkladu soud zmiňuje v rozhodnutí?
+","
+Soud hovoří o gramatickém a logickém výkladu.",S,1,vicuna,7
+108,8,1988_2.txt,"
+Podle jakého zákona soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 89/2012 Sb., občanského zákoníku (OZ).","A)Podle § 1955 o.z.
+B) Podle § 1757 o.z.
+C) Podle § 1952 o.z.
+D) Podle § 2395 o.z.",1,vicuna,8
+109,9,1988.txt,"
+Jaký typ smlouvy spolu uzavřeli žalobkyně a žalovaný?
+","
+Žalobkyně a žalovaný spolu uzavřeli smlouvu o úvěru.",Ž,1,vicuna,9
+110,10,595.txt,"
+V jaké výši je možné stanovit přiřážku? Kdo a jak ji stanoví?
+","
+Přirážka může být maximálně 1 500 Kč a stanovena je dopravcem v přepravních podmínkách.","Czechtranslation:
+Jaká je výše, kterou je možné stanovit přirážku? Kdo a jak ji stanoví?",1,vicuna,10
+111,11,689.txt,"
+Jak se vypočítá příspěvek za provozování vozidla?
+","
+Příspěvek se vypočítá jako součin počtu dní provozu vozidla a částky 34 Kč jakožto denní sazby.","Příspěvekza provozování vozidla se vypočítá součinem počtu dní žalovaného období a částky 34 Kč jako denní sazby, jejíž výše je dána druhem vozidla. V tomto případě byl žalovaný vlastníkem vozidla, přesto však nehradil pojistné z titulu pojištění odpovědnosti z",5,vicuna,11
+112,12,1970.txt,"
+Jak soud ve věci postupoval?
+","
+Soud nejprve vydal platební rozkaz, ale ten se nepodařilo žalované doručit, a tak jej zrušil usnesením. Poté projednal věc bez nařízení jednání, protože se účastníci tohoto práva vzdali. Soud provedl dokazování na základě listin ve spise.",S,1,vicuna,12
+113,13,949_2.txt,"
+Které právní předpisy soud použil při rozhodování?
+","
+Soud použil občanský zákoník, energetických zákon a cenové rozhodnutí ERÚ","A)Ustanovení §§ 497, 1746 odst. 2 a ustanovení § 1828 a násl. zák. č. 89/2012 Sb. občanský zákoník
+B) Ustanovení § 1828 a násl. zák. č. 89/2012 Sb. občanský zákoník a zák. č. 458/2000 Sb. o podmínkách podnikání a o vý",4,vicuna,13
+114,14,1898.txt,"
+Jakými dopravními prostředky cestovala žalovaná?
+","
+Žalovaná cestovala autobusem MHD a trolejbusem MHD.",Ž,1,vicuna,14
+115,15,949.txt,"
+Čeho se týkala smlouva mezi žalobkyní a žalovanou?
+","
+Smlouva se týkala dodávky zemního plynu do odběrného místa.","A)Smlouva byla týkala dodávky zemního plynu.
+B) Smlouva byla týkala jiného plynu než zemní.
+C) Smlouva nebyla vůbec uzavřena.
+D) Smlouva byla týkala jiného typu služby než dodávka plynu.",5,vicuna,15
+116,16,807.txt,"
+Co je to exponenciální časová složitost?
+","
+Bohužel není možné odpovědět na základě poskytnutých informací, ty se týkají soudních rozhodnutí.",Ex,1,vicuna,16
+117,17,663.txt,"
+Které zákony soud použil při svém rozhodování?
+","
+Soud postupoval podle občanského zákoníku a podle občanského soudního řádu.",S,1,vicuna,17
+118,18,697.txt,"
+Jaké číslo má zákon, podle kterého soud postupoval?
+","
+Číslo zákona je 348/2005 Sb.",Z,1,vicuna,18
+119,19,12521.txt,"
+Jakou smlouvu spolu strany uzavřely?
+","
+Strany spolu uzavřely smlouvu o revolvingovém/spotřebitelském úvěru.",S,1,vicuna,19
+120,20,450001.txt,"
+Kdo nesl ve věci důkazní břemeno?
+","
+Důkazní břemeno přešlo na žalovanou, protože žalobkyně nemůže prokazovat, že žalovaná něco neučinila.",Ž,1,vicuna,20
+121,21,449857.txt,"
+Z jakých důkazů soud vyšel?
+","
+Zjištěné údaje o vozidle [registrační značka], druhá upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 19.8.2020, předžalobní upomínka ze dne 24.11.2020, zjištěné údaje o vozidle [registrační značka], výzva k zaplacení dlužné částky ze dne 29.9.2022, předžalobní upomínka ze dne 29.11.2022, výzva k zaplacení dlužné částky ze dne 3.10.2022 včetně sledování zásilek, upomínka o úhradu nedoplatku ze dne 9.7.2022, výzva k úhradě příspěvku do garančního fondu ze dne 11.3.2022, upomínka o úhradu nedoplatku příspěvku do garančního fondu ze dne 11.2.2021.",S,1,vicuna,21
+122,22,895.txt,"
+Které měsíce žalovaný poplatek zaplatil?
+","
+Žalovaný zaplatil za leden až duben 2018.",Ž,1,vicuna,22
+123,23,454305.txt,"
+Jakým způsobem se žalovaný bránil proti žalobě?
+","
+Žalovaný se vůbec nevyjádřil.",Žalovanýse k žalobě nevyjádřil.,10,vicuna,23
+124,24,449826.txt,"
+Kolik toho žalovaná splatila?
+","
+Žalovaná splatila částku 22.910 Kč, tedy 9 splátek.",Ž,1,vicuna,24
+125,25,454304.txt,"
+Kolik požadovala žalobkyně a kolik jí soud přiznal?
+","
+Soud přiznal žalobkyni částku 129 328,71 Kč se zákonným úrokem z prodlení ve výši 7,75% ročně z částky 105 049,77 Kč. Žalobkyně navíc požadovala zaplacení úroku ve výši 14,2 % ročně z částky 102 232,13 Kč od [datum] do zaplacení a zákonného úroku z prodlení ve výši 7,75 % ročně z částky 10 603,36 Kč od [datum] do zaplacení.","Žalobkyněpožadovala 129 328,71 Kč se zákonným úrokem z prodlení ve výši 7,75 % ročně z částky 105 049,77 Kč od [datum] do zaplacení, vše do tří dnů ode dne právní moci tohoto rozsudku. Soud jí přiznal 129 328,71 Kč se zákonným úrokem z prodlení ve výši 7,75 % ročně z částky 105 049,77 Kč od [datum] do zaplacení, vše do t",4,vicuna,25
+126,26,454243.txt,"
+Kde je stanovena denní sazbu příspěvku pojištění odpovědnosti při provozu osobního automobilu?
+","
+Denní sazba je uvedena v ust. § 2 odst. 1 vyhlášky Ministerstva financí č. 205/1999 Sb.",D,1,vicuna,26
+127,27,449749.txt,"
+V jakém složení soud rozhodl ve věci?
+","
+Věc posuzovala samosoudkyně.",S,1,vicuna,27
+128,28,449644.txt,"
+Kdo tento soudní spor vyhrál?
+","
+Vyhrála žalobykně, byť jen částečně (soud část žaloby zamítl).",Soudníspor vyhrál žalovaný.,1,vicuna,28
+129,29,449893.txt,"
+O jakou neplatnost smlouvy se v tomto případě jednalo?
+","
+Neplatnost absolutní.",V,1,vicuna,29
+130,30,454226.txt,"
+Jak se žalovaný bránil proti žalobě?
+","
+Žalovaný se nijak nevyjádřil.","Žalovanýse ve stanovené lhůtě nevyjádřil a soudu, tudíž soudu nezbylo než rozhodnout podle ustanovení § 114b odst. 5 ve spojení s ustanovením § 153a odst. 3 občanského soudního řádu.
+
+This means that the defendant did not respond to the invitation to express their views within the time limit set by",7,vicuna,30
+131,31,449948.txt,"
+Jaká úroková sazba byla mezi stranami sjednána?
+","
+Úroková sazba byla 2,90 % p.a. a 20% p.a. v případě úroku z prodlení.",S,1,vicuna,31
+132,32,449878.txt,"
+Na koho se soud v rozhodnutí odvolává?
+","
+Soud se odvolává na rozhodnutí Soudního dvora EU z roku 2020.",S,1,vicuna,32
+133,33,449787.txt,"
+Jak dlouho jezdil žalovaný bez pojištění odpovědnosti?
+","
+Žalovaný po 70 dní neměl sjednáno pojištění.",Ž,1,vicuna,33
+134,34,449829.txt,"
+Odkdy dokdy nebylo vozidlo pojištěno?
+","
+Od 1. 6. 2021 do 30. 9. 2021 a od 1. 10. do 1. 11. 2021.",V,1,vicuna,34
+135,35,454398.txt,"
+Co v tomto případu učinil žalovaný za právní kroky?
+","
+Žalovaný písemně uznal svůj dluh, ale k žalobě se nevyjádřil.",Ž,1,vicuna,35
+136,36,454274.txt,"
+Podle jakých zákonů soud věc posoudil?
+","
+Soud věc posoudil podle zákona č. 458/2000 Sb., o podmínkách podnikání a o výkonu státní správy v energetických odvětvích a o změně některých zákonů (energetický zákon), ve spojení se zákonem č. 89/2012 Sb., občanský zákoník (dále jen„ OZ“).",S,1,vicuna,36
+137,37,449683.txt,"
+Jak se neodborně nazývá typ pojištění odpovědnosti, o kterém v případě šlo?
+","
+Povinné ručení",T,1,vicuna,37
+138,38,449698.txt,"
+Jaký typ pojištění byl mezi stranami uzavřen?
+","
+Životní pojištění s pojistnou dobou 29 let.",U,1,vicuna,38
+139,39,450226.txt,"
+Kolik titulů má soudce, který věc řešil?
+","
+Má 2 tituly: Mgr. a Bc.",S,1,vicuna,39
+140,40,449702.txt,"
+Čeho se dopustil žalovaný?
+","
+Žalovaný se dopustil bezdůvodného obohacení.",Ž,1,vicuna,40
+141,41,1018.txt,"
+Kdo se chtěl rozvést s kým?
+","
+Návrh podal manžel, avšak manželka se k němu připojila rozvést se tedy chtěli oba dva manželé.",Man,1,vicuna,41
+142,42,744.txt,"
+Proč se manželé rozvedli?
+","
+Důvodem bylo neplnění společenské funkce manželství.","Manželése rozvedli proto, že manželství nepl",1,vicuna,42
+143,43,1925.txt,"
+Jak se jmenuje společnost, která poskytla spotřebitelský úvěr?
+","
+Provident",Sp,1,vicuna,43
+144,44,449935.txt,"
+Podle kterého zákona soud posoudil skutkový stav?
+","
+Podle zák. č. 168/1999 Sb., o pojištění odpovědnosti z provozu vozidla.",S,1,vicuna,44
+145,45,449892.txt,"
+Jakou částku (už) žalovaný žalobkyni uhradil?
+","
+Žalovaný neuhradil žádnou částku, proto byl žalován.",Ž,1,vicuna,45
+146,46,449861.txt,"
+Jakou smlouvu spolu uzavřeli žalobci a žalovaný?
+","
+Smlouvu o nájmu nebytových prostor.",Ž,1,vicuna,46
+147,47,12502.txt,"
+Kolikrát žalovaný použil dopravní prostředek žalobkyně?
+","
+Žalovený takto cestoval jednou a to tramvají.",Ž,1,vicuna,47
+148,48,449869.txt,"
+Proč je žalovaný povinen něco platit žalobci?
+","
+Protože žalovaný užíval byt žalobce bez právního důvodu a bezdůvodně se tak obohatil.",Ž,1,vicuna,48
+149,49,450042.txt,"
+K jakému soudu je možné podat ve věci odvolání?
+","
+Ke Krajskému soudu v Brně prostřednictvím Okresního soudu v Jihlavě.",V,1,vicuna,49

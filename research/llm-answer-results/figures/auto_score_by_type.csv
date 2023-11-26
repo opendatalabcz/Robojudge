@@ -1,0 +1,4 @@
+typ LLM,počet,průměr,směrodatná odchylka,medián
+gpt,50.0,6.7,3.63,8.5
+llama,50.0,6.56,3.73,8.0
+vicuna,50.0,1.86,2.18,1.0

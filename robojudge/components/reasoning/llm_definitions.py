@@ -14,7 +14,7 @@ standard_llm = (
     if settings.OPENAI_API_TYPE == "azure"
     else ChatOpenAI(
         openai_api_key=settings.OPENAI_API_KEY,
-        deployment_name=settings.GPT_MODEL_NAME,
+        model=settings.GPT_MODEL_NAME,
         temperature=0,
     )
 )
@@ -31,7 +31,7 @@ advanced_llm = (
     if settings.OPENAI_API_TYPE == "azure"
     else ChatOpenAI(
         openai_api_key=settings.OPENAI_API_KEY,
-        deployment_name=settings.AUTO_EVALUATOR_NAME,
+        model=settings.AUTO_EVALUATOR_NAME,
         temperature=0,
     )
 )
