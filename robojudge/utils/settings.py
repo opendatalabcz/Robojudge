@@ -32,8 +32,7 @@ class Settings(BaseSettings):
     OPENAI_API_TYPE = "azure"
     OPENAI_API_VERSION = "2023-08-01-preview"
 
-    # Research summarizing
-    GPT_MODEL_NAME = "gpt-35-turbo-16k"
+    GPT_MODEL_NAME = "gpt-3.5-turbo-1106"
     BARD__Secure_1PSID = ""
     BARD__Secure_1PSIDTS = ""
     SUMMARIZE_MAX_PARALLEL_REQUESTS = 1
@@ -46,8 +45,6 @@ class Settings(BaseSettings):
     TOKENIZER_MODEL = "czech-morfflex2.0-pdtc1.0-220710"
     TOKENIZER_URL = "http://lindat.mff.cuni.cz/services/morphodita/api/tag"
 
-    # App summarizing
-    SUMMARIZE_LLM_MODEL = "gpt-35-turbo-16k"
     AGENT_MAX_EXECUTION_TIME = 120
 
     REPLICATE_API_TOKEN: str = ''
