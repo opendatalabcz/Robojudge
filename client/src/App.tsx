@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link
+} from "react-router-dom";
+
 import { Home } from './pages/home';
-import { AppBar, Typography } from '@mui/material';
+import { AppBar, Button, ButtonGroup, Typography } from '@mui/material';
 import { FloatingAlert } from './components/FloatingAlert';
 import { ErrorPage } from './pages/error';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Info } from './pages/info';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
 const styles = {
   app: {
@@ -24,24 +33,46 @@ function App() {
   }
 
   return (
-    <div className="App" style={styles.app}>
-      <AppBar position='relative' >
-        <Typography padding="0.5rem" noWrap variant="h5" component="div">
-          RoboJudge
-        </Typography>
-      </AppBar>
-      <div style={styles.mainPageContainer}>
-        <ErrorBoundary FallbackComponent={ErrorPage} onError={(err) => console.error(err)}>
-          <Home triggerAlert={triggerAlert} />
-        </ErrorBoundary>
+    <Router>
+      <div className="App" style={styles.app}>
+        <AppBar position='relative' style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+          <Button component={Link} to='/' type='text' style={{ color: 'white' }}>
+            <Typography padding="0.5rem" noWrap variant="h5" component="div">
+              RoboJudge
+            </Typography>
+          </Button>
+          <ButtonGroup variant='text'>
+            <Button component={Link} to='/info' style={{ color: 'white' }}>
+              <Typography padding="0.5rem" noWrap component="div">
+                Info
+              </Typography>
+            </Button>
+          </ButtonGroup>
+        </AppBar>
+        <div style={styles.mainPageContainer}>
+          <ErrorBoundary FallbackComponent={ErrorPage} onError={(err) => console.error(err)}>
+            <Routes>
+              <Route path='/' element={<Home triggerAlert={triggerAlert} />} />
+              <Route path='/info' element={<Info triggerAlert={triggerAlert} />} />
+            </Routes>
+          </ErrorBoundary>
+        </div>
+        <AppBar position='relative' style={{ 'background': 'white' }}>
+          <Grid2 style={{ paddingRight: '1em', display: 'flex', justifyContent: 'flex-end', gap: '1em', alignItems: 'center' }}>
+            <a href='https://fit.cvut.cz/cs'>
+              <img src="/fit-cvut-logo-cs.svg" style={{ width: '100px' }} />
+            </a>
+            <a href="https://github.com/opendatalabcz/Robojudge">
+              <img src="/github-logo-black.svg" style={{ width: '30px' }} />
+            </a>
+            <a href="https://opendatalab.cz/">
+              <img src="/opendatalab-logo.png" style={{ width: '55px' }} />
+            </a>
+          </Grid2>
+        </AppBar>
+        <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text={alertText} />
       </div>
-      <AppBar position='relative'>
-        <Typography padding="0.5rem" noWrap component="div">
-          © 2023
-        </Typography>
-      </AppBar>
-      <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text={alertText} />
-    </div>
+    </Router >
   );
 }
 

@@ -29,7 +29,7 @@ const styles = {
 } as Record<string, React.CSSProperties>;
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
-                  případy podobné. Nejlepších výsledků dosáhnete zadáním ca. 200
+                  případy podobné. Nejlepších výsledků dosáhnete zadáním 100 a více
                   znaků a použitím právní terminologie.`;
 
 const MIN_DESCRIPTION_LENGTH = 20;
