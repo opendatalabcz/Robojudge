@@ -8,11 +8,13 @@ import {
 
 import { Home } from './pages/home';
 import { AppBar, Button, ButtonGroup, Typography } from '@mui/material';
+import GavelIcon from '@mui/icons-material/Gavel';
 import { FloatingAlert } from './components/FloatingAlert';
 import { ErrorPage } from './pages/error';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Info } from './pages/info';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { Api } from './pages/api';
 
 const styles = {
   app: {
@@ -37,7 +39,8 @@ function App() {
       <div className="App" style={styles.app}>
         <AppBar position='relative' style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Button component={Link} to='/' type='text' style={{ color: 'white' }}>
-            <Typography padding="0.5rem" noWrap variant="h5" component="div">
+            <Typography padding="0.5rem" noWrap variant="h5" component="div" style={{ display: 'flex', alignItems: 'center' }}>
+              <GavelIcon style={{ marginRight: '10px' }} />
               RoboJudge
             </Typography>
           </Button>
@@ -47,6 +50,11 @@ function App() {
                 Info
               </Typography>
             </Button>
+            <Button component={Link} to='/api' style={{ color: 'white' }}>
+              <Typography padding="0.5rem" noWrap component="div">
+                API
+              </Typography>
+            </Button>
           </ButtonGroup>
         </AppBar>
         <div style={styles.mainPageContainer}>
@@ -54,6 +62,7 @@ function App() {
             <Routes>
               <Route path='/' element={<Home triggerAlert={triggerAlert} />} />
               <Route path='/info' element={<Info triggerAlert={triggerAlert} />} />
+              <Route path='/api' element={<Api triggerAlert={triggerAlert} />} />
             </Routes>
           </ErrorBoundary>
         </div>

@@ -30,13 +30,15 @@ const styles = {
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
                   případy podobné. Nejlepších výsledků dosáhnete zadáním 100 a více
-                  znaků a použitím právní terminologie.`;
+                  znaků.`;
 
 const MIN_DESCRIPTION_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 500;
 
 const INPUT_TOO_SHORT = `Zadejte prosím delší popis případu (aspoň ${MIN_DESCRIPTION_LENGTH} znaků).`;
 const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} znaků.`;
+
+export const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
 
 type HomeProps = {
   triggerAlert: (text: string) => void;
@@ -78,9 +80,8 @@ export function Home({ triggerAlert }: HomeProps) {
       setIsLoading(true);
 
       const { data } = await axios.post(
-        `${
-          process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
-        }/cases/search`,
+        SERVER_URL
+        + '/cases/search',
         {
           query_text: caseDescription,
           limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,
