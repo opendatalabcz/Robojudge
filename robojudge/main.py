@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from icecream import install
 
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+
 from robojudge.tasks.case_scraping import run_scheduler
 from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
@@ -26,6 +29,7 @@ app.add_middleware(
 
 app.include_router(robojudge.routers.cases.router)
 
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 @app.get("/health")
 async def get_health():

@@ -12,6 +12,8 @@ from fastapi import (
     HTTPException,
 )
 from fastapi.responses import PlainTextResponse, JSONResponse
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
@@ -40,6 +42,7 @@ router = APIRouter(
     prefix="/cases",
     tags=["Cases"],
 )
+limiter = Limiter(key_func=get_remote_address)
 
 
 async def prepare_summary_and_title(case: Case):
@@ -50,14 +53,17 @@ async def prepare_summary_and_title(case: Case):
 
 
 @router.get("/chunks", response_model=list[CaseChunk])
+@limiter.limit("30/minute")
 async def get_all_case_chunks(
-    embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
+    request: Request, embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
 ):
     return embedding_db.get_all_cases()
 
 
 @router.get("", response_model=list[Case])
+@limiter.limit("30/minute")
 async def get_all_cases(
+    request: Request,
     document_db: Annotated[DocumentStorage, Depends(document_db)],
     offset: Annotated[int, Query()] = 0,
     limit: Annotated[int, Query()] = 100,
@@ -73,6 +79,7 @@ async def get_all_cases(
 # TODO: docs for request filter params
 # TODO: notify about errored case_ids (save info into DB)
 @router.post("/fetch")
+@limiter.limit("5/minute")
 async def fetch_specified_cases(
     request: FetchCasesRequest,
 ):
@@ -86,7 +93,9 @@ async def fetch_specified_cases(
 
 # TODO: add token expiration?
 @router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse)
+@limiter.limit("30/minute")
 async def get_cases_by_fetch_job_token(
+    request: Request,
     fetch_job_token: Annotated[str, Path()],
     document_db: Annotated[DocumentStorage, Depends(document_db)],
 ):
@@ -103,8 +112,8 @@ async def get_cases_by_fetch_job_token(
 
     return response
 
-
 @router.post("/search", response_model=list[Case])
+@limiter.limit("5/minute")
 async def search_cases(
     request: CaseSearchRequest,
     bg_tasks: BackgroundTasks,
@@ -141,6 +150,7 @@ async def search_cases(
 
 
 @router.post("/{case_id}/question", response_model=CaseQuestionResponse)
+@limiter.limit("10/minute")
 async def answer_case_question(
     case_id: str,
     request: CaseQuestionRequest,
@@ -161,7 +171,8 @@ async def answer_case_question(
 
 
 @router.post("/scrape")
-async def fetch_cases(bg_tasks: BackgroundTasks):
+@limiter.limit("5/minute")
+async def fetch_cases(request: Request, bg_tasks: BackgroundTasks):
     """
     Manually triggers one instance/batch of scraping cases from the justice ministry's website.
     """
