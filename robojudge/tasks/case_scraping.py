@@ -1,9 +1,9 @@
 import datetime
 
 import asyncio
-import uvicorn
 from multiprocessing import Queue, Process
 from concurrent.futures import ThreadPoolExecutor
+import signal
 
 import more_itertools
 from rocketry import Rocketry
@@ -24,17 +24,53 @@ PARSER_PROCESS_COUNT = 3
 logger = logging.getLogger(__name__)
 
 
-async def determine_case_ids_to_parse():
-    latest_id = await CasePageScraper.get_newest_case_id()
+def get_ruling_ids_ascending(latest_web_id: int, latest_id_in_db: int, ruling_ids_in_db: set) -> list:
+    upper = min(latest_id_in_db +
+                settings.SCRAPER_SINGLE_RUN_CASE_COUNT, latest_web_id) + 1
+    lower = latest_id_in_db + 1
+
+    return sorted(set(range(lower, upper)).difference(ruling_ids_in_db), key=int)
+
+
+def get_ruling_ids_descending(latest_web_id: int, ruling_ids_in_db: set) -> list:
+    # Max is set to latest_web_id, we have to find min
+    to_be_scraped_case_ids = set(
+        range(latest_web_id, latest_web_id - settings.SCRAPER_SINGLE_RUN_CASE_COUNT, -1))
+
+    to_be_scraped_case_ids.difference_update(ruling_ids_in_db)
+    if not len(to_be_scraped_case_ids):
+        to_be_scraped_case_ids.add(
+            latest_web_id - settings.SCRAPER_SINGLE_RUN_CASE_COUNT)
+
+    lowest_case_id = min(to_be_scraped_case_ids)
+    while len(to_be_scraped_case_ids) < settings.SCRAPER_SINGLE_RUN_CASE_COUNT:
+        for i in range(lowest_case_id - 1, lowest_case_id - settings.SCRAPER_SINGLE_RUN_CASE_COUNT, -1):
+            lowest_case_id = i
+            to_be_scraped_case_ids.add(lowest_case_id)
+
+        to_be_scraped_case_ids.difference_update(ruling_ids_in_db)
+
+    ruling_ids_in_correct_batch_size = sorted(to_be_scraped_case_ids, key=int, reverse=True)[
+        :settings.SCRAPER_SINGLE_RUN_CASE_COUNT]
+
+    if lowest_case_id <= settings.OLDEST_KNOWN_CASE_ID:
+        ruling_ids_in_correct_batch_size = list(filter(
+            lambda id: id >= settings.OLDEST_KNOWN_CASE_ID, ruling_ids_in_correct_batch_size))
+
+    return ruling_ids_in_correct_batch_size
+
+
+async def determine_ruling_ids_to_parse() -> set:
+    latest_web_id = await CasePageScraper.get_newest_case_id()
     latest_id_in_db = document_db.find_latest_case_id() or settings.OLDEST_KNOWN_CASE_ID
 
-    case_ids_in_db = list(document_db.collection.find({}, {"case_id"}))
-    case_ids_in_db = set(int(case["case_id"]) for case in case_ids_in_db)
+    ruling_ids_in_db = list(document_db.collection.find({}, {"case_id"}))
+    ruling_ids_in_db = set(int(case["case_id"]) for case in ruling_ids_in_db)
 
-    lower = latest_id_in_db + 1
-    upper = min(latest_id_in_db + settings.SCRAPER_MAX_RUN_CASE_COUNT, latest_id) + 1
-
-    return sorted(set(range(lower, upper)).difference(case_ids_in_db), key=int)
+    if settings.SCRAPE_CASES_FROM_LAST:
+        return get_ruling_ids_descending(latest_web_id=latest_web_id, ruling_ids_in_db=ruling_ids_in_db)
+    else:
+        return get_ruling_ids_ascending(latest_web_id=latest_web_id, latest_id_in_db=latest_id_in_db, ruling_ids_in_db=ruling_ids_in_db)
 
 
 app = Rocketry()
@@ -53,7 +89,7 @@ def last_scraping_empty():
 )
 async def run_scraping_instance(case_ids: list[str] = None):
     if not case_ids:
-        case_ids = await determine_case_ids_to_parse()
+        case_ids = await determine_ruling_ids_to_parse()
 
     q = Queue()
 
@@ -88,9 +124,8 @@ async def run_scraping_instance(case_ids: list[str] = None):
     for parser in parsers:
         parser.join()
 
-    # TODO: fix empty case_ids
     scraping_information = ScrapingInformation(
-        last_case_id=case_ids[-1],
+        last_case_id=case_ids[-1] if len(case_ids) else -1,
         timestamp=datetime.datetime.now(),
         unsuccessful_case_count=unsuccessful_case_count,
     )
@@ -133,14 +168,21 @@ def parser_worker(q, worker_id):
                 f'{worker_id} - Upserted cases "{[case.case_id for case in cases]}".'
             )
         except Exception:
-            logger.exception(f"Parser #{worker_id} - Error while parsing cases:")
+            logger.exception(
+                f"Parser #{worker_id} - Error while parsing cases:")
 
 
 async def create_scheduler_async_task():
     scheduled = asyncio.create_task(app.serve())
 
-    await scheduled
+    def shutdown_scheduler(*args):
+        app.session.shut_down(force=True)
 
+    signal.signal(signal.SIGINT, shutdown_scheduler)
+    signal.signal(signal.SIGTERM, shutdown_scheduler)
+
+    await scheduled
+    
 
 def run_scheduler():
     asyncio.run(create_scheduler_async_task())

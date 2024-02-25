@@ -1,4 +1,5 @@
 import os
+import datetime
 
 import pymongo
 from pymongo import ReplaceOne, UpdateOne
@@ -51,7 +52,8 @@ class DocumentStorage:
             cases = self.scraping_collection.find().sort("$natural", -1).limit(1)
             cases = list(cases)
             if len(cases) > 0:
-                return int(list(cases)[0]["last_case_id"])
+                last_case_id = int(list(cases)[0]["last_case_id"])
+                return last_case_id if last_case_id > settings.OLDEST_KNOWN_CASE_ID else settings.OLDEST_KNOWN_CASE_ID
 
             # Try to deduce last case from cases themselves if scraping metadata are missing
             cases = self.collection.find().sort("$natural", -1).limit(1)
@@ -83,7 +85,7 @@ class DocumentStorage:
             updates = [
                 ReplaceOne(
                     {"case_id": case.case_id},
-                    case.dict(),
+                    {**case.dict(), "created_at": datetime.datetime.now()},
                     upsert=True,
                 )
                 for case in cases

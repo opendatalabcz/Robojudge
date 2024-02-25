@@ -45,5 +45,4 @@ if __name__ == "__main__":
         Process(target=run_scheduler).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
-# TODO: Compare summarization with some non-LLM model (if available for Czech)
 # TODO: Mongo password
