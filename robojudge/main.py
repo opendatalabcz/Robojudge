@@ -1,13 +1,12 @@
 import asyncio
 from multiprocessing import Process
 
+import redis.asyncio as redis
+from fastapi_limiter import FastAPILimiter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from icecream import install
-
-from slowapi.errors import RateLimitExceeded
-from slowapi import _rate_limit_exceeded_handler
 
 from robojudge.tasks.case_scraping import run_scheduler
 from robojudge.utils.logger import logging
@@ -29,8 +28,6 @@ app.add_middleware(
 
 app.include_router(robojudge.routers.cases.router)
 
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
 @app.get("/health")
 async def get_health():
     return {
@@ -40,7 +37,15 @@ async def get_health():
     }
 
 
+@app.on_event("startup")
+async def startup():
+    redis_connection = redis.from_url(
+        f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True)
+    await FastAPILimiter.init(redis_connection)
+
+
 if __name__ == "__main__":
+
     if settings.ENABLE_AUTOMATIC_SCRAPING:
         Process(target=run_scheduler).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
