@@ -7,68 +7,14 @@ from playwright.async_api import (
 )
 
 from robojudge.components.case_page_scraper import CasePageScraper
-from robojudge.utils.internal_types import CaseFetchJob, CaseFetchJobStatus
-from robojudge.utils.settings import settings
-from robojudge.db.mongo_db import document_db
-from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import ScrapingFilters
-from robojudge.utils.api_types import FetchCasesRequest
 
 logger = logging.getLogger(__name__)
 
 
 class PaginatingScraper:
     MAX_SCAPE_SIZE = 2000
-
-    @classmethod
-    async def run_fetch_job(cls, token: str, request: FetchCasesRequest):
-        try:
-            filters = ScrapingFilters(**request.filters.dict())
-            fetch_job = CaseFetchJob(token=token, filters=filters)
-
-            document_db.fetch_job_collection.insert_one(
-                fetch_job.dict()
-            )
-            logger.info(f'Start extracting case_ids for token "{token}".')
-
-            case_ids = await cls.extract_case_ids(filters)
-
-            cases_in_db = document_db.collection.find({"case_id": {"$in": case_ids}})
-            all_case_ids = case_ids[:]
-            for db_case in cases_in_db:
-                case_ids.remove(db_case["case_id"])
-
-            if request.limit:
-                case_ids = case_ids[: request.limit]
-
-            # TODO: embedding and stuff should be done separately ...
-            if len(case_ids):
-                logger.info(
-                    f'Starting scraping missing cases for token "{token}": {case_ids}'
-                )
-                await run_scraping_instance(case_ids)
-
-            document_db.fetch_job_collection.find_one_and_update(
-                {"token": token},
-                {
-                    "$set": {
-                        "case_ids": all_case_ids,
-                        "status": CaseFetchJobStatus.FINISHED.value,
-                    }
-                },
-            )
-            logger.info(f'Finished scraping cases for token "{token}".')
-        except Exception:
-            logger.exception(f'Error while processing fetch job for token "{token}":')
-            document_db.fetch_job_collection.find_one_and_update(
-                {"token": token},
-                {
-                    "$set": {
-                        "status": CaseFetchJobStatus.FINISHED.value,
-                    }
-                },
-            )
 
     @classmethod
     async def extract_case_ids(cls, filters: ScrapingFilters) -> list[str]:
@@ -157,6 +103,7 @@ class PaginatingScraper:
 if __name__ == "__main__":
     asyncio.run(
         PaginatingScraper.extract_case_ids(
-            ScrapingFilters(judge_firstname="Petr", publication_date_from="2023-09-30")
+            ScrapingFilters(judge_firstname="Petr",
+                            publication_date_from="2023-09-30")
         )
     )

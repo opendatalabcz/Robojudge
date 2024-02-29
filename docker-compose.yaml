@@ -3,7 +3,7 @@ version: "3.9"
 services:
   mongo:
     image: mongo:7.0.5
-    restart: always
+    restart: unless-stopped
     ports:
       - ${DOCUMENT_DB_PORT}:${DOCUMENT_DB_PORT}
     volumes:
@@ -23,7 +23,33 @@ services:
     networks:
       - default
 
+  rabbit:
+    image: rabbitmq:3.13.0
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - default
+
   server:
+    build: ./
+    volumes:
+      - embedder-cache:/root/.cache/chroma/
+    depends_on:
+      - mongo
+      - chroma
+      - rabbit
+      - scraper_workers
+    env_file:
+      - .env
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - default
+    command: [python, -m, robojudge.main]
+
+  scraper_workers:
     build: ./
     restart: unless-stopped
     volumes:
@@ -31,17 +57,12 @@ services:
     depends_on:
       - mongo
       - chroma
+      - rabbit
     env_file:
       - .env
-    environment:
-      DOCUMENT_DB_HOST: mongo
-      EMBEDDING_DB_HOST: chroma
-      REDIS_URL: redis
-      RABBIT_HOST: rabbit
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - default
+    command: [dramatiq, robojudge.tasks.case_scraping]
   
   migrate_db:
     build: ./
@@ -51,8 +72,7 @@ services:
       - chroma
     env_file:
       - .env
-    command:
-      'robojudge.tasks.enrich_chroma_metadata'
+    command: [python, -m, robojudge.tasks.enrich_chroma_metadata]
     environment:
       DOCUMENT_DB_HOST: mongo
       EMBEDDING_DB_HOST: chroma
@@ -62,6 +82,7 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - default
+    
 
   client:
     build: 

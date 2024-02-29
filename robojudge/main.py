@@ -7,11 +7,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from icecream import install
+from robojudge.tasks.case_scraping import intialize_scheduled_scraping
 
-from robojudge.tasks.case_scraping import run_scheduler
 from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
-
 import robojudge.routers.cases
 
 if settings.ENVIRONMENT == "dev":
@@ -44,11 +43,13 @@ async def startup():
         f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True)
     await FastAPILimiter.init(redis_connection)
 
+ # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
 
 if __name__ == "__main__":
-
     if settings.ENABLE_AUTOMATIC_SCRAPING:
-        Process(target=run_scheduler).start()
+        Process(target=intialize_scheduled_scraping).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
 # TODO: Mongo password
+# TODO: structlog
+# TODO: rename cases to rulings
