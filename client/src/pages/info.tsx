@@ -54,6 +54,7 @@ export function Info({ triggerAlert }: InfoProps) {
                 Návod k použití
               </Typography>
               <p>Do hlavního textového okna popište případ, pro který mají být nalezeny soudní rozhodnutí řešící podobnou věc. Popis je možné formulovat přirozeným jazykem, ale také heslovitě; pro vyhledávání je důležitý význam nikoli forma.</p>
+              <p>Databáze Ministerstva spravedlnosti, ze které jsou rozhodnutí získávána, obsahuje bohužel v současnosti pouze rozhodnutí civilních soudů v prvním stupni. Aplikace tedy nabídne smysluplné výsledky pouze pro oblasti spadající pod tuto agendu (např. spory o zaplacení částky, rozvod manželství atd.).</p>
               <p>Výsledkem vyhledávání bude několik nejpodobnějších soudních rozhodnutí. K dispozici je shrnutí rozhodnutí generované pomocí LLM a metadata. Celý text je dostupný po kliknutí na příslušný odkaz.</p>
               <p>Vpravo dole je možné po rozkliknutí lišty formulovat dotazy ohledně obsahu rozhodnutí. Tímto způsobem je možné doptat se na obsah rozhodnutí nad rámec shrnutí, aniž by bylo třeba jej nutně číst.</p>
               <Typography padding="0.5rem" noWrap variant="h5" component="div">
