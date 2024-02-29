@@ -52,7 +52,7 @@ class CasePageScraper:
             try:
                 await page.wait_for_selector('div[id="PrintDiv"]', timeout=settings.SCRAPER_TIMEOUT)
             except PlaywrightTimeoutError:
-                logging.warning(f'Timeout or no case with {self.case_id}.')
+                logging.debug(f'Timeout or no case with {self.case_id}.')
                 return ''
 
             return await page.content()
@@ -82,7 +82,8 @@ class CasePageScraper:
             metadata[CaseMetadataAttributes.KEYWORDS] = metadata[CaseMetadataAttributes.KEYWORDS].split(
                 ', ')
 
-        metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED] = metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED].split(
+        if metadata.get(CaseMetadataAttributes.REGULATIONS_MENTIONED, None):
+            metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED] = metadata[CaseMetadataAttributes.REGULATIONS_MENTIONED].split(
             ', ')
 
         if metadata.get(CaseMetadataAttributes.RELATED_CASES, None):

@@ -25,5 +25,3 @@ RUN playwright install & playwright install-deps
 COPY robojudge ./robojudge
 
 EXPOSE 4000
-
-ENTRYPOINT ["python", "-m", "robojudge.main"]

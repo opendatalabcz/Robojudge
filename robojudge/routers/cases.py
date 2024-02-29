@@ -14,7 +14,6 @@ from fastapi import (
 from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi_limiter.depends import RateLimiter
 
-from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
 from robojudge.utils.api_types import (
     CaseQuestionRequest,
@@ -23,9 +22,8 @@ from robojudge.utils.api_types import (
     FetchCasesRequest,
     FetchCasesStatusResponse,
 )
-from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
-from robojudge.tasks.scraper_pool import pool
-from robojudge.components.paginating_scraper import PaginatingScraper
+from robojudge.utils.internal_types import Case, CaseChunk, ScrapingJob
+from robojudge.tasks.case_scraping import run_scraper_parser_pipeline, run_filtered_scraper_parser_pipeline
 from robojudge.utils.settings import settings
 from robojudge.utils.functional import generate_uuid, construct_server_url
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
@@ -81,7 +79,7 @@ async def fetch_specified_cases(
     fetch_job_token = generate_uuid()
     payload = {"token": fetch_job_token}
 
-    pool.queue.put({"token": fetch_job_token, "request": request})
+    run_filtered_scraper_parser_pipeline(fetch_job_token, request)
 
     return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=payload)
 
@@ -93,7 +91,8 @@ async def get_cases_by_fetch_job_token(
     fetch_job_token: Annotated[str, Path()],
     document_db: Annotated[DocumentStorage, Depends(document_db)],
 ):
-    fetch_job = document_db.fetch_job_collection.find_one({"token": fetch_job_token})
+    fetch_job = document_db.scraping_job_collection.find_one(
+        {"token": fetch_job_token})
 
     if not fetch_job:
         raise HTTPException(
@@ -101,8 +100,10 @@ async def get_cases_by_fetch_job_token(
             detail=f'Fetch job with token "{fetch_job_token}" was not found.',
         )
 
-    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
-    response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
+    cases = document_db.collection.find(
+        {"case_id": {"$in": fetch_job["case_ids"]}})
+    response = FetchCasesStatusResponse(
+        status=fetch_job["status"], content=list(cases))
 
     return response
 
@@ -137,7 +138,8 @@ async def search_cases(
     if request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
         # Cache the results if the cases are retrieved in the future
-        bg_tasks.add_task(document_db.add_document_summaries, cases_with_summary)
+        bg_tasks.add_task(document_db.add_document_summaries,
+                          cases_with_summary)
 
     return cases_with_summary
 
@@ -151,7 +153,8 @@ async def answer_case_question(
     """
     Given a `case_id` and a question, an LLM tries to answer that question by searching through the text (reasoning) of the case.
     """
-    logger.info(f'Answering question about case "{case_id}": "{request.question}".')
+    logger.info(
+        f'Answering question about case "{case_id}": "{request.question}".')
 
     case = Case(**document_db.collection.find_one({"case_id": case_id}))
 
@@ -163,10 +166,10 @@ async def answer_case_question(
 
 
 @router.post("/scrape", dependencies=[Depends(RateLimiter(times=5, seconds=60))])
-async def fetch_cases(request: Request, bg_tasks: BackgroundTasks):
+async def fetch_cases(request: Request):
     """
     Manually triggers one instance/batch of scraping cases from the justice ministry's website.
     """
     logger.info("Triggering case scraping based on an API request.")
-    bg_tasks.add_task(run_scraping_instance)
+    run_scraper_parser_pipeline()
     return PlainTextResponse("ok", 202)

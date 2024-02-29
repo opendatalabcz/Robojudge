@@ -1,6 +1,7 @@
 from pydantic import BaseSettings
 from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 
+
 class Settings(BaseSettings):
     SERVER_HOST = "0.0.0.0"
     SERVER_PORT = 4000
@@ -20,14 +21,22 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = 'localhost'
 
+    ENABLE_SCRAPING: bool = True
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     SCRAPER_SINGLE_RUN_CASE_COUNT = 30
     SCRAPER_TIMEOUT = 10_000
-    SCRAPER_TASK_INTERVAL_IN_SECONDS = 3600
+    SCRAPER_CRONTAB = "* * * * *"  # https://crontab.guru/#*/10_*_*_*_*
     SCRAPE_CASES_FROM_LAST: bool = False
     OLDEST_KNOWN_CASE_ID = (
         450  # Based on manual testing, this is one of the first available cases
     )
+
+    RABBIT_HOST: str = 'localhost'
+    RABBIT_PORT: int = 5672
+
+    MAX_RETRIES: int = 2
+    MIN_BACKOFF: str = '15 seconds'
+    MAX_BACKOFF: str = '10 minutes'
 
     OPENAI_API_KEY = "dummykey"
     OPENAI_API_BASE = "https://api.openai.com/v1"

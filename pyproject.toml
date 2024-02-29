@@ -23,6 +23,9 @@ async-lru = "^2.0.4"
 rocketry = "^2.5.1"
 mongomock = "^4.1.2"
 fastapi-limiter = "^0.1.6"
+dramatiq = {extras = ["rabbitmq", "watch"], version = "^1.16.0"}
+structlog = "^24.1.0"
+apscheduler = "^3.10.4"
 
 [tool.poetry.group.dev.dependencies]
 evaluate = "^0.4.0"

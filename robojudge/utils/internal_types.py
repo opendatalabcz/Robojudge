@@ -12,8 +12,10 @@ class ScrapingFilters(BaseModel):
     court: Optional[str] = ""
     fulltext_search: Optional[str] = ""
     # keyword: Optional[str] = '' # Does not work on the website
-    publication_date_from: Optional[str] = Field(default="", description="YYYY-MM-DD")
-    publication_date_to: Optional[str] = Field(default="", description="YYYY-MM-DD")
+    publication_date_from: Optional[str] = Field(
+        default="", description="YYYY-MM-DD")
+    publication_date_to: Optional[str] = Field(
+        default="", description="YYYY-MM-DD")
 
 
 class CaseMetadataAttributes(StrEnum):
@@ -75,30 +77,35 @@ class Case(BaseModel):
 
 
 class CaseChunk(BaseModel):
-    chunk_id: str = Field(description="Not case_id but the internal ChromaDB id")
+    chunk_id: str = Field(
+        description="Not case_id but the internal ChromaDB id")
     chunk_index: int
     case_id: str
     chunk_text: str
     metadata: dict
 
 
-class ScrapingInformation(BaseModel):
-    last_case_id: str
-    timestamp: datetime.datetime
-    unsuccessful_case_count: int
-
-
-class CaseFetchJobStatus(StrEnum):
+class ScrapingJobStatus(StrEnum):
     RUNNING = auto()
     FINISHED = auto()
     ERROR = auto()
 
 
-class CaseFetchJob(BaseModel):
-    token: str
+class ScrapingJobType(StrEnum):
+    SCHEDULED = auto()
+    MANUAL = auto()
+
+
+class ScrapingJob(BaseModel):
+    token: Optional[str] = ''
+    last_ruling_id: int = -1
+    started_at: datetime.datetime
+    finished_at: datetime.datetime = None
     filters: Optional[ScrapingFilters] = None
-    status: CaseFetchJobStatus = CaseFetchJobStatus.RUNNING
-    case_ids: list[str] = []
+    status: ScrapingJobStatus = ScrapingJobStatus.RUNNING
+    filtered_ruling_ids: list[str] = []
+    scraped_ruling_ids: list[str] = []
+    type: ScrapingJobType = ScrapingJobType.SCHEDULED
 
     class Config:
         use_enum_values = True

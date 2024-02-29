@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 from robojudge.main import app
 from robojudge.db.mongo_db import document_db
-from robojudge.utils.internal_types import Case, CaseFetchJob, ScrapingFilters
+from robojudge.utils.internal_types import Case, ScrapingJob, ScrapingFilters
 
 
 @app.get("/")
@@ -61,13 +61,13 @@ def test_trigger_fetch():
 def test_get_cases_by_fetch_job_token(cases_in_mongo: list[Case]):
     case_ids = [case.case_id for case in cases_in_mongo]
     token = "very-special-token"
-    fetch_job = CaseFetchJob(
+    fetch_job = ScrapingJob(
         token=token,
-        case_ids=case_ids,
+        scraped_ruling_ids=case_ids,
     )
 
     document_db.upsert_documents(cases_in_mongo)
-    document_db.fetch_job_collection.insert_one(fetch_job.dict())
+    document_db.scraping_job_collection.insert_one(fetch_job.dict())
 
     response = client.get(f"/cases/fetch/{token}")
 
