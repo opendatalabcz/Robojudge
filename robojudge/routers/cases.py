@@ -13,6 +13,7 @@ from fastapi import (
 )
 from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi_limiter.depends import RateLimiter
+from robojudge.components.reasoning.query_checker import RulingQueryChecker
 
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
@@ -22,6 +23,7 @@ from robojudge.utils.api_types import (
     CaseQuestionResponse,
     FetchCasesRequest,
     FetchCasesStatusResponse,
+    SearchCasesResponse,
 )
 from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
 from robojudge.tasks.scraper_pool import pool
@@ -93,7 +95,8 @@ async def get_cases_by_fetch_job_token(
     fetch_job_token: Annotated[str, Path()],
     document_db: Annotated[DocumentStorage, Depends(document_db)],
 ):
-    fetch_job = document_db.fetch_job_collection.find_one({"token": fetch_job_token})
+    fetch_job = document_db.fetch_job_collection.find_one(
+        {"token": fetch_job_token})
 
     if not fetch_job:
         raise HTTPException(
@@ -101,12 +104,15 @@ async def get_cases_by_fetch_job_token(
             detail=f'Fetch job with token "{fetch_job_token}" was not found.',
         )
 
-    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
-    response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
+    cases = document_db.collection.find(
+        {"case_id": {"$in": fetch_job["case_ids"]}})
+    response = FetchCasesStatusResponse(
+        status=fetch_job["status"], content=list(cases))
 
     return response
 
-@router.post("/search", response_model=list[Case], dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+
+@router.post("/search", response_model=SearchCasesResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def search_cases(
     request: CaseSearchRequest,
     bg_tasks: BackgroundTasks,
@@ -117,6 +123,10 @@ async def search_cases(
     Given a string, searches for the most similar texts in a vector DB of court cases.
     If a part of the case is similar, it is returned alongside a summary of the whole case (if requested).
     """
+    relevance = await RulingQueryChecker.assess_query_relevance(request.query_text)
+    if not relevance['relevant']:
+        return SearchCasesResponse(relevance=False, reasoning=relevance['reasoning'])
+
     logger.info(f'Searching for similar text chunks:"{request.query_text}".')
 
     # Find the most similar text chunks of saved cases
@@ -137,9 +147,10 @@ async def search_cases(
     if request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
         # Cache the results if the cases are retrieved in the future
-        bg_tasks.add_task(document_db.add_document_summaries, cases_with_summary)
+        bg_tasks.add_task(document_db.add_document_summaries,
+                          cases_with_summary)
 
-    return cases_with_summary
+    return SearchCasesResponse(cases=cases_with_summary, relevance=True)
 
 
 @router.post("/{case_id}/question", response_model=CaseQuestionResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
@@ -151,7 +162,8 @@ async def answer_case_question(
     """
     Given a `case_id` and a question, an LLM tries to answer that question by searching through the text (reasoning) of the case.
     """
-    logger.info(f'Answering question about case "{case_id}": "{request.question}".')
+    logger.info(
+        f'Answering question about case "{case_id}": "{request.question}".')
 
     case = Case(**document_db.collection.find_one({"case_id": case_id}))
 
