@@ -144,7 +144,7 @@ export function Home({ triggerAlert }: HomeProps) {
                 </Tooltip>
               </Grid2>
             </CardContent>
-            <Collapse in={!!queryRelevanceExplanation}>
+            <Collapse in={!!queryRelevanceExplanation} timeout="auto">
               <div style={{ margin: 'auto', textAlign: 'center' }}>
                 <Typography variant="subtitle2"
                 >{queryRelevanceExplanation}</Typography>
