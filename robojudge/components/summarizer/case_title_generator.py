@@ -11,8 +11,8 @@ from robojudge.components.reasoning.llm_definitions import standard_llm
 logger = logging.getLogger(__name__)
 
 SYSTEM_MESSAGE_TEMPLATE = """\
-Your task is to create a catchy/pithy/funny title for an article about a court ruling based on a summary of that ruling.
-The title should relate to what the case was about.
+Your task is to create an short and interesting title for an article about a court ruling based on a summary of that ruling.
+The title should relate to what the case was about. Avoid sounding like a tabloid.
 Create your title ONLY in Czech.
 """
 
@@ -48,5 +48,8 @@ if __name__ == "__main__":
     test_summary = """
 Soud rozhodoval o žalobě, ve které žalobkyně požadovala zaplacení peněz od žalovaného za cestování bez platné jízdenky. Soud posoudil věc podle platného zákona o drahách, který umožňuje uložit cestujícímu, který nemá platný jízdní doklad, zaplacení jízdného a přirážky. V tomto případě byla přirážka stanovena na 1 500 Kč. Žalobkyně a žalovaný uzavřeli smlouvu o přepravě, podle které je žalovaný povinen zaplatit žalobkyni jízdné a přirážku. Žalobkyně má také právo na úrok z prodlení. Soud rozhodl, že žalobkyni náleží náhrada nákladů řízení ve výši 1 489 Kč, která zahrnuje soudní poplatek a odměnu advokáta.
 """
+    async def main():
+        print(await title_generator.generate_title(test_summary))
 
-    print(title_generator.generate_title(test_summary))
+    import asyncio
+    asyncio.run(main())
