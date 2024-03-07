@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from robojudge.utils.internal_types import ScrapingFilters, Case
 
+
 class CaseSearchRequest(BaseModel):
     query_text: str = Field(
         description="Any string of text which should have similar cases in the DB. Longer texts have more accurate results."
@@ -25,10 +26,18 @@ class CaseQuestionRequest(BaseModel):
 class CaseQuestionResponse(BaseModel):
     answer: str
 
+
 class FetchCasesRequest(BaseModel):
     limit: Optional[int] = None
     filters: ScrapingFilters
 
+
 class FetchCasesStatusResponse(BaseModel):
     status: str
     content: Optional[list[Case]] = None
+
+
+class SearchCasesResponse(BaseModel):
+    cases: list[Case] = []
+    relevance: bool = True
+    reasoning: str = ''
