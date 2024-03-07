@@ -1,7 +1,6 @@
 from pydantic import BaseSettings
 from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 
-
 class Settings(BaseSettings):
     SERVER_HOST = "0.0.0.0"
     SERVER_PORT = 4000
@@ -19,10 +18,13 @@ class Settings(BaseSettings):
     DOCUMENT_DB_HOST = "mongo"
     DOCUMENT_DB_PORT: int = 27017
 
+    REDIS_URL: str = 'localhost'
+
     ENABLE_AUTOMATIC_SCRAPING: bool = True
-    SCRAPER_MAX_RUN_CASE_COUNT = 30
+    SCRAPER_SINGLE_RUN_CASE_COUNT = 30
     SCRAPER_TIMEOUT = 10_000
     SCRAPER_TASK_INTERVAL_IN_SECONDS = 3600
+    SCRAPE_CASES_FROM_LAST: bool = False
     OLDEST_KNOWN_CASE_ID = (
         450  # Based on manual testing, this is one of the first available cases
     )

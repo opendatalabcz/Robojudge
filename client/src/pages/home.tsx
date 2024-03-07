@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { Button, Card, CardContent, TextField, Tooltip } from "@mui/material";
+import { Button, Card, CardContent, Collapse, TextField, Tooltip, Typography } from "@mui/material";
 import { CaseCard } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
 
@@ -30,7 +30,7 @@ const styles = {
 
 const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
                   případy podobné. Nejlepších výsledků dosáhnete zadáním 100 a více
-                  znaků.`;
+                  znaků. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
 
 const MIN_DESCRIPTION_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -52,6 +52,8 @@ export function Home({ triggerAlert }: HomeProps) {
 
   const [isInputInvalid, setIsInputInvalid] = useState(true);
   const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
+
+  const [queryRelevanceExplanation, setQueryRelevanceExplanation] = useState('');
 
   const handleTextInputChange = (value: string) => {
     if (value.length < MIN_DESCRIPTION_LENGTH) {
@@ -78,6 +80,7 @@ export function Home({ triggerAlert }: HomeProps) {
 
     try {
       setIsLoading(true);
+      setQueryRelevanceExplanation('');
 
       const { data } = await axios.post(
         SERVER_URL
@@ -89,7 +92,11 @@ export function Home({ triggerAlert }: HomeProps) {
         },
       );
 
-      setCases(data.map(convertObjectKeysToCamelCase));
+      const cases = data['cases'];
+      setCases(cases.map(convertObjectKeysToCamelCase));
+      if (!data['relevance']) {
+        setQueryRelevanceExplanation(data['reasoning'])
+      }
     } catch (err) {
       console.error(err);
       triggerAlert(
@@ -137,6 +144,12 @@ export function Home({ triggerAlert }: HomeProps) {
                 </Tooltip>
               </Grid2>
             </CardContent>
+            <Collapse in={!!queryRelevanceExplanation} timeout="auto">
+              <div style={{ margin: 'auto', textAlign: 'center' }}>
+                <Typography variant="subtitle2"
+                >{queryRelevanceExplanation}</Typography>
+              </div>
+            </Collapse>
           </Card>
         </Grid2>
       </Grid2>

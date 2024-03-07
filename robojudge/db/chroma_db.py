@@ -8,6 +8,7 @@ import unittest.mock
 from pydantic import BaseModel
 import chromadb
 import chromadb.config
+from chromadb.utils import embedding_functions
 
 from robojudge.components.chunker import split_text_into_embeddable_chunks
 from robojudge.utils.settings import settings
@@ -27,6 +28,7 @@ class CasesInChromaDB(BaseModel):
 class CaseEmbeddingStorage:
     COLLECTION_NAME = "cases"
     client: chromadb.PersistentClient
+    embedding_function: embedding_functions.DefaultEmbeddingFunction
 
     def __init__(self):
         self.client = chromadb.HttpClient(
@@ -37,6 +39,8 @@ class CaseEmbeddingStorage:
         self.collection = self.client.get_or_create_collection(
             name=CaseEmbeddingStorage.COLLECTION_NAME
         )
+
+        self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
         logger.info(
             f'Connection to established to ChromaDB "{settings.EMBEDDING_DB_HOST}:{settings.EMBEDDING_DB_PORT}".'
         )

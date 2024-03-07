@@ -12,6 +12,8 @@ from fastapi import (
     HTTPException,
 )
 from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi_limiter.depends import RateLimiter
+from robojudge.components.reasoning.query_checker import RulingQueryChecker
 
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
@@ -21,6 +23,7 @@ from robojudge.utils.api_types import (
     CaseQuestionResponse,
     FetchCasesRequest,
     FetchCasesStatusResponse,
+    SearchCasesResponse,
 )
 from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
 from robojudge.tasks.scraper_pool import pool
@@ -49,15 +52,16 @@ async def prepare_summary_and_title(case: Case):
         case.title = await title_generator.generate_title(case.summary)
 
 
-@router.get("/chunks", response_model=list[CaseChunk])
+@router.get("/chunks", response_model=list[CaseChunk], dependencies=[Depends(RateLimiter(times=30, seconds=60))])
 async def get_all_case_chunks(
-    embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
+    request: Request, embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)]
 ):
     return embedding_db.get_all_cases()
 
 
-@router.get("", response_model=list[Case])
+@router.get("", response_model=list[Case], dependencies=[Depends(RateLimiter(times=30, seconds=60))])
 async def get_all_cases(
+    request: Request,
     document_db: Annotated[DocumentStorage, Depends(document_db)],
     offset: Annotated[int, Query()] = 0,
     limit: Annotated[int, Query()] = 100,
@@ -72,7 +76,7 @@ async def get_all_cases(
 
 # TODO: docs for request filter params
 # TODO: notify about errored case_ids (save info into DB)
-@router.post("/fetch")
+@router.post("/fetch", dependencies=[Depends(RateLimiter(times=5, seconds=60))])
 async def fetch_specified_cases(
     request: FetchCasesRequest,
 ):
@@ -85,12 +89,14 @@ async def fetch_specified_cases(
 
 
 # TODO: add token expiration?
-@router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse)
+@router.get("/fetch/{fetch_job_token}", response_model=FetchCasesStatusResponse, dependencies=[Depends(RateLimiter(times=30, seconds=60))])
 async def get_cases_by_fetch_job_token(
+    request: Request,
     fetch_job_token: Annotated[str, Path()],
     document_db: Annotated[DocumentStorage, Depends(document_db)],
 ):
-    fetch_job = document_db.fetch_job_collection.find_one({"token": fetch_job_token})
+    fetch_job = document_db.fetch_job_collection.find_one(
+        {"token": fetch_job_token})
 
     if not fetch_job:
         raise HTTPException(
@@ -98,13 +104,15 @@ async def get_cases_by_fetch_job_token(
             detail=f'Fetch job with token "{fetch_job_token}" was not found.',
         )
 
-    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
-    response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
+    cases = document_db.collection.find(
+        {"case_id": {"$in": fetch_job["case_ids"]}})
+    response = FetchCasesStatusResponse(
+        status=fetch_job["status"], content=list(cases))
 
     return response
 
 
-@router.post("/search", response_model=list[Case])
+@router.post("/search", response_model=SearchCasesResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def search_cases(
     request: CaseSearchRequest,
     bg_tasks: BackgroundTasks,
@@ -115,6 +123,10 @@ async def search_cases(
     Given a string, searches for the most similar texts in a vector DB of court cases.
     If a part of the case is similar, it is returned alongside a summary of the whole case (if requested).
     """
+    relevance = await RulingQueryChecker.assess_query_relevance(request.query_text)
+    if not relevance['relevant']:
+        return SearchCasesResponse(relevance=False, reasoning=relevance['reasoning'])
+
     logger.info(f'Searching for similar text chunks:"{request.query_text}".')
 
     # Find the most similar text chunks of saved cases
@@ -135,12 +147,13 @@ async def search_cases(
     if request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
         # Cache the results if the cases are retrieved in the future
-        bg_tasks.add_task(document_db.add_document_summaries, cases_with_summary)
+        bg_tasks.add_task(document_db.add_document_summaries,
+                          cases_with_summary)
 
-    return cases_with_summary
+    return SearchCasesResponse(cases=cases_with_summary, relevance=True)
 
 
-@router.post("/{case_id}/question", response_model=CaseQuestionResponse)
+@router.post("/{case_id}/question", response_model=CaseQuestionResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def answer_case_question(
     case_id: str,
     request: CaseQuestionRequest,
@@ -149,7 +162,8 @@ async def answer_case_question(
     """
     Given a `case_id` and a question, an LLM tries to answer that question by searching through the text (reasoning) of the case.
     """
-    logger.info(f'Answering question about case "{case_id}": "{request.question}".')
+    logger.info(
+        f'Answering question about case "{case_id}": "{request.question}".')
 
     case = Case(**document_db.collection.find_one({"case_id": case_id}))
 
@@ -160,8 +174,8 @@ async def answer_case_question(
     return CaseQuestionResponse(answer=answer)
 
 
-@router.post("/scrape")
-async def fetch_cases(bg_tasks: BackgroundTasks):
+@router.post("/scrape", dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def fetch_cases(request: Request, bg_tasks: BackgroundTasks):
     """
     Manually triggers one instance/batch of scraping cases from the justice ministry's website.
     """
