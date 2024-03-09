@@ -13,8 +13,8 @@ from fastapi import (
 )
 from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi_limiter.depends import RateLimiter
-from robojudge.components.reasoning.query_checker import RulingQueryChecker
 
+from robojudge.components.reasoning.query_checker import RulingQueryChecker
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
 from robojudge.utils.api_types import (
@@ -47,6 +47,8 @@ router = APIRouter(
 
 async def prepare_summary_and_title(case: Case):
     if not case.summary:
+        logging.info(
+            f'Generating summary for text: "{case.reasoning[:200]}..."')
         case.summary = await summarizer.summarize(case.reasoning)
     if not case.title:
         case.title = await title_generator.generate_title(case.summary)
@@ -114,7 +116,7 @@ async def get_cases_by_fetch_job_token(
 
 @router.post("/search", response_model=SearchCasesResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def search_cases(
-    request: CaseSearchRequest,
+    search_request: CaseSearchRequest,
     bg_tasks: BackgroundTasks,
     embedding_db: Annotated[CaseEmbeddingStorage, Depends(embedding_db)],
     document_db: Annotated[DocumentStorage, Depends(document_db)],
@@ -123,17 +125,25 @@ async def search_cases(
     Given a string, searches for the most similar texts in a vector DB of court cases.
     If a part of the case is similar, it is returned alongside a summary of the whole case (if requested).
     """
-    relevance = await RulingQueryChecker.assess_query_relevance(request.query_text)
+    if search_request.page_size * search_request.page > settings.MAX_SEARCHABLE_RULING_COUNT:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'Max limit of {settings.MAX_SEARCHABLE_RULING_COUNT} exceeded.',
+        )
+
+    relevance = await RulingQueryChecker.assess_query_relevance(search_request.query_text)
     if not relevance['relevant']:
         return SearchCasesResponse(relevance=False, reasoning=relevance['reasoning'])
 
-    logger.info(f'Searching for similar text chunks:"{request.query_text}".')
+    logger.info(f'Searching for similar text chunks:"{search_request.query_text}".')
 
     # Find the most similar text chunks of saved cases
     case_chunks = embedding_db.find_case_chunks_by_text(
-        query_text=request.query_text, limit=request.limit
+        query_text=search_request.query_text, offset=search_request.page * search_request.page_size, n_results=search_request.page_size
     )
     case_ids = set(case.case_id for case in case_chunks)
+
+    logging.info(f'Vector DB returned similar ruling_ids: "{case_ids}".')
 
     cases_with_summary: list[Case] = []
 
@@ -144,13 +154,13 @@ async def search_cases(
     for case_in_doc_db in cases_in_document_db:
         cases_with_summary.append(Case(**case_in_doc_db))
 
-    if request.generate_summaries:
+    if search_request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, cases_with_summary))
         # Cache the results if the cases are retrieved in the future
         bg_tasks.add_task(document_db.add_document_summaries,
                           cases_with_summary)
 
-    return SearchCasesResponse(cases=cases_with_summary, relevance=True)
+    return SearchCasesResponse(cases=cases_with_summary, relevance=True, max_page=settings.MAX_SEARCHABLE_RULING_COUNT / search_request.page_size)
 
 
 @router.post("/{case_id}/question", response_model=CaseQuestionResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])

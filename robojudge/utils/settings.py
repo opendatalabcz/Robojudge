@@ -20,6 +20,8 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = 'localhost'
 
+    MAX_SEARCHABLE_RULING_COUNT: int = 20
+
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     SCRAPER_SINGLE_RUN_CASE_COUNT = 30
     SCRAPER_TIMEOUT = 10_000

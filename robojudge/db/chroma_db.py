@@ -103,24 +103,29 @@ class CaseEmbeddingStorage:
 
             for chunk_index, chunk in enumerate(chunks):
                 cases_for_db.documents.append(chunk)
-                cases_for_db.metadatas.append({**metadata, "chunk_index": chunk_index})
+                cases_for_db.metadatas.append(
+                    {**metadata, "chunk_index": chunk_index})
                 cases_for_db.ids.append(
-                    CaseEmbeddingStorage.generate_id(f"{case.case_id}_{chunk_index}")
+                    CaseEmbeddingStorage.generate_id(
+                        f"{case.case_id}_{chunk_index}")
                 )
 
         self.collection.upsert(**cases_for_db.dict())
 
     def get_all_cases(self):
-        case_chunks_from_db = CasesInChromaDB(**self.collection.get(ids=[], where={}))
+        case_chunks_from_db = CasesInChromaDB(
+            **self.collection.get(ids=[], where={}))
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
 
     def get_case_chunks_by_chunk_id(self, case_ids: list[str]):
-        case_chunks_from_db = CasesInChromaDB(**self.collection.get(ids=case_ids))
+        case_chunks_from_db = CasesInChromaDB(
+            **self.collection.get(ids=case_ids))
         return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
 
     def get_case_chunks_by_case_id(self, case_ids: list[str]):
         query_result = CaseEmbeddingStorage.parse_text_query_result(
-            self.collection.query(query_texts="", where={"case_id": {"$in": case_ids}})
+            self.collection.query(query_texts="", where={
+                                  "case_id": {"$in": case_ids}})
         )
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
 
@@ -130,15 +135,17 @@ class CaseEmbeddingStorage:
     def find_case_chunks_by_text(
         self,
         query_text: str,
-        limit: int = 5,
+        offset: int = 0,
+        n_results: int = 5,
         included_fields: list[str] = ["documents", "metadatas"],
     ) -> list[CaseChunk]:
         query_result = CaseEmbeddingStorage.parse_text_query_result(
             self.collection.query(
-                query_texts=[query_text], n_results=limit, include=included_fields
+                query_texts=[
+                    query_text], n_results=settings.MAX_SEARCHABLE_RULING_COUNT, include=included_fields
             )
         )
-        return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))
+        return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))[offset:offset + n_results]
 
 
 if os.environ.get("ENV") == "test":
@@ -146,5 +153,3 @@ if os.environ.get("ENV") == "test":
     embedding_db = unittest.mock.Mock(spec=CaseEmbeddingStorage)
 else:
     embedding_db = CaseEmbeddingStorage()
-
-

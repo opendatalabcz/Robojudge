@@ -39,19 +39,19 @@ function App() {
       <div className="App" style={styles.app}>
         <AppBar position='relative' style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Button component={Link} to='/' type='text' style={{ color: 'white' }}>
-            <Typography padding="0.5rem" noWrap variant="h5" component="div" style={{ display: 'flex', alignItems: 'center' }}>
-              <GavelIcon style={{ marginRight: '10px' }} />
+            <Typography padding="0.5rem" noWrap variant="h4" component="div" style={{ display: 'flex', alignItems: 'center', letterSpacing: '0.03REM' }}>
+              <GavelIcon style={{ marginRight: '10px', fontSize: '30px' }} />
               RoboJudge
             </Typography>
           </Button>
           <ButtonGroup variant='text'>
             <Button component={Link} to='/info' style={{ color: 'white' }}>
-              <Typography padding="0.5rem" noWrap component="div">
+              <Typography padding="0.5rem" variant='h6' noWrap component="div">
                 Info
               </Typography>
             </Button>
             <Button component={Link} to='/api' style={{ color: 'white' }}>
-              <Typography padding="0.5rem" noWrap component="div">
+              <Typography padding="0.5rem" variant="h6" noWrap component="div">
                 API
               </Typography>
             </Button>

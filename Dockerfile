@@ -20,6 +20,7 @@ ENV VIRTUAL_ENV=/app/.venv \
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 # Installs headless browser and deps for case scraping
+RUN apt-get update -y
 RUN playwright install & playwright install-deps
 
 COPY robojudge ./robojudge

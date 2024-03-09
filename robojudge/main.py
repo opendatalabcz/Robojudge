@@ -28,6 +28,7 @@ app.add_middleware(
 
 app.include_router(robojudge.routers.cases.router)
 
+
 @app.get("/health")
 async def get_health():
     return {

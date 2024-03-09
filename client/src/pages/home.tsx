@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { Button, Card, CardContent, Collapse, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Card, CardContent, Collapse, Fade, TextField, Tooltip, Typography, useTheme } from "@mui/material";
 import { CaseCard } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
+import { ArrowDropDown } from "@mui/icons-material";
+import { TransitionGroup } from 'react-transition-group';
 
 export type Case = {
   caseId: string;
@@ -13,13 +15,14 @@ export type Case = {
   metadata: Record<string, unknown>;
   reasoning: string;
   verdict: string;
+  isLoading: boolean;
 };
 
-const styles = {
+export const styles = {
   searchCard: {
     padding: "1rem",
-    maxWidth: "750px",
-    minWidth: "50vw",
+    maxWidth: "800px",
+    minWidth: "250px",
   },
   caseCardsContainer: {
     display: "flex",
@@ -53,7 +56,14 @@ export function Home({ triggerAlert }: HomeProps) {
   const [isInputInvalid, setIsInputInvalid] = useState(true);
   const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
 
+  const [casesPage, setCasesPage] = useState(0);
+  const [maxCasesPage, setMaxCasesPage] = useState(0);
+
   const [queryRelevanceExplanation, setQueryRelevanceExplanation] = useState('');
+
+  const bottomRef = useRef(null);
+
+  const theme = useTheme()
 
   const handleTextInputChange = (value: string) => {
     if (value.length < MIN_DESCRIPTION_LENGTH) {
@@ -69,7 +79,7 @@ export function Home({ triggerAlert }: HomeProps) {
     setCaseDescription(value);
   };
 
-  const searchForCases = async () => {
+  const searchForCases = async (currentPage = 0) => {
     if (caseDescription.length < MIN_DESCRIPTION_LENGTH) {
       setTooltipText(INPUT_TOO_SHORT);
       return;
@@ -78,8 +88,16 @@ export function Home({ triggerAlert }: HomeProps) {
       return;
     }
 
+    const resultsCount = Number(process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS) ?? 5;
     try {
+
+      const caseSkeletons = [];
+      for (let i = 0; i < resultsCount; i++) {
+        caseSkeletons.push({ isLoading: true, metadata: {} })
+      }
+
       setIsLoading(true);
+      setCases(cases => [...cases, ...caseSkeletons]);
       setQueryRelevanceExplanation('');
 
       const { data } = await axios.post(
@@ -87,21 +105,26 @@ export function Home({ triggerAlert }: HomeProps) {
         + '/cases/search',
         {
           query_text: caseDescription,
-          limit: process.env.REACT_APP_NUMBER_OF_SEARCH_RESULTS ?? 5,
+          page_size: resultsCount,
+          page: currentPage,
           generate_summaries: true,
         },
       );
 
-      const cases = data['cases'];
-      setCases(cases.map(convertObjectKeysToCamelCase));
+      const casesRaw = data['cases'];
+      setCases(cases => [...cases.slice(0, -resultsCount), ...casesRaw.map(convertObjectKeysToCamelCase)]);
+
       if (!data['relevance']) {
         setQueryRelevanceExplanation(data['reasoning'])
       }
+      setMaxCasesPage(data['max_page'])
+      setCasesPage(currentPage + 1)
     } catch (err) {
       console.error(err);
       triggerAlert(
         "Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.",
       );
+      setCases(cases => [...cases.slice(0, -resultsCount)])
     } finally {
       setIsLoading(false);
     }
@@ -109,10 +132,10 @@ export function Home({ triggerAlert }: HomeProps) {
 
   return (
     <>
-      {isLoading ? <LoadingOverlay /> : null}
+      {/* {isLoading ? <LoadingOverlay /> : null} */}
       <Grid2
         container
-        style={{ padding: "1rem", opacity: isLoading ? 0.6 : 1 }}
+        style={{ padding: "1rem" }}
       >
         <Grid2 xs={12} style={{ display: "flex", justifyContent: "center" }}>
           <Card style={styles.searchCard}>
@@ -121,6 +144,7 @@ export function Home({ triggerAlert }: HomeProps) {
                 <TextField
                   fullWidth
                   multiline
+                  disabled={isLoading}
                   minRows={2}
                   maxRows={5}
                   value={caseDescription}
@@ -134,7 +158,11 @@ export function Home({ triggerAlert }: HomeProps) {
                   {/* The tooltip will not display on disabled elements otherwise */}
                   <div>
                     <Button
-                      onClick={searchForCases}
+                      onClick={async () => {
+                        setMaxCasesPage(0)
+                        setCases([]);
+                        await searchForCases(0)
+                      }}
                       disabled={isLoading || isInputInvalid}
                       variant="outlined"
                     >
@@ -153,19 +181,29 @@ export function Home({ triggerAlert }: HomeProps) {
           </Card>
         </Grid2>
       </Grid2>
-      <Grid2
-        container
-        spacing={4}
-        style={{ margin: "1rem", opacity: isLoading ? 0.6 : 1 }}
-      >
-        {cases.map((courtCase) => (
-          <CaseCard
-            key={courtCase.caseId}
-            courtCase={courtCase}
-            triggerAlert={triggerAlert}
-          />
-        ))}
-      </Grid2>
+      <Grid2 container spacing={4} style={{ margin: 0 }}>
+        <TransitionGroup style={{ width: "100%", margin: '1rem', opacity: isLoading ? 0.6 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+          {
+            cases.map((courtCase, index) => (
+              <Collapse key={index} style={{ width: '100%' }}>
+                <CaseCard
+                  courtCase={courtCase}
+                  triggerAlert={triggerAlert}
+                />
+              </Collapse>
+            ))
+          }
+        </TransitionGroup >
+      </Grid2 >
+      <Fade in={casesPage > 0 && casesPage < maxCasesPage}>
+        <div ref={bottomRef} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', margin: 'auto', width: '48px', height: '48px', marginTop: '2rem', }} onClick={async () => {
+          await searchForCases(casesPage);
+          // bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }}>
+          <Typography variant="overline">Další</Typography>
+          <ArrowDropDown style={{ fontSize: '8rem', marginTop: '-3.5rem', }} />
+        </div>
+      </Fade>
     </>
   );
 }
