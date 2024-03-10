@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { Button, Card, CardContent, Collapse, Fade, TextField, Tooltip, Typography, useTheme } from "@mui/material";
-import { CaseCard } from "../components/CaseCard";
+import { Box, Button, Card, CardContent, Chip, Collapse, Fade, IconButton, TextField, Tooltip, Typography, useTheme } from "@mui/material";
+import { CaseCard, ExpandMore } from "../components/CaseCard";
 import { LoadingOverlay } from "../components/LoadingOverlay";
-import { ArrowDropDown } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+import { ArrowDropDown, Close } from "@mui/icons-material";
 import { TransitionGroup } from 'react-transition-group';
 
 export type Case = {
@@ -20,7 +22,8 @@ export type Case = {
 
 export const styles = {
   searchCard: {
-    padding: "1rem",
+    padding: "1.5rem",
+
     maxWidth: "800px",
     minWidth: "250px",
   },
@@ -31,9 +34,8 @@ export const styles = {
   },
 } as Record<string, React.CSSProperties>;
 
-const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté
-                  případy podobné. Nejlepších výsledků dosáhnete zadáním 100 a více
-                  znaků. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
+const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté podobné
+                  případy. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
 
 const MIN_DESCRIPTION_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -42,6 +44,8 @@ const INPUT_TOO_SHORT = `Zadejte prosím delší popis případu (aspoň ${MIN_D
 const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} znaků.`;
 
 export const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
+
+const queryExamples = [{ "text": "Manželé se rozvedli, protože každý měl jiného partnera a nechtěli spolu zůstat." }]
 
 type HomeProps = {
   triggerAlert: (text: string) => void;
@@ -56,28 +60,29 @@ export function Home({ triggerAlert }: HomeProps) {
   const [isInputInvalid, setIsInputInvalid] = useState(true);
   const [tooltipText, setTooltipText] = useState(INPUT_TOO_SHORT);
 
+  const [isCardExpanded, setIsCardExpanded] = useState(false)
+
   const [casesPage, setCasesPage] = useState(0);
   const [maxCasesPage, setMaxCasesPage] = useState(0);
 
-  const [queryRelevanceExplanation, setQueryRelevanceExplanation] = useState('');
-
   const bottomRef = useRef(null);
 
-  const theme = useTheme()
-
   const handleTextInputChange = (value: string) => {
-    if (value.length < MIN_DESCRIPTION_LENGTH) {
+    setCaseDescription(value);
+  };
+
+  useEffect(() => {
+    if (caseDescription.length < MIN_DESCRIPTION_LENGTH) {
       setIsInputInvalid(true);
       setTooltipText(INPUT_TOO_SHORT);
-    } else if (value.length > MAX_DESCRIPTION_LENGTH) {
+    } else if (caseDescription.length > MAX_DESCRIPTION_LENGTH) {
       setIsInputInvalid(true);
       setTooltipText(INPUT_TOO_LONG);
     } else {
       setIsInputInvalid(false);
       setTooltipText("");
     }
-    setCaseDescription(value);
-  };
+  }, [caseDescription])
 
   const searchForCases = async (currentPage = 0) => {
     if (caseDescription.length < MIN_DESCRIPTION_LENGTH) {
@@ -98,7 +103,6 @@ export function Home({ triggerAlert }: HomeProps) {
 
       setIsLoading(true);
       setCases(cases => [...cases, ...caseSkeletons]);
-      setQueryRelevanceExplanation('');
 
       const { data } = await axios.post(
         SERVER_URL
@@ -115,7 +119,8 @@ export function Home({ triggerAlert }: HomeProps) {
       setCases(cases => [...cases.slice(0, -resultsCount), ...casesRaw.map(convertObjectKeysToCamelCase)]);
 
       if (!data['relevance']) {
-        setQueryRelevanceExplanation(data['reasoning'])
+        triggerAlert(data['reasoning'])
+        return
       }
       setMaxCasesPage(data['max_page'])
       setCasesPage(currentPage + 1)
@@ -146,21 +151,45 @@ export function Home({ triggerAlert }: HomeProps) {
       >
         <Grid2 xs={12} style={{ display: "flex", justifyContent: "center" }}>
           <Card style={styles.searchCard}>
-            <CardContent>
+            <CardContent style={{ padding: 0 }}>
               <Grid2>
                 <TextField
                   fullWidth
                   multiline
+                  style={{ margin: 0 }}
                   disabled={isLoading}
-                  minRows={2}
+                  minRows={1}
                   maxRows={5}
                   value={caseDescription}
                   onChange={(e) => handleTextInputChange(e.target.value)}
                   label="Popis případu"
                   helperText={DEFAULT_HELPER_TEXT}
+                  FormHelperTextProps={{ style: { marginLeft: 0 } }}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        sx={{ visibility: caseDescription ? "visible" : "hidden", padding: '0' }}
+                        onClick={() => { setCaseDescription('') }}
+                      >
+                        <Close />
+                      </IconButton>
+                    ),
+                  }}
+                  sx={{
+                    m: 2,
+                    "& .Mui-focused .MuiIconButton-root": { color: "primary.main" },
+                  }}
                 ></TextField>
               </Grid2>
-              <Grid2 style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Grid2 style={{ display: "flex", justifyContent: "space-between", paddingTop: '0.5rem' }}>
+                <Box display="flex" alignItems="center" onClick={() => setIsCardExpanded(!isCardExpanded)} style={{ cursor: 'pointer' }}>
+                  <Typography variant="subtitle1">Příklady dotazů</Typography>
+                  <ExpandMoreIcon style={{
+                    transform: !isCardExpanded ? "rotate(0deg)" : "rotate(180deg)",
+                    marginLeft: "auto",
+                    float: "right",
+                  }} />
+                </Box>
                 <Tooltip title={tooltipText} placement="bottom">
                   {/* The tooltip will not display on disabled elements otherwise */}
                   <div>
@@ -179,11 +208,8 @@ export function Home({ triggerAlert }: HomeProps) {
                 </Tooltip>
               </Grid2>
             </CardContent>
-            <Collapse in={!!queryRelevanceExplanation} timeout="auto">
-              <div style={{ margin: 'auto', textAlign: 'center' }}>
-                <Typography variant="subtitle2"
-                >{queryRelevanceExplanation}</Typography>
-              </div>
+            <Collapse in={isCardExpanded} timeout="auto">
+              {queryExamples.map((example, index) => <Chip disabled={isLoading} key={index} label={example.text} color='primary' clickable onClick={() => setCaseDescription(example.text)} />)}
             </Collapse>
           </Card>
         </Grid2>
@@ -202,7 +228,7 @@ export function Home({ triggerAlert }: HomeProps) {
           }
         </TransitionGroup >
       </Grid2 >
-      <Fade in={casesPage > 0 && casesPage < maxCasesPage}>
+      <Fade in={caseDescription && casesPage > 0 && casesPage < maxCasesPage}>
         <div ref={bottomRef} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', margin: 'auto', width: '48px', height: '48px', marginTop: '2rem', }} onClick={async () => {
           await searchForCases(casesPage);
           // bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

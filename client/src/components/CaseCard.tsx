@@ -12,6 +12,7 @@ import {
   LinearProgress,
   Skeleton,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Case } from "../pages/home";
@@ -36,7 +37,9 @@ const styles = {
   },
   caseCardSticker: {
     position: "absolute",
-    borderBottom: "26px solid #d3d0d0",
+    borderBottom: "26px solid #597081",
+    color: 'white',
+    cursor: 'pointer',
     borderLeft: "12px solid transparent",
     borderRight: "12px solid transparent",
     height: 0,
@@ -57,7 +60,7 @@ interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
-const ExpandMore = (props: ExpandMoreProps) => {
+export const ExpandMore = (props: ExpandMoreProps) => {
   const { expand, ...other } = props;
   return (
     <IconButton
@@ -108,11 +111,15 @@ export const CaseCard = ({ courtCase, triggerAlert }: CardCardProps) => {
 
   return (
     <Card style={styles.caseCard} variant="outlined">
-      <div style={styles.caseCardSticker}>
-        <Typography variant="button">
-          {!courtCase.isLoading ? (courtCase.metadata?.jednaciCislo as string) ?? "" : null}
-        </Typography>
-      </div>
+      <Tooltip placement="right" title='Kliknutím zkopírujete číslo jednací.'>
+        <div style={styles.caseCardSticker} onClick={() => {
+          !courtCase.isLoading ? navigator.clipboard.writeText(courtCase?.metadata?.jednaciCislo as string ?? "") : null
+        }}>
+          < Typography variant="button" >
+            {!courtCase.isLoading ? (courtCase.metadata?.jednaciCislo as string) ?? "" : null}
+          </Typography>
+        </div>
+      </Tooltip >
       <CardContent>
         <div style={styles.caseCardHeader}>
           {courtCase.isLoading ?
@@ -124,7 +131,7 @@ export const CaseCard = ({ courtCase, triggerAlert }: CardCardProps) => {
 
           {courtCase.isLoading ? <Skeleton animation="wave" width={'50px'} />
             :
-            <span style={{ minWidth: '150px', whiteSpace: 'nowrap' }} >
+            <span style={{ whiteSpace: 'nowrap', marginTop: '-1rem', marginRight: '-1rem' }} >
               Datum vydání:{" "}
               {formatDate((courtCase.metadata.sentenceDate as string) ?? "")}
             </span>
