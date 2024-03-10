@@ -13,8 +13,8 @@ class CaseSearchRequest(BaseModel):
         default=3,
         description="The number of results to return in a single response.",
     )
-    page: Optional[int] = Field(
-        default=0, description='Which page of the results to return'),
+    current_page: Optional[int] = Field(
+        default=0, description="Which page of the results to return.")
     generate_summaries: Optional[bool] = Field(
         default=False,
         description="Whether to generate any new summaries. In case the case already has a summary in DB, it will return that.",

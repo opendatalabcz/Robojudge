@@ -50,7 +50,7 @@ function App() {
                 Info
               </Typography>
             </Button>
-            <Button component={Link} to='/api' style={{ color: 'white' }}>
+            <Button component={Link} to='/docs' style={{ color: 'white' }}>
               <Typography padding="0.5rem" variant="h6" noWrap component="div">
                 API
               </Typography>
@@ -62,7 +62,7 @@ function App() {
             <Routes>
               <Route path='/' element={<Home triggerAlert={triggerAlert} />} />
               <Route path='/info' element={<Info triggerAlert={triggerAlert} />} />
-              <Route path='/api' element={<Api triggerAlert={triggerAlert} />} />
+              <Route path='/docs' element={<Api triggerAlert={triggerAlert} />} />
             </Routes>
           </ErrorBoundary>
         </div>
