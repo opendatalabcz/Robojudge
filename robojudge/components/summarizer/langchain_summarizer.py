@@ -22,7 +22,7 @@ Create your summary ONLY in Czech and use a maximum of 7 sentences.
 
 
 class CaseSummarizer:
-    NEXT_CHUNK_SIZE = 4096 - 1000
+    NEXT_CHUNK_SIZE = 4096 - 500
 
     def __init__(self) -> None:
         system_message_prompt = SystemMessagePromptTemplate.from_template(
@@ -143,4 +143,5 @@ a v důsledku této skutečnosti mu nelze poskytnout poučení dle ustanovení 
 19. Výrok III. o náhradě nákladů řízení je odůvodněn ustanovením § 142 odst. 2 o.s.ř. podle něhož měl-li účastník ve věci úspěch jen částečný, soud náhradu nákladů poměrně rozdělí, popřípadě vysloví, že žádný z účastníků nemá na náhradu nákladů právo. Sluší se v této souvislosti poznamenat, že soud při rozhodování o náhradě nákladů řízení dle míry úspěchu zvážil míru úspěchu v celém sporu, tj. nejen ohledně samotné pohledávky, ale též stran jejího příslušenství
 (k tomu srov. nález Ústavního soudu sp. zn. I. ÚS 2717/08 ze dne 30. 8. 2010), a že pro zjednodušení výpočtu úspěchu účastníků stanovil pro výpočet nároků požadovaných do zaplacení limit 16. 5. 2022, tj. den vydání tohoto rozsudku. Předmětem řízení bylo zaplacení částky v celkové výši 32.617,11 Kč (15.000 Kč + 2.100 Kč + 1.767,11 Kč + 7.300 Kč + 6.450 Kč). Úspěch žalobce je v tomto případě představován výrokem I. tohoto rozsudku, tedy částkou v celkové výši 10.285,98 Kč (9.400 Kč + 885,98 Kč), ohledně které soud žalobě vyhověl. Naopak úspěch žalovaného je představován výrokem II. tohoto rozsudku, tedy částkou v celkové výši 22.331,13 Kč (5.600 Kč + 386,30 Kč + 639,78 Kč + 187,93 Kč + 1.767,12 Kč + 7.300 Kč + 6.450 Kč), ohledně které byla žaloba zamítnuta. Žalobce byl proto úspěšný v 31,5 % předmětu řízení, žalovaný byl úspěšný v 68,5 % a po vzájemném zápočtu úspěchu žalovaného vůči úspěchu žalobce, by žalovaný měl právo na náhradu 37 % účelně vynaložených nákladů. Vzhledem k tomu však, že žalovanému v tomto směru žádné náklady řízení nevznikly, rozhodl soud tak, jak je ve výroku III. tohoto rozsudku uvedeno.
 """
-    print(summarizer.summarize(test_text))
+    import asyncio
+    print(asyncio.run(summarizer.summarize(test_text)))

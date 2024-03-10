@@ -2,7 +2,9 @@ import asyncio
 import re
 import queue
 
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 from robojudge.components.summarizer.base_summarizer import BaseSummarizer, openai
 from robojudge.utils.logger import logging
@@ -47,9 +49,7 @@ class GPTSummarizer(BaseSummarizer):
         ]
 
         try:
-            chat_completion = openai.ChatCompletion.create(
-                engine=settings.GPT_MODEL_NAME, messages=messages, temperature=0
-            )
+            chat_completion = client.chat.completions.create(engine=settings.GPT_MODEL_NAME, messages=messages, temperature=0)
 
             return chat_completion.choices[0].message.content
             # return 'Summary:' + text_chunk

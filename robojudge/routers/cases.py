@@ -14,7 +14,7 @@ from fastapi import (
 from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi_limiter.depends import RateLimiter
 
-from robojudge.components.reasoning.query_checker import RulingQueryChecker
+from robojudge.components.reasoning.query_checker import query_checker
 from robojudge.tasks.case_scraping import run_scraping_instance
 from robojudge.utils.logger import logging
 from robojudge.utils.api_types import (
@@ -131,7 +131,7 @@ async def search_cases(
             detail=f'Max limit of {settings.MAX_SEARCHABLE_RULING_COUNT} exceeded.',
         )
 
-    relevance = await RulingQueryChecker.assess_query_relevance(search_request.query_text)
+    relevance = await query_checker.assess_query_relevance(search_request.query_text)
     if not relevance['relevant']:
         return SearchCasesResponse(relevance=False, reasoning=relevance['reasoning'])
 

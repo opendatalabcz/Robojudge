@@ -4,17 +4,17 @@ import queue
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-import openai
+from openai import AzureOpenAI
+
+client = AzureOpenAI(api_key=settings.OPENAI_API_KEY,
+azure_endpoint=settings.OPENAI_API_BASE,
+api_version="2023-03-15-preview")
 
 from robojudge.utils.logger import logging
 from robojudge.utils.async_tools import make_async, gather_with_concurrency
 from robojudge.utils.settings import settings
 from robojudge.utils.gpt_tokenizer import tokenizer
 
-openai.api_key = settings.OPENAI_API_KEY
-openai.api_type = "azure"
-openai.api_base = settings.OPENAI_API_BASE
-openai.api_version = "2023-03-15-preview"
 
 logger = logging.getLogger(__name__)
 
@@ -115,9 +115,7 @@ class BaseSummarizer(ABC):
         ]
 
         try:
-            chat_completion = openai.ChatCompletion.create(
-                engine=settings.GPT_MODEL_NAME, messages=messages, temperature=0
-            )
+            chat_completion = client.chat.completions.create(model=settings.GPT_MODEL_NAME, messages=messages, temperature=0)
 
             return chat_completion.choices[0].message.content
             # return 'Summary:' + "\n".join(self.chunk_summaries)
@@ -212,9 +210,7 @@ Text to split: {text}
         ]
 
         try:
-            chat_completion = openai.ChatCompletion.create(
-                engine="chatgpt", messages=messages, temperature=0
-            )
+            chat_completion = client.chat.completions.create(model="chatgpt", messages=messages, temperature=0)
 
             response = chat_completion.choices[0].message.content
 

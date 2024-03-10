@@ -1,5 +1,4 @@
 from pydantic import BaseSettings
-from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 
 class Settings(BaseSettings):
     SERVER_HOST = "0.0.0.0"
