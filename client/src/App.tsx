@@ -79,7 +79,7 @@ function App() {
             </a>
           </Grid2>
         </AppBar>
-        <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text={alertText} />
+        <FloatingAlert isShown={isErrorAlertShown} setShown={setIsErrorAlertShown} text={alertText} positionHorizontal='center' positionVertical='top' />
       </div>
     </Router >
   );

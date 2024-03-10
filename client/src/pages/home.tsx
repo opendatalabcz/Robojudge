@@ -121,9 +121,16 @@ export function Home({ triggerAlert }: HomeProps) {
       setCasesPage(currentPage + 1)
     } catch (err) {
       console.error(err);
-      triggerAlert(
-        "Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.",
-      );
+
+      if (err?.response?.status == 429)
+        triggerAlert(
+          "Zaslali jste příliš mnoho dotazů v krátkém čase. Opakujte prosím akci za chvíli.",
+        );
+      else
+        triggerAlert(
+          "Při vytváření shrnutí nastala chyba. Opakujte prosím akci za chvíli.",
+        );
+
       setCases(cases => [...cases.slice(0, -resultsCount)])
     } finally {
       setIsLoading(false);
