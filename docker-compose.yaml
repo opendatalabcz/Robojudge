@@ -33,6 +33,11 @@ services:
       - chroma
     env_file:
       - .env
+    environment:
+      DOCUMENT_DB_HOST: mongo
+      EMBEDDING_DB_HOST: chroma
+      REDIS_URL: redis
+      RABBIT_HOST: rabbit
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
