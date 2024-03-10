@@ -28,7 +28,7 @@ from robojudge.utils.api_types import (
 from robojudge.utils.internal_types import Case, CaseChunk, CaseFetchJob
 from robojudge.tasks.scraper_pool import pool
 from robojudge.components.paginating_scraper import PaginatingScraper
-from robojudge.utils.settings import settings
+from robojudge.utils.settings import settings, SUMMARY_UNAVAILABLE_MESSAGE
 from robojudge.utils.functional import generate_uuid, construct_server_url
 from robojudge.db.chroma_db import embedding_db, CaseEmbeddingStorage
 from robojudge.db.mongo_db import document_db, DocumentStorage
@@ -46,11 +46,12 @@ router = APIRouter(
 
 
 async def prepare_summary_and_title(case: Case):
-    if not case.summary:
+    if not case.summary or case.summary == SUMMARY_UNAVAILABLE_MESSAGE:
         logging.info(
             f'Generating summary for text: "{case.reasoning[:200]}..."')
-        case.summary = await summarizer.summarize(case.reasoning)
-    if not case.title:
+        summary = await summarizer.summarize(case.reasoning)
+        case.summary = summary if summary else SUMMARY_UNAVAILABLE_MESSAGE
+    if not case.title and case.summary != SUMMARY_UNAVAILABLE_MESSAGE:
         case.title = await title_generator.generate_title(case.summary)
 
 
@@ -135,7 +136,8 @@ async def search_cases(
     if not relevance['relevant']:
         return SearchCasesResponse(relevance=False, reasoning=relevance['reasoning'])
 
-    logger.info(f'Searching for similar text chunks:"{search_request.query_text}".')
+    logger.info(
+        f'Searching for similar text chunks:"{search_request.query_text}".')
 
     # Find the most similar text chunks of saved cases
     case_chunks = embedding_db.find_case_chunks_by_text(

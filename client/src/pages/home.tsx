@@ -45,7 +45,7 @@ const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} zn
 
 export const SERVER_URL = process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"
 
-const queryExamples = [{ "text": "Manželé se rozvedli, protože každý měl jiného partnera a nechtěli spolu zůstat." }]
+const queryExamples = [{ "text": "Manželé se rozvedli, protože každý měl jiného partnera a nechtěli spolu zůstat." }, { 'text': 'Muž cestoval v MHD a dostal pokutu, protože jel načerno.' }]
 
 type HomeProps = {
   triggerAlert: (text: string) => void;
@@ -209,7 +209,7 @@ export function Home({ triggerAlert }: HomeProps) {
               </Grid2>
             </CardContent>
             <Collapse in={isCardExpanded} timeout="auto">
-              {queryExamples.map((example, index) => <Chip disabled={isLoading} key={index} label={example.text} color='primary' clickable onClick={() => setCaseDescription(example.text)} />)}
+              {queryExamples.map((example, index) => <Chip style={{ margin: '0.25rem' }} disabled={isLoading} key={index} label={example.text} color='primary' clickable onClick={() => setCaseDescription(example.text)} />)}
             </Collapse>
           </Card>
         </Grid2>

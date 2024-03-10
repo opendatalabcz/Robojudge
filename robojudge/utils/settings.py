@@ -1,5 +1,8 @@
 from pydantic import BaseSettings
 
+SUMMARY_UNAVAILABLE_MESSAGE = 'Nebylo možné vygenerovat shrnutí.'
+
+
 class Settings(BaseSettings):
     SERVER_HOST = "0.0.0.0"
     SERVER_PORT = 4000
