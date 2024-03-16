@@ -24,10 +24,10 @@ PARSER_PROCESS_COUNT = 3
 logger = logging.getLogger(__name__)
 
 
-def get_ruling_ids_ascending(latest_web_id: int, latest_id_in_db: int, ruling_ids_in_db: set) -> list:
+def get_ruling_ids_ascending(latest_web_id: int, latest_id_in_db: int, ruling_ids_in_db: set, empty_streak_jump: int = 0) -> list:
     upper = min(latest_id_in_db +
-                settings.SCRAPER_SINGLE_RUN_CASE_COUNT, latest_web_id) + 1
-    lower = latest_id_in_db + 1
+                settings.SCRAPER_SINGLE_RUN_CASE_COUNT + empty_streak_jump + 1, latest_web_id)
+    lower = latest_id_in_db + 1 + empty_streak_jump
 
     return sorted(set(range(lower, upper)).difference(ruling_ids_in_db), key=int)
 
@@ -67,21 +67,27 @@ async def determine_ruling_ids_to_parse() -> set:
     ruling_ids_in_db = list(document_db.collection.find({}, {"case_id"}))
     ruling_ids_in_db = set(int(case["case_id"]) for case in ruling_ids_in_db)
 
+    # Gradually increase jumps to get over stretches of 'empty IDs'
+
+    empty_streak_jump = 0
+    if SCRAPING_EMPTY_STREAK > 0:
+        empty_streak_jump = min(int(settings.SCRAPER_SINGLE_RUN_CASE_COUNT *
+                                (2**(SCRAPING_EMPTY_STREAK-1))), settings.SCRAPER_MAX_EMPTY_JUMP)
+
     if settings.SCRAPE_CASES_FROM_LAST:
         return get_ruling_ids_descending(latest_web_id=latest_web_id, ruling_ids_in_db=ruling_ids_in_db)
     else:
-        return get_ruling_ids_ascending(latest_web_id=latest_web_id, latest_id_in_db=latest_id_in_db, ruling_ids_in_db=ruling_ids_in_db)
+        return get_ruling_ids_ascending(latest_web_id=latest_web_id, latest_id_in_db=latest_id_in_db, ruling_ids_in_db=ruling_ids_in_db, empty_streak_jump=empty_streak_jump)
 
 
 app = Rocketry()
 
-
-LAST_SCRAPING_EMPTY = False
+SCRAPING_EMPTY_STREAK = 0
 
 
 @app.cond("last_scraping_empty")
 def last_scraping_empty():
-    return LAST_SCRAPING_EMPTY
+    return SCRAPING_EMPTY_STREAK > 0
 
 
 @app.task(
@@ -131,15 +137,15 @@ async def run_scraping_instance(case_ids: list[str] = None):
     )
     document_db.insert_scraping_instance_information(scraping_information)
 
-    global LAST_SCRAPING_EMPTY
+    global SCRAPING_EMPTY_STREAK
     if len(case_ids) == unsuccessful_case_count:
         logger.warning(f"No case_ids fetched, repeating task immediately.")
-        LAST_SCRAPING_EMPTY = True
+        SCRAPING_EMPTY_STREAK += 1
     else:
         logger.info(
             f"Fetched {(len(case_ids) - unsuccessful_case_count)}/{len(case_ids)} case_ids."
         )
-        LAST_SCRAPING_EMPTY = False
+        SCRAPING_EMPTY_STREAK = 0
 
 
 # Has to be wrapped because of its async nature
@@ -182,7 +188,7 @@ async def create_scheduler_async_task():
     signal.signal(signal.SIGTERM, shutdown_scheduler)
 
     await scheduled
-    
+
 
 def run_scheduler():
     asyncio.run(create_scheduler_async_task())
