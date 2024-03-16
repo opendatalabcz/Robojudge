@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     ENABLE_SCRAPING: bool = True
     ENABLE_AUTOMATIC_SCRAPING: bool = True
-    SCRAPER_SINGLE_RUN_CASE_COUNT = 30
+    SCRAPER_SINGLE_RUN_CASE_COUNT = 50
     SCRAPER_TIMEOUT = 10_000
     SCRAPER_CRONTAB = "* * * * *"  # https://crontab.guru/#*/10_*_*_*_*
     SCRAPE_CASES_FROM_LAST: bool = False
