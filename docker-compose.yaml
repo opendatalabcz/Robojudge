@@ -72,7 +72,7 @@ services:
       <<: *server-env
     networks:
       - default
-    command: [dramatiq, robojudge.tasks.case_scraping, '--threads 4']
+    command: [dramatiq, robojudge.tasks.case_scraping, --threads, '4']
   
   migrate_db:
     build: ./
@@ -92,7 +92,6 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - default
-  
 
   client:
     build: 

@@ -2,6 +2,7 @@ import datetime
 
 import asyncio
 
+import structlog
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -16,14 +17,13 @@ from robojudge.components.case_page_scraper import CasePageScraper
 from robojudge.db.mongo_db import document_db
 from robojudge.db.chroma_db import embedding_db
 from robojudge.tasks.ruling_ids_selector import select_ruling_ids_for_scraping
-from robojudge.utils.logger import logging
 
 BATCH_SIZE = 10
 SCRAPER_THREAD_COUNT = 3
 PARSER_PROCESS_COUNT = 3
 
 
-logger = logging.getLogger(__name__)
+logger: structlog.BoundLogger = structlog.get_logger()
 
 
 if settings.ENABLE_SCRAPING:
@@ -52,7 +52,8 @@ async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesReque
     scraping_job = ScrapingJob(token=token, filters=filters,
                                started_at=datetime.datetime.now(), type=ScrapingJobType.MANUAL)
 
-    logger.info(f'Extracting ruling_ids based on this filter: "{filters}".')
+    logger.info(f'Extracting ruling_ids based on this filter:',
+                filters=filters)
     ruling_ids = await PaginatingScraper.extract_case_ids(filters)
 
     cases_in_db = document_db.collection.find({"case_id": {"$in": ruling_ids}})
@@ -85,7 +86,7 @@ async def scraper_worker(scraping_job: ScrapingJob = None):
                                                     )
 
     logger.info(
-        f'Initializing scraping for ruling_ids: "{scraping_job.filtered_ruling_ids}".')
+        f'Initializing scraping for ruling_ids:', ruling_ids=scraping_job.filtered_ruling_ids)
 
     scraped_rulings = await asyncio.gather(
         *[CasePageScraper(ruling_id).scrape_case() for ruling_id in scraping_job.filtered_ruling_ids]
@@ -111,7 +112,7 @@ def parser_worker(args):
             {'token': scraping_job.token}, {"$set": {'finished_at': datetime.datetime.now(), 'status': ScrapingJobStatus.FINISHED, 'scraped_ruling_ids': scraped_ruling_ids}})
 
         logger.info(
-            f'Scraped and parsed rulings with ids: "{scraped_ruling_ids}".'
+            f'Scraped and parsed rulings with ids:', ruling_ids=scraped_ruling_ids
         )
     except Exception:
         logger.exception(
