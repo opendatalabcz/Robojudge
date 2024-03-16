@@ -1,5 +1,11 @@
 version: "3.9"
 
+x-server-env: &server-env
+  DOCUMENT_DB_HOST: mongo
+  EMBEDDING_DB_HOST: chroma
+  REDIS_URL: redis
+  RABBIT_HOST: rabbit
+
 services:
   mongo:
     image: mongo:7.0.5
@@ -39,10 +45,12 @@ services:
     depends_on:
       - mongo
       - chroma
-      - rabbit
       - scraper_workers
+      - redis
     env_file:
       - .env
+    environment:
+      <<: *server-env
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
@@ -60,9 +68,11 @@ services:
       - rabbit
     env_file:
       - .env
+    environment:
+      <<: *server-env
     networks:
       - default
-    command: [dramatiq, robojudge.tasks.case_scraping]
+    command: [dramatiq, robojudge.tasks.case_scraping, '--threads 4']
   
   migrate_db:
     build: ./
@@ -82,7 +92,7 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - default
-    
+  
 
   client:
     build: 
@@ -93,6 +103,11 @@ services:
       - server
     env_file:
       - .env
+    environment:
+      DOCUMENT_DB_HOST: mongo
+      EMBEDDING_DB_HOST: chroma
+      REDIS_URL: redis
+      RABBIT_HOST: rabbit
     ports:
       - ${CLIENT_PORT}:80
     networks:
