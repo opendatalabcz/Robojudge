@@ -126,7 +126,7 @@ async def search_cases(
     Given a string, searches for the most similar texts in a vector DB of court cases.
     If a part of the case is similar, it is returned alongside a summary of the whole case (if requested).
     """
-    if search_request.page_size * search_request.page > settings.MAX_SEARCHABLE_RULING_COUNT:
+    if search_request.page_size * search_request.current_page > settings.MAX_SEARCHABLE_RULING_COUNT:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'Max limit of {settings.MAX_SEARCHABLE_RULING_COUNT} exceeded.',
@@ -141,7 +141,7 @@ async def search_cases(
 
     # Find the most similar text chunks of saved cases
     case_chunks = embedding_db.find_case_chunks_by_text(
-        query_text=search_request.query_text, offset=search_request.page * search_request.page_size, n_results=search_request.page_size
+        query_text=search_request.query_text, offset=search_request.current_page * search_request.page_size, n_results=search_request.page_size
     )
     case_ids = set(case.case_id for case in case_chunks)
 

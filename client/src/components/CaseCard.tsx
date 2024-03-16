@@ -6,6 +6,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  Chip,
   Collapse,
   IconButton,
   IconButtonProps,
@@ -139,10 +140,9 @@ export const CaseCard = ({ courtCase, triggerAlert }: CardCardProps) => {
         </div>
 
         {!courtCase.isLoading ?
-          <Typography variant="overline" gutterBottom>
-            {((courtCase.metadata?.keywords as Array<string>) ?? []).join(", ")}
-          </Typography>
-          : <Skeleton animation="wave" variant='text' width={'60%'} height={'1rem'} />}
+          ((courtCase.metadata?.keywords as Array<string>) ?? []).map((keyword) => <Chip key={keyword} label={keyword} style={{marginRight: '0.75rem', marginBottom: '0.75rem', marginTop: '0.75rem'}} />)
+          : <Skeleton animation="wave" variant='text' width={'60%'} height={'1rem'} />
+        }
 
         {!courtCase.isLoading ?
           <Typography gutterBottom>{courtCase.summary}</Typography>

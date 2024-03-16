@@ -110,7 +110,7 @@ export function Home({ triggerAlert }: HomeProps) {
         {
           query_text: caseDescription,
           page_size: resultsCount,
-          page: currentPage,
+          current_page: currentPage,
           generate_summaries: true,
         },
       );
