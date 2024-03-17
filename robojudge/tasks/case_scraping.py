@@ -37,8 +37,9 @@ if settings.ENABLE_SCRAPING:
 
 def intialize_scheduled_scraping():
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_scraper_parser_pipeline,  CronTrigger.from_crontab(
-        settings.SCRAPER_CRONTAB))
+    for _ in range(settings.PARALLEL_SCRAPER_INSTANCES):
+        scheduler.add_job(run_scraper_parser_pipeline,  CronTrigger.from_crontab(
+            settings.SCRAPER_CRONTAB))
 
     try:
         scheduler.start()
@@ -53,7 +54,7 @@ async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesReque
                                started_at=datetime.datetime.now(), type=ScrapingJobType.MANUAL)
 
     logger.info(f'Extracting ruling_ids based on this filter:',
-                filters=filters)
+                job_id=scraping_job.token, filters=filters)
     ruling_ids = await PaginatingScraper.extract_case_ids(filters)
 
     cases_in_db = document_db.collection.find({"case_id": {"$in": ruling_ids}})
@@ -86,11 +87,18 @@ async def scraper_worker(scraping_job: ScrapingJob = None):
                                                     )
 
     logger.info(
-        f'Initializing scraping for ruling_ids:', ruling_ids=scraping_job.filtered_ruling_ids)
+        f'Initializing scraping for ruling_ids ({len(scraping_job.filtered_ruling_ids)}):', job_id=scraping_job.token, ruling_ids=scraping_job.filtered_ruling_ids)
 
     scraped_rulings = await asyncio.gather(
         *[CasePageScraper(ruling_id).scrape_case() for ruling_id in scraping_job.filtered_ruling_ids]
     )
+
+    scraped_rulings: list[Case] = [
+        ruling for ruling in scraped_rulings if ruling]
+    scraping_job.scraped_ruling_ids = [
+        ruling.case_id for ruling in scraped_rulings]
+    logger.info(
+        f'Finishing scraping for ruling_ids ({len(scraped_rulings)}):', job_id=scraping_job.token, ruling_ids=scraping_job.scraped_ruling_ids)
 
     return scraping_job, scraped_rulings
 
@@ -101,19 +109,17 @@ def parser_worker(args):
     Takes scraped rulings and upserts them into DBs.
     """
     try:
-        scraping_job, rulings = args
-        scraped_rulings: list[Case] = [ruling for ruling in rulings if ruling]
-        scraped_ruling_ids = [ruling.case_id for ruling in scraped_rulings]
+        scraping_job: ScrapingJob
+        scraped_rulings: list[Case]
+        scraping_job, scraped_rulings = args
 
         embedding_db.upsert_cases(scraped_rulings)
         document_db.upsert_documents(scraped_rulings)
 
         document_db.scraping_job_collection.update_one(
-            {'token': scraping_job.token}, {"$set": {'finished_at': datetime.datetime.now(), 'status': ScrapingJobStatus.FINISHED, 'scraped_ruling_ids': scraped_ruling_ids}})
+            {'token': scraping_job.token}, {"$set": {'finished_at': datetime.datetime.now(), 'status': ScrapingJobStatus.FINISHED, 'scraped_ruling_ids': scraping_job.scraped_ruling_ids}})
 
-        logger.info(
-            f'Scraped and parsed rulings with ids:', ruling_ids=scraped_ruling_ids
-        )
+        logger.info(f'Rulings parsed into DB:', job_id=scraping_job.token)
     except Exception:
         logger.exception(
             f"Error while parsing rulings:")

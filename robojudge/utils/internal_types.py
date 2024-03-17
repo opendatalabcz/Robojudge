@@ -49,7 +49,7 @@ DOCUMENT_METADATA_MAP = {
 # TODO: explain what these mean
 class Metadata(BaseModel):
     jednaci_cislo: str
-    court: str
+    court: str = ''
     subject_matter: str
     judge_name: str
     sentence_date: datetime.datetime
