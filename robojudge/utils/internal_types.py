@@ -105,6 +105,7 @@ class ScrapingJob(BaseModel):
     status: ScrapingJobStatus = ScrapingJobStatus.RUNNING
     filtered_ruling_ids: list[str] = []
     scraped_ruling_ids: list[str] = []
+    previous_empty_scraping_counts: int = 0
     type: ScrapingJobType = ScrapingJobType.SCHEDULED
 
     class Config:
