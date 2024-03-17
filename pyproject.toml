@@ -26,10 +26,10 @@ openai = "^1.13.3"
 dramatiq = {extras = ["rabbitmq", "watch"], version = "^1.16.0"}
 structlog = "^24.1.0"
 apscheduler = "^3.10.4"
+more-itertools = "^10.1.0"
 
 [tool.poetry.group.dev.dependencies]
 evaluate = "^0.4.0"
-more-itertools = "^10.1.0"
 bert-score = "^0.3.13"
 torch = "^2.1.0"
 torchvision = "^0.16.0"
