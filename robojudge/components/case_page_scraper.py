@@ -40,8 +40,8 @@ class CasePageScraper:
             logging.debug(f'Scraped case: {self.case_id}')
 
             return Case(case_id=self.case_id, verdict=verdict, reasoning=reasoning, metadata=metadata)
-        except Exception:
-            logging.exception(f'Error while scraping case "{self.case_id}":')
+        except Exception as e:
+            logging.error(f'Error while scraping case "{self.case_id}": {e}')
 
     async def scrape_case_page(self):
         async with async_playwright() as pw:

@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     SCRAPER_SINGLE_RUN_CASE_COUNT = 50
     SCRAPER_TIMEOUT = 10_000
+    PARALLEL_SCRAPER_INSTANCES= 2
     SCRAPER_CRONTAB = "* * * * *"  # https://crontab.guru/#*/10_*_*_*_*
     SCRAPE_CASES_FROM_LAST: bool = False
     OLDEST_KNOWN_CASE_ID = (
@@ -35,8 +36,8 @@ class Settings(BaseSettings):
     RABBIT_PORT: int = 5672
 
     MAX_RETRIES: int = 2
-    MIN_BACKOFF: str = '15 seconds'
-    MAX_BACKOFF: str = '10 minutes'
+    MIN_BACKOFF: str = 15_000
+    MAX_BACKOFF: str = 60 * 10 * 1_000
 
     OPENAI_API_KEY = "dummykey"
     OPENAI_API_BASE = "https://api.openai.com/v1"
