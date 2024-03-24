@@ -26,7 +26,7 @@ PARSER_PROCESS_COUNT = 3
 logger: structlog.BoundLogger = structlog.get_logger()
 
 
-if settings.ENABLE_SCRAPING:
+if settings.ENABLE_AUTOMATIC_SCRAPING:
     rabbitmq_broker = RabbitmqBroker(
         host=settings.RABBIT_HOST, port=settings.RABBIT_PORT)
     rabbitmq_broker.add_middleware(dramatiq.middleware.AsyncIO())
@@ -47,7 +47,7 @@ def intialize_scheduled_scraping():
         scheduler.shutdown()
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF, max_backoff=settings.MAX_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
 async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesRequest):
     filters = ScrapingFilters(**request.filters.dict())
     scraping_job = ScrapingJob(token=token, filters=filters,
@@ -71,7 +71,7 @@ async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesReque
     return scraping_job
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF, max_backoff=settings.MAX_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
 async def scraper_worker(scraping_job: ScrapingJob = None):
     if not scraping_job:
         scraping_job = ScrapingJob(
@@ -103,7 +103,7 @@ async def scraper_worker(scraping_job: ScrapingJob = None):
     return scraping_job, scraped_rulings
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF, max_backoff=settings.MAX_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
 def parser_worker(args):
     """
     Takes scraped rulings and upserts them into DBs.

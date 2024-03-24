@@ -28,10 +28,10 @@ class Settings(BaseSettings):
     ENABLE_SCRAPING: bool = True
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     SCRAPER_MAX_EMPTY_JUMP = 5000
-    SCRAPER_SINGLE_RUN_CASE_COUNT = 50
+    SCRAPER_SINGLE_RUN_CASE_COUNT = 40
     SCRAPER_TIMEOUT = 10_000
     PARALLEL_SCRAPER_INSTANCES= 2
-    SCRAPER_CRONTAB = "* * * * *"  # https://crontab.guru/#*/10_*_*_*_*
+    SCRAPER_CRONTAB = "*/2 * * * *"  # https://crontab.guru/#*/10_*_*_*_*
     SCRAPE_CASES_FROM_LAST: bool = False
     OLDEST_KNOWN_CASE_ID = (
         450  # Based on manual testing, this is one of the first available cases
@@ -42,7 +42,6 @@ class Settings(BaseSettings):
 
     MAX_RETRIES: int = 2
     MIN_BACKOFF: str = 15_000
-    MAX_BACKOFF: str = 60 * 10 * 1_000
 
     OPENAI_API_KEY = "dummykey"
     OPENAI_API_BASE = "https://api.openai.com/v1"
