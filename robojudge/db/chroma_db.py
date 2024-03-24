@@ -37,7 +37,8 @@ class CaseEmbeddingStorage:
             settings=chromadb.config.Settings(anonymized_telemetry=False),
         )
         self.collection = self.client.get_or_create_collection(
-            name=CaseEmbeddingStorage.COLLECTION_NAME
+            name=CaseEmbeddingStorage.COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"}  # l2 is the default
         )
 
         self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
