@@ -1,0 +1,2 @@
+
+Exponenciální časová složitost je složitost algoritmu, která roste exponenciálně s velikostí vstupních dat.
