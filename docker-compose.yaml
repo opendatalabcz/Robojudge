@@ -42,6 +42,26 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - default
+  
+  migrate_db:
+    build: ./
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - chroma
+    env_file:
+      - .env
+    command:
+      'robojudge.tasks.enrich_chroma_metadata'
+    environment:
+      DOCUMENT_DB_HOST: mongo
+      EMBEDDING_DB_HOST: chroma
+      REDIS_URL: redis
+      RABBIT_HOST: rabbit
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - default
 
   client:
     build: 

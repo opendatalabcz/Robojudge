@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatDate } from "../utils/dateFormatter";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import {
@@ -110,6 +110,14 @@ export const CaseCard = ({ courtCase, triggerAlert }: CardCardProps) => {
     }
   };
 
+  useEffect(() => {
+    if (courtCase.isLoading) {
+      setIsCardExpanded(false)
+      setCaseQuestion('')
+      setCaseAnswer('')
+    }
+  }, [courtCase])
+
   return (
     <Card style={styles.caseCard} variant="outlined">
       <Tooltip placement="right" title='Kliknutím zkopírujete číslo jednací.'>
@@ -140,7 +148,7 @@ export const CaseCard = ({ courtCase, triggerAlert }: CardCardProps) => {
         </div>
 
         {!courtCase.isLoading ?
-          ((courtCase.metadata?.keywords as Array<string>) ?? []).map((keyword) => <Chip key={keyword} label={keyword} style={{marginRight: '0.75rem', marginBottom: '0.75rem', marginTop: '0.75rem'}} />)
+          ((courtCase.metadata?.keywords as Array<string>) ?? []).map((keyword) => <Chip key={keyword} label={keyword} style={{ marginRight: '0.75rem', marginBottom: '0.75rem', marginTop: '0.75rem' }} />)
           : <Skeleton animation="wave" variant='text' width={'60%'} height={'1rem'} />
         }
 

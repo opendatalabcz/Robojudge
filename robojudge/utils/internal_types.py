@@ -44,7 +44,7 @@ DOCUMENT_METADATA_MAP = {
     "Vztah k jiným rozhodnutím": CaseMetadataAttributes.RELATED_CASES,
 }
 
-
+# TODO: explain what these mean
 class Metadata(BaseModel):
     jednaci_cislo: str
     court: str

@@ -141,7 +141,7 @@ async def search_cases(
 
     # Find the most similar text chunks of saved cases
     case_chunks = embedding_db.find_case_chunks_by_text(
-        query_text=search_request.query_text, offset=search_request.current_page * search_request.page_size, n_results=search_request.page_size
+        query_text=search_request.query_text, offset=search_request.current_page * search_request.page_size, n_results=search_request.page_size, filters=search_request.filters
     )
     case_ids = set(case.case_id for case in case_chunks)
 

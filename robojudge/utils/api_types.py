@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -5,10 +6,21 @@ from pydantic import BaseModel, Field
 from robojudge.utils.internal_types import ScrapingFilters, Case
 
 
+class CaseSearchRequestFilters(BaseModel):
+    publication_date_from: Optional[float] = Field()
+    publication_date_to: Optional[float] = Field()
+    sentence_date_from: Optional[float] = Field()
+    sentence_date_to: Optional[float] = Field()
+
+
 class CaseSearchRequest(BaseModel):
     query_text: str = Field(
         description="Any string of text which should have similar cases in the DB. Longer texts have more accurate results."
     )
+    filters: Optional[CaseSearchRequestFilters]
+    sentence_date_from: Optional[datetime.datetime]
+    sentence_date_to: Optional[datetime.datetime]
+    court: Optional[str]
     page_size: Optional[int] = Field(
         default=3,
         description="The number of results to return in a single response.",

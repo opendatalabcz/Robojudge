@@ -1,4 +1,5 @@
-from typing import Optional
+import datetime
+from typing import Any, Optional
 import uuid
 import os
 from typing import Dict
@@ -11,6 +12,7 @@ import chromadb.config
 from chromadb.utils import embedding_functions
 
 from robojudge.components.chunker import split_text_into_embeddable_chunks
+from robojudge.utils.api_types import CaseSearchRequestFilters
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logging
 from robojudge.utils.internal_types import Case, CaseChunk
@@ -77,7 +79,7 @@ class CaseEmbeddingStorage:
     @staticmethod
     def parse_text_query_result(query_result):
         """
-        The format is `(for whatever reason) { "documents": [ [ 'text1', 'text2', ... ] ], ... }`
+        The format is (for whatever reason) `{ "documents": [ [ 'text1', 'text2', ... ] ], ... }`
         """
         parsed_result = {}
         for field, value in query_result.items():
@@ -85,6 +87,41 @@ class CaseEmbeddingStorage:
                 parsed_result[field] = value[0] or []
 
         return parsed_result
+
+    @staticmethod
+    def parse_filters(filters: CaseSearchRequestFilters):
+        where_clauses = {'$and': []}
+
+        def construct_where_clause(field: str, operator: str, value: Any):
+            return {field: {
+                operator: value
+            }}
+
+        for filter_key, filter_value in filters.dict().items():
+            if not filter_value:
+                continue
+
+            match filter_key:
+                case 'publication_date_from':
+                    where_clauses['$and'].append(
+                        construct_where_clause('publication_date', '$gte', filter_value))
+                case 'publication_date_to':
+                    where_clauses['$and'].append(
+                        construct_where_clause('publication_date', '$lte', filter_value))
+                case 'sentence_date_from':
+                    where_clauses['$and'].append(
+                        construct_where_clause('sentence_date', '$gte', filter_value))
+                case 'sentence_date_to':
+                    where_clauses['$and'].append(
+                        construct_where_clause('sentence_date', '$lte', filter_value))
+
+        if not len(where_clauses['$and']):
+            return {}
+
+        if len(where_clauses['$and']) == 1:
+            where_clauses = where_clauses['$and'][0]
+
+        return where_clauses
 
     def upsert_cases(self, cases: list[Case]):
         if not len(cases):
@@ -98,6 +135,9 @@ class CaseEmbeddingStorage:
             metadata = {
                 "case_id": case.case_id,
                 "jednaci_cislo": case.metadata.jednaci_cislo,
+                "sentence_date": case.metadata.sentence_date.timestamp(),
+                "publication_date": case.metadata.publication_date.timestamp(),
+                "court": case.metadata.court
             }
 
             chunks = split_text_into_embeddable_chunks(case.reasoning)
@@ -139,11 +179,15 @@ class CaseEmbeddingStorage:
         offset: int = 0,
         n_results: int = 5,
         included_fields: list[str] = ["documents", "metadatas"],
+        filters: dict = None,
     ) -> list[CaseChunk]:
+
+        where_clauses = CaseEmbeddingStorage.parse_filters(filters)
+
         query_result = CaseEmbeddingStorage.parse_text_query_result(
             self.collection.query(
                 query_texts=[
-                    query_text], n_results=settings.MAX_SEARCHABLE_RULING_COUNT, include=included_fields
+                    query_text], n_results=settings.MAX_SEARCHABLE_RULING_COUNT, include=included_fields, where=where_clauses
             )
         )
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))[offset:offset + n_results]
@@ -154,3 +198,22 @@ if os.environ.get("ENV") == "test":
     embedding_db = unittest.mock.Mock(spec=CaseEmbeddingStorage)
 else:
     embedding_db = CaseEmbeddingStorage()
+
+if __name__ == '__main__':
+    where_clauses = CaseEmbeddingStorage.parse_filters(CaseSearchRequestFilters(
+        publication_date_from='2020-11-03', publication_date_to='2020-11-03'))
+
+    print(where_clauses)
+
+    result = CaseEmbeddingStorage.parse_text_query_result(
+        embedding_db.collection.query(query_texts='', where=where_clauses, n_results=100))
+
+    # result = embedding_db.get_case_chunks_by_case_id(['451])
+
+    case_chunks = CaseEmbeddingStorage.cast_to_case_chunks(
+        CasesInChromaDB(**result))
+
+    ruling_ids = set()
+    for case_chunk in case_chunks:
+        ruling_ids.add(case_chunk.case_id)
+    print(len(ruling_ids))
