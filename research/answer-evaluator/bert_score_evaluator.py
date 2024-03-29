@@ -1,6 +1,4 @@
 import logging
-from pathlib import Path
-import csv
 
 from evaluate import load
 
