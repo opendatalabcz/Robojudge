@@ -183,11 +183,11 @@ class CaseEmbeddingStorage:
     ) -> list[CaseChunk]:
 
         where_clauses = CaseEmbeddingStorage.parse_filters(filters)
+        query_texts = split_text_into_embeddable_chunks(query_text)
 
         query_result = CaseEmbeddingStorage.parse_text_query_result(
             self.collection.query(
-                query_texts=[
-                    query_text], n_results=settings.MAX_SEARCHABLE_RULING_COUNT, include=included_fields, where=where_clauses
+                query_texts=query_texts, n_results=settings.MAX_SEARCHABLE_RULING_COUNT, include=included_fields, where=where_clauses
             )
         )
         return CaseEmbeddingStorage.cast_to_case_chunks(CasesInChromaDB(**query_result))[offset:offset + n_results]

@@ -35,11 +35,11 @@ export const styles = {
   },
 } as Record<string, React.CSSProperties>;
 
-const DEFAULT_HELPER_TEXT = `Zadejte popis případu, pro který chcete najít již rozhodnuté podobné
+const DEFAULT_HELPER_TEXT = `Zadejte popis nebo text případu, pro který chcete najít již rozhodnuté podobné
                   případy. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
 
 const MIN_DESCRIPTION_LENGTH = 20;
-const MAX_DESCRIPTION_LENGTH = 500;
+const MAX_DESCRIPTION_LENGTH = 20000;
 
 const INPUT_TOO_SHORT = `Zadejte prosím delší popis případu (aspoň ${MIN_DESCRIPTION_LENGTH} znaků).`;
 const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} znaků.`;
