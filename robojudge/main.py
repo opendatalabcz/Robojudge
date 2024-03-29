@@ -1,4 +1,3 @@
-import asyncio
 from multiprocessing import Process
 
 import redis.asyncio as redis
@@ -6,15 +5,10 @@ from fastapi_limiter import FastAPILimiter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from icecream import install
 from robojudge.tasks.case_scraping import intialize_scheduled_scraping
 
-from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
 import robojudge.routers.cases
-
-if settings.ENVIRONMENT == "dev":
-    install()
 
 app = FastAPI()
 
@@ -40,10 +34,10 @@ async def get_health():
 @app.on_event("startup")
 async def startup():
     redis_connection = redis.from_url(
-        f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True)
+        f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True
+    )
     await FastAPILimiter.init(redis_connection)
 
- # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
 
 if __name__ == "__main__":
     if settings.ENABLE_AUTOMATIC_SCRAPING:
@@ -51,5 +45,4 @@ if __name__ == "__main__":
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
 # TODO: Mongo password
-# TODO: structlog
 # TODO: rename cases to rulings
