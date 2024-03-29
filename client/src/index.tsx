@@ -7,7 +7,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: "#597081",

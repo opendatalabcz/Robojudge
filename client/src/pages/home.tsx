@@ -5,6 +5,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { CaseCard } from "../components/CaseCard";
 import { convertObjectKeysToCamelCase } from "../utils/camelCaser";
+import {theme} from '../index'
 
 import { ArrowDropDown, Close } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -225,14 +226,14 @@ export function Home({ triggerAlert }: HomeProps) {
                     <Grid2>
                       <DatePicker sx={{ width: '260px' }} slotProps={{
                         field: { clearable: true, onClear: () => setSentenceDateTo(null) },
-                      }} label="Datum vydání (od)" format="DD.MM.YYYY" value={sentenceDateTo} onChange={(newValue) => setSentenceDateTo(newValue)} />
+                      }} label="Datum vydání (do)" format="DD.MM.YYYY" value={sentenceDateTo} onChange={(newValue) => setSentenceDateTo(newValue)} />
                     </Grid2>
                   </Grid2>
                   <Grid2 spacing={2} container flexDirection='row' alignItems='center'>
                     <Grid2>
                       <DatePicker sx={{ width: '260px' }} slotProps={{
                         field: { clearable: true, onClear: () => setPublicationDateFrom(null) },
-                      }} label="Datum vydání (od)" format="DD.MM.YYYY" value={publicationDateFrom} onChange={(newValue) => setPublicationDateFrom(newValue)} />
+                      }} label="Datum zveřejnění (od)" format="DD.MM.YYYY" value={publicationDateFrom} onChange={(newValue) => setPublicationDateFrom(newValue)} />
                     </Grid2>
                     <Grid2>
                       -
@@ -240,7 +241,7 @@ export function Home({ triggerAlert }: HomeProps) {
                     <Grid2>
                       <DatePicker sx={{ width: '260px' }} slotProps={{
                         field: { clearable: true, onClear: () => setPublicationDateTo(null) },
-                      }} label="Datum vydání (od)" format="DD.MM.YYYY" value={publicationDateTo} onChange={(newValue) => setPublicationDateTo(newValue)} />
+                      }} label="Datum zveřejnění (do)" format="DD.MM.YYYY" value={publicationDateTo} onChange={(newValue) => setPublicationDateTo(newValue)} />
                     </Grid2>
                   </Grid2>
                 </Grid2>
@@ -286,7 +287,7 @@ export function Home({ triggerAlert }: HomeProps) {
           // bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
         }}>
           <Typography variant="overline">Další</Typography>
-          <ArrowDropDown style={{ fontSize: '8rem', marginTop: '-3.5rem', }} />
+          <ArrowDropDown style={{ color: theme.palette.primary.main, fontSize: '8rem', marginTop: '-3.5rem', }} />
         </div>
       </Fade>
     </>
