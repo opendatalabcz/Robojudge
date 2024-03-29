@@ -9,16 +9,3 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #fafafa;
 }
-
-/* @font-face {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-}
- */
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
