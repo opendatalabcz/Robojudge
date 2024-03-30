@@ -10,7 +10,27 @@ from robojudge.tasks.case_scraping import intialize_scheduled_scraping
 from robojudge.utils.settings import settings
 import robojudge.routers.cases
 
-app = FastAPI()
+tags_metadata = [
+    {
+        "name": "rulings",
+        "description": "Endpoints for fetching rulings based on semantic search and answering questions with LLM.",
+    },
+    {
+        "name": "scraping",
+        "description": "Endpoints to initiate scraping, poll the job status and its results.",
+    },
+]
+
+
+app = FastAPI(
+    title="Robojudge API",
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+    openapi_tags=tags_metadata,
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+)
 
 app.add_middleware(
     CORSMiddleware,
