@@ -44,5 +44,4 @@ if __name__ == "__main__":
         Process(target=intialize_scheduled_scraping).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
-# TODO: Mongo password
 # TODO: rename cases to rulings

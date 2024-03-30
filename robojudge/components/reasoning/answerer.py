@@ -1,7 +1,6 @@
 import asyncio
 from async_lru import alru_cache
 
-from langchain.agents import initialize_agent, AgentType
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -9,12 +8,8 @@ from langchain.prompts.chat import (
 )
 from langchain.chains import RefineDocumentsChain, LLMChain
 
-from robojudge.utils.gpt_tokenizer import tokenizer
-from robojudge.utils.settings import settings
 from robojudge.components.reasoning.llm_definitions import standard_llm
 from robojudge.components.summarizer.langchain_summarizer import CaseSummarizer
-from robojudge.components.reasoning.tools.get_next_text_chunk import create_get_text_tool
-from robojudge.components.reasoning.tools.irrelevant_result import irrelevant_result_tool
 
 
 SYSTEM_MESSAGE_TEMPLATE = """\
@@ -86,28 +81,6 @@ class CaseQuestionAnswerer:
         chunks = CaseSummarizer.split_text_into_chunks(text)
         result, summary_metadata = await self.refiner.acombine_docs(docs=chunks)
         return result
-
-    @classmethod
-    def answer_question_by_agent(cls, question: str, texts: list[str]) -> str:
-        tools = [
-            create_get_text_tool(texts),
-            irrelevant_result_tool,
-        ]
-        agent_executor = initialize_agent(
-            tools,
-            llm=standard_llm,
-            agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=True,
-            return_intermediate_steps=True,
-            max_iterations=5,
-            max_execution_time=settings.AGENT_MAX_EXECUTION_TIME,
-            agent_kwargs={
-                "prefix": prefix,
-                "suffix": suffix,
-            },
-        )
-
-        return agent_executor(question)
 
 
 if __name__ == "__main__":

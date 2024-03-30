@@ -115,7 +115,7 @@ class BaseSummarizer(ABC):
         ]
 
         try:
-            chat_completion = client.chat.completions.create(model=settings.GPT_MODEL_NAME, messages=messages, temperature=0)
+            chat_completion = client.chat.completions.create(model=settings.INAPP_GPT_MODEL_NAME, messages=messages, temperature=0)
 
             return chat_completion.choices[0].message.content
             # return 'Summary:' + "\n".join(self.chunk_summaries)
