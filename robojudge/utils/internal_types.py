@@ -7,8 +7,16 @@ from pydantic import BaseModel, Field
 
 
 class ScrapingFilters(BaseModel):
-    judge_firstname: Optional[str] = Field(default="")
-    judge_lastname: Optional[str] = Field(default="")
+    judge_firstname: Optional[str] = Field(
+        default="",
+        description="First name of the judge who decided the case.",
+        example="Petr",
+    )
+    judge_lastname: Optional[str] = Field(
+        default="",
+        description="Last name of the judge who decided the case.",
+        example="Mareš",
+    )
     court: Optional[str] = Field(
         default="",
         description="Exact name of the court who handed down the ruling.",
@@ -17,15 +25,18 @@ class ScrapingFilters(BaseModel):
     fulltext_search: Optional[str] = Field(
         default="",
         description="Will search for this string in the rulings in a fulltext manner.",
+        example="Žalovaný se k návrhu žalobce nevyjádřil",
     )
     # keyword: Optional[str] = '' # Does not work on the justice website
     publication_date_from: Optional[str] = Field(
         default="",
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
+        example="2020-12-01",
     )
     publication_date_to: Optional[str] = Field(
         default="",
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
+        example="2020-12-01",
     )
 
 

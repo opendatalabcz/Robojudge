@@ -9,6 +9,7 @@ from robojudge.tasks.case_scraping import intialize_scheduled_scraping
 
 from robojudge.utils.settings import settings
 import robojudge.routers.cases
+import robojudge.routers.scraping
 
 tags_metadata = [
     {
@@ -40,6 +41,7 @@ app.add_middleware(
 )
 
 app.include_router(robojudge.routers.cases.router)
+app.include_router(robojudge.routers.scraping.router)
 
 
 @app.get("/health")

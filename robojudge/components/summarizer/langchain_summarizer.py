@@ -7,11 +7,10 @@ from langchain.schema import Document
 from langchain.chains import RefineDocumentsChain, LLMChain
 import more_itertools
 
-from robojudge.utils.logger import logging
+from robojudge.utils.logger import logger
 from robojudge.utils.gpt_tokenizer import tokenizer
 from robojudge.components.reasoning.llm_definitions import standard_llm
 
-logger = logging.getLogger(__name__)
 
 SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create an interesting summary of a court ruling.
@@ -67,8 +66,8 @@ class CaseSummarizer:
             result, summary_metadata = await self.refiner.acombine_docs(chunks)
             return result
         except Exception:
-            logger.exception(f'Error while summarizing text:')
-            return ''
+            logger.exception("Error while summarizing text:")
+            return ""
 
     @classmethod
     def split_text_into_chunks(cls, text: str):
@@ -144,4 +143,5 @@ a v důsledku této skutečnosti mu nelze poskytnout poučení dle ustanovení 
 (k tomu srov. nález Ústavního soudu sp. zn. I. ÚS 2717/08 ze dne 30. 8. 2010), a že pro zjednodušení výpočtu úspěchu účastníků stanovil pro výpočet nároků požadovaných do zaplacení limit 16. 5. 2022, tj. den vydání tohoto rozsudku. Předmětem řízení bylo zaplacení částky v celkové výši 32.617,11 Kč (15.000 Kč + 2.100 Kč + 1.767,11 Kč + 7.300 Kč + 6.450 Kč). Úspěch žalobce je v tomto případě představován výrokem I. tohoto rozsudku, tedy částkou v celkové výši 10.285,98 Kč (9.400 Kč + 885,98 Kč), ohledně které soud žalobě vyhověl. Naopak úspěch žalovaného je představován výrokem II. tohoto rozsudku, tedy částkou v celkové výši 22.331,13 Kč (5.600 Kč + 386,30 Kč + 639,78 Kč + 187,93 Kč + 1.767,12 Kč + 7.300 Kč + 6.450 Kč), ohledně které byla žaloba zamítnuta. Žalobce byl proto úspěšný v 31,5 % předmětu řízení, žalovaný byl úspěšný v 68,5 % a po vzájemném zápočtu úspěchu žalovaného vůči úspěchu žalobce, by žalovaný měl právo na náhradu 37 % účelně vynaložených nákladů. Vzhledem k tomu však, že žalovanému v tomto směru žádné náklady řízení nevznikly, rozhodl soud tak, jak je ve výroku III. tohoto rozsudku uvedeno.
 """
     import asyncio
+
     print(asyncio.run(summarizer.summarize(test_text)))

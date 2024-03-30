@@ -7,10 +7,8 @@ from pymongo.collection import Collection
 import mongomock
 
 from robojudge.utils.settings import settings
-from robojudge.utils.logger import logging
+from robojudge.utils.logger import logger
 from robojudge.utils.internal_types import Case
-
-logger = logging.getLogger(__name__)
 
 
 class DocumentStorage:
@@ -45,11 +43,17 @@ class DocumentStorage:
 
     def find_latest_case_id(self):
         try:
-            cases = self.scraping_job_collection.find().sort("last_ruling_id", -1).limit(1)
+            cases = (
+                self.scraping_job_collection.find().sort("last_ruling_id", -1).limit(1)
+            )
             cases = list(cases)
             if len(cases) > 0:
                 last_case_id = int(list(cases)[0]["last_ruling_id"])
-                return last_case_id if last_case_id > settings.OLDEST_KNOWN_CASE_ID else settings.OLDEST_KNOWN_CASE_ID
+                return (
+                    last_case_id
+                    if last_case_id > settings.OLDEST_KNOWN_CASE_ID
+                    else settings.OLDEST_KNOWN_CASE_ID
+                )
 
             # Try to deduce last case from cases themselves if scraping metadata are missing
             cases = self.collection.find().sort("$natural", -1).limit(1)
@@ -60,11 +64,11 @@ class DocumentStorage:
             return settings.OLDEST_KNOWN_CASE_ID
 
         except Exception:
-            logging.exception(f"Error while searching for latest case_id:")
+            logger.exception(f"Error while searching for latest case_id:")
 
     def upsert_documents(self, cases: list[Case]):
         if len(cases) < 1:
-            logging.warning("No documents to upsert to MongoDB")
+            logger.warning("No documents to upsert to MongoDB")
             return
 
         try:
@@ -79,7 +83,7 @@ class DocumentStorage:
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(f'Error while upserting metadata: "{cases}":')
+            logger.exception(f'Error while upserting metadata: "{cases}":')
 
     def add_document_summaries(self, summaried_cases: list[Case]):
         if len(summaried_cases) < 1:
@@ -97,15 +101,13 @@ class DocumentStorage:
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(
-                f"Error while adding summaries {summaried_cases}:")
+            logger.exception(f"Error while adding summaries {summaried_cases}:")
 
     def delete_documents(self, case_ids: list[str]):
         try:
             self.collection.delete_many({"case_id": {"$in": case_ids}})
         except Exception:
-            logging.exception(
-                f"Error while deleting metadata with ids {case_ids}:")
+            logger.exception(f"Error while deleting metadata with ids {case_ids}:")
 
 
 @mongomock.patch(servers=((settings.DOCUMENT_DB_HOST, settings.DOCUMENT_DB_PORT),))

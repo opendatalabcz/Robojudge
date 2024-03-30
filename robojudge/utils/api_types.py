@@ -66,6 +66,12 @@ class FetchCasesRequest(BaseModel):
     filters: ScrapingFilters
 
 
+class FetchCasesResponse(BaseModel):
+    token: str = Field(
+        description="Unique identifier of the scraping job used for polling the API."
+    )
+
+
 class FetchCasesStatusResponse(BaseModel):
     status: ScrapingJobStatus = Field(
         description="The current status of the fetch job."

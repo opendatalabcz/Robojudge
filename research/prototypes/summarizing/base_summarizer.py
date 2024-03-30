@@ -11,7 +11,7 @@ azure_endpoint=settings.OPENAI_API_BASE,
 api_version="2023-03-15-preview")
 
 from robojudge.utils.logger import logging
-from robojudge.utils.async_tools import make_async, gather_with_concurrency
+from research.utils.async_tools import make_async, gather_with_concurrency
 from robojudge.utils.settings import settings
 from robojudge.utils.gpt_tokenizer import tokenizer
 

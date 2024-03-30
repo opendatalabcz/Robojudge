@@ -8,7 +8,7 @@ client = OpenAI()
 
 from robojudge.components.summarizer.base_summarizer import BaseSummarizer, openai
 from robojudge.utils.logger import logging
-from robojudge.utils.async_tools import make_async
+from research.utils.async_tools import make_async
 from robojudge.utils.settings import settings
 
 logger = logging.getLogger(__name__)

@@ -7,10 +7,9 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 
-from robojudge.utils.logger import logging
+from robojudge.utils.logger import logger
 from robojudge.components.reasoning.llm_definitions import standard_llm
 
-logger = logging.getLogger(__name__)
 
 SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create an short and interesting title for an article about a court ruling based on a summary of that ruling.
@@ -24,16 +23,16 @@ class CaseTitleGenerator:
     NEXT_CHUNK_SIZE = 4096 - 1000
 
     def __init__(self) -> None:
-
         output_parser = StrOutputParser()
-        prompt = PromptTemplate(template=SYSTEM_MESSAGE_TEMPLATE, input_variables=[
-            'summary'])
+        prompt = PromptTemplate(
+            template=SYSTEM_MESSAGE_TEMPLATE, input_variables=["summary"]
+        )
 
         self.llm_chain = prompt | standard_llm | output_parser
 
     async def generate_title(self, summary: str) -> str:
         try:
-            return await self.llm_chain.ainvoke(input={'summary': summary})
+            return await self.llm_chain.ainvoke(input={"summary": summary})
         except Exception:
             logger.exception(f"Error while generating title:")
             return ""
@@ -50,4 +49,5 @@ Soud rozhodoval o žalobě, ve které žalobkyně požadovala zaplacení peněz 
         print(await title_generator.generate_title(test_summary))
 
     import asyncio
+
     asyncio.run(main())
