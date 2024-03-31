@@ -7,7 +7,7 @@ from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 import dramatiq
-from robojudge.components.paginating_scraper import PaginatingScraper
+from robojudge.components.scraping.paginating_scraper import PaginatingRulingIdSelector
 from robojudge.utils.api_types import FetchCasesRequest
 from robojudge.utils.functional import generate_uuid
 
@@ -19,20 +19,18 @@ from robojudge.utils.internal_types import (
     ScrapingJobType,
 )
 from robojudge.utils.settings import settings
-from robojudge.components.case_page_scraper import CasePageScraper
+from robojudge.components.scraping.case_page_scraper import CasePageScraper
 from robojudge.db.mongo_db import document_db
 from robojudge.db.chroma_db import embedding_db
-from robojudge.tasks.ruling_ids_selector import select_ruling_ids_for_scraping
-
-BATCH_SIZE = 10
-SCRAPER_THREAD_COUNT = 3
-PARSER_PROCESS_COUNT = 3
+from robojudge.components.scraping.ruling_ids_selector import (
+    SimpleRulingIdSelector,
+)
 
 
 logger: structlog.BoundLogger = structlog.get_logger()
 
 
-if settings.ENABLE_AUTOMATIC_SCRAPING:
+if settings.ENABLE_SCRAPING or settings.ENABLE_AUTOMATIC_SCRAPING:
     rabbitmq_broker = RabbitmqBroker(
         host=settings.RABBIT_HOST, port=settings.RABBIT_PORT
     )
@@ -43,6 +41,9 @@ if settings.ENABLE_AUTOMATIC_SCRAPING:
 
 
 def intialize_scheduled_scraping():
+    """
+    Schedules the requested number of parallel scrapers.
+    """
     scheduler = BlockingScheduler()
     for _ in range(settings.PARALLEL_SCRAPER_INSTANCES):
         scheduler.add_job(
@@ -71,7 +72,7 @@ async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesReque
         job_id=scraping_job.token,
         filters=filters,
     )
-    ruling_ids = await PaginatingScraper.extract_case_ids(filters)
+    ruling_ids = await PaginatingRulingIdSelector.extract_case_ids(filters)
 
     cases_in_db = document_db.collection.find({"case_id": {"$in": ruling_ids}})
     for db_case in cases_in_db:
@@ -97,7 +98,9 @@ async def scraper_worker(scraping_job: ScrapingJob = None):
             token=generate_uuid(), started_at=datetime.datetime.now()
         )
 
-        scraping_job.filtered_ruling_ids = await select_ruling_ids_for_scraping()
+        scraping_job.filtered_ruling_ids = (
+            await SimpleRulingIdSelector.select_ruling_ids_for_scraping()
+        )
         scraping_job.last_ruling_id = (
             scraping_job.filtered_ruling_ids[-1]
             if len(scraping_job.filtered_ruling_ids)
@@ -156,9 +159,9 @@ def parser_worker(args):
             },
         )
 
-        logger.info(f"Rulings parsed into DB:", job_id=scraping_job.token)
+        logger.info("Rulings parsed into DB:", job_id=scraping_job.token)
     except Exception:
-        logger.exception(f"Error while parsing rulings:")
+        logger.exception("Error while parsing rulings:")
 
 
 run_scraper_parser_pipeline = dramatiq.pipeline(

@@ -8,6 +8,9 @@ from robojudge.utils.logger import logger
 
 
 async def run_migration():
+    """
+    One time migration that adds date metadata to Chroma entries.
+    """
     pool = multiprocessing.pool.ThreadPool(processes=1)
 
     rulings = document_db.collection.find()

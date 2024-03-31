@@ -77,7 +77,7 @@ class CasePageScraper:
             val = row.find("dd").get_text(", ", strip=True)
             try:
                 snake_case_key = DOCUMENT_METADATA_MAP[key]
-            except:
+            except Exception:
                 logger.warning(f'Unknown metadata key "{key}"')
                 snake_case_key = key
             metadata[snake_case_key] = val
@@ -134,26 +134,3 @@ class CasePageScraper:
     def parse_related_cases(self, raw_related_cases: str) -> list[str]:
         matches = self.JEDNACI_CISLO_REGEX.findall(raw_related_cases)
         return [match[0] for match in matches]
-
-    @staticmethod
-    async def get_newest_case_id():
-        async with async_playwright() as pw:
-            browser = await pw.chromium.launch()
-            page = await browser.new_page()
-            await page.goto(CasePageScraper.MAIN_PAGE_URL)
-
-            search_button = page.locator('button[class="btn btn-primary mx-1 my-2"]')
-            await search_button.click()
-
-            await page.wait_for_selector(
-                'table[class="table table-striped dataTable bg-white rounded"]'
-            )
-
-            links = await page.locator("tr").filter(has=page.locator("a")).all()
-
-            case_ids = []
-            for link in links:
-                case_id = await link.locator("a").get_attribute("href")
-                case_ids.append(case_id.removeprefix(CasePageScraper.LINK_PREFIX))
-
-            return int(case_ids[0])

@@ -1,4 +1,3 @@
-import logging
 import asyncio
 
 from playwright.async_api import (
@@ -6,18 +5,18 @@ from playwright.async_api import (
     Page,
 )
 
-from robojudge.components.case_page_scraper import CasePageScraper
-from robojudge.utils.logger import logging
+from robojudge.components.scraping.case_page_scraper import CasePageScraper
 from robojudge.utils.internal_types import ScrapingFilters
 
-logger = logging.getLogger(__name__)
 
-
-class PaginatingScraper:
-    MAX_SCAPE_SIZE = 2000
+class PaginatingRulingIdSelector:
+    MAX_SCRAPE_SIZE = 2000
 
     @classmethod
     async def extract_case_ids(cls, filters: ScrapingFilters) -> list[str]:
+        """
+        Applies the provided filters and returns all ruling IDs that fulfil the filters (with the max of MAX_SCRAPE_SIZE).
+        """
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
             page = await browser.new_page()
@@ -29,7 +28,7 @@ class PaginatingScraper:
             is_next_button_enabled = True
             while (
                 is_next_button_enabled
-                and len(case_ids) <= PaginatingScraper.MAX_SCAPE_SIZE
+                and len(case_ids) <= PaginatingRulingIdSelector.MAX_SCRAPE_SIZE
             ):
                 case_ids.extend(await cls.extract_case_links_from_page(page))
                 is_next_button_enabled = await cls.navigate_forward(page)
@@ -102,8 +101,7 @@ class PaginatingScraper:
 
 if __name__ == "__main__":
     asyncio.run(
-        PaginatingScraper.extract_case_ids(
-            ScrapingFilters(judge_firstname="Petr",
-                            publication_date_from="2023-09-30")
+        PaginatingRulingIdSelector.extract_case_ids(
+            ScrapingFilters(judge_firstname="Petr", publication_date_from="2023-09-30")
         )
     )
