@@ -78,7 +78,7 @@ class CaseQuestionAnswerer:
             initial_response_name=initial_response_name,
         )
 
-        chunks = CaseSummarizer.split_text_into_chunks(text)
+        chunks = CaseSummarizer.split_text_into_llm_chunks(text)
         result, summary_metadata = await self.refiner.acombine_docs(docs=chunks)
         return result
 

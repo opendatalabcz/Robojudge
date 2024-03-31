@@ -2,6 +2,10 @@
 
 from typing import Optional
 
+
+from langchain.schema import Document
+import more_itertools
+
 from robojudge.utils.settings import settings
 from robojudge.utils.gpt_tokenizer import tokenizer
 
@@ -11,6 +15,8 @@ class TextChunker:
     EMBEDDINGS_BATCH_SIZE = 16  # The number of embeddings to request at a time
     MAX_NUM_CHUNKS = 10000  # The maximum number of chunks to generate from a text
     MIN_CHUNK_SIZE_CHARS = 100  # The minimum size of each text chunk in characters
+
+    LLM_CHUNK_SIZE = 4096 - 500
 
     @classmethod
     def split_text_into_embeddable_chunks(
@@ -62,5 +68,23 @@ class TextChunker:
             remaining_text = tokenizer.decode(tokens).replace("\n", " ").strip()
             if len(remaining_text) > cls.MIN_CHUNK_LENGTH_TO_EMBED:
                 chunks.append(remaining_text)
+
+        return chunks
+
+    @classmethod
+    def split_text_into_llm_chunks(cls, text: str):
+        chunks = []
+
+        tokens = tokenizer.encode(text)
+        if len(tokens) <= cls.LLM_CHUNK_SIZE:
+            chunks.append(Document(page_content=text))
+        else:
+            split_tokens = more_itertools.chunked(tokens, cls.LLM_CHUNK_SIZE)
+            chunks.extend(
+                [
+                    Document(page_content=tokenizer.decode(token_batch))
+                    for token_batch in split_tokens
+                ]
+            )
 
         return chunks

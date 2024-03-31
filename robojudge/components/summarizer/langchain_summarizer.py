@@ -3,29 +3,25 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-from langchain.schema import Document
 from langchain.chains import RefineDocumentsChain, LLMChain
-import more_itertools
+
 
 from robojudge.utils.logger import logger
-from robojudge.utils.gpt_tokenizer import tokenizer
 from robojudge.components.reasoning.llm_definitions import standard_llm
+from robojudge.components.chunker import TextChunker
 
 
-SYSTEM_MESSAGE_TEMPLATE = """\
+class CaseSummarizer:
+    SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create an interesting summary of a court ruling.
 You will receive the court ruling in parts and continuously refine your summary from the previous parts.
 Ignore any mentions of litigation costs and fees, they are irrelevant
 Create your summary ONLY in Czech and use a maximum of 7 sentences.
 """
 
-
-class CaseSummarizer:
-    NEXT_CHUNK_SIZE = 4096 - 500
-
     def __init__(self) -> None:
         system_message_prompt = SystemMessagePromptTemplate.from_template(
-            SYSTEM_MESSAGE_TEMPLATE
+            self.SYSTEM_MESSAGE_TEMPLATE
         )
         human_message_prompt = HumanMessagePromptTemplate.from_template(
             "Summarize the initial part of the court ruling: {context}"
@@ -62,30 +58,12 @@ class CaseSummarizer:
 
     async def summarize(self, text: str) -> str:
         try:
-            chunks = CaseSummarizer.split_text_into_chunks(text)
-            result, summary_metadata = await self.refiner.acombine_docs(chunks)
+            chunks = TextChunker.split_text_into_llm_chunks(text)
+            result, _ = await self.refiner.acombine_docs(chunks)
             return result
         except Exception:
             logger.exception("Error while summarizing text:")
             return ""
-
-    @classmethod
-    def split_text_into_chunks(cls, text: str):
-        chunks = []
-
-        tokens = tokenizer.encode(text)
-        if len(tokens) <= cls.NEXT_CHUNK_SIZE:
-            chunks.append(Document(page_content=text))
-        else:
-            split_tokens = more_itertools.chunked(tokens, cls.NEXT_CHUNK_SIZE)
-            chunks.extend(
-                [
-                    Document(page_content=tokenizer.decode(token_batch))
-                    for token_batch in split_tokens
-                ]
-            )
-
-        return chunks
 
 
 summarizer = CaseSummarizer()
