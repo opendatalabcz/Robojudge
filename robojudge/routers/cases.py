@@ -87,13 +87,13 @@ async def search_cases(
     logger.info(f'Searching for similar text chunks:"{search_request.query_text}".')
 
     # Find the most similar text chunks of saved cases
-    case_chunks = embedding_db.find_case_chunks_by_text(
+    case_chunks = embedding_db.find_rulings_by_text(
         query_text=search_request.query_text,
         offset=search_request.current_page * search_request.page_size,
         n_results=search_request.page_size,
         filters=search_request.filters,
     )
-    case_ids = set(case.case_id for case in case_chunks)
+    case_ids = set(str(case.metadata.case_id) for case in case_chunks)
 
     logger.info(f'Vector DB returned similar ruling_ids: "{case_ids}".')
 
@@ -158,4 +158,4 @@ async def get_all_case_chunks(
     """
     if settings.ENVIRONMENT != "dev":
         raise HTTPException(400, "Invalid for production use.")
-    return embedding_db.get_all_cases()
+    return embedding_db.get_all_case_chunks()

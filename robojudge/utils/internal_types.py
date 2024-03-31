@@ -128,12 +128,22 @@ class Case(BaseModel):
     )
 
 
+class ChunkMetadata(BaseModel):
+    chunk_index: int = Field(description="Used to sort chunks of the same ruling")
+    jednaci_cislo: str
+    case_id: int
+    sentence_date: Optional[float] = None
+    publication_date: Optional[float] = None
+    court: Optional[str] = ""
+    distance: Optional[float] = Field(
+        description="Measure of how similar the chunk was to the query text."
+    )
+
+
 class CaseChunk(BaseModel):
     chunk_id: str = Field(description="Not case_id but the internal ChromaDB id")
-    chunk_index: int = Field(description="Used to sort chunks of the same ruling")
-    case_id: str
     chunk_text: str
-    metadata: dict
+    metadata: ChunkMetadata
 
 
 class ScrapingJobStatus(StrEnum):

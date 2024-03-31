@@ -64,7 +64,7 @@ class DocumentStorage:
             return settings.OLDEST_KNOWN_CASE_ID
 
         except Exception:
-            logger.exception(f"Error while searching for latest case_id:")
+            logger.exception("Error while searching for latest case_id:")
 
     def upsert_documents(self, cases: list[Case]):
         if len(cases) < 1:
