@@ -1,4 +1,3 @@
-import datetime
 from typing import Any, Optional
 import uuid
 import os
@@ -11,7 +10,7 @@ import chromadb
 import chromadb.config
 from chromadb.utils import embedding_functions
 
-from robojudge.components.chunker import split_text_into_embeddable_chunks
+from robojudge.components.chunker import TextChunker
 from robojudge.utils.api_types import CaseSearchRequestFilters
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logger
@@ -140,7 +139,7 @@ class CaseEmbeddingStorage:
                 "court": case.metadata.court,
             }
 
-            chunks = split_text_into_embeddable_chunks(case.reasoning)
+            chunks = TextChunker.split_text_into_embeddable_chunks(case.reasoning)
 
             for chunk_index, chunk in enumerate(chunks):
                 cases_for_db.documents.append(chunk)
@@ -177,7 +176,7 @@ class CaseEmbeddingStorage:
         filters: dict = None,
     ) -> list[CaseChunk]:
         where_clauses = CaseEmbeddingStorage.parse_filters(filters)
-        query_texts = split_text_into_embeddable_chunks(query_text)
+        query_texts = TextChunker.split_text_into_embeddable_chunks(query_text)
 
         query_result = CaseEmbeddingStorage.parse_text_query_result(
             self.collection.query(
