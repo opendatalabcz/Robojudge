@@ -1,6 +1,3 @@
-# TODO: mock playwright call to l atest
-# TODO: mock cases from Mongo
-
 from robojudge.utils.settings import settings
 from robojudge.tasks.case_scraping import get_ruling_ids_ascending, get_ruling_ids_descending
 

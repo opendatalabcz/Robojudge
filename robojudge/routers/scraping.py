@@ -8,7 +8,7 @@ from fastapi import (
     Path,
     HTTPException,
 )
-from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.responses import PlainTextResponse
 from fastapi_limiter.depends import RateLimiter
 
 from robojudge.utils.api_types import (
@@ -19,8 +19,8 @@ from robojudge.utils.api_types import (
 from robojudge.utils.logger import logger
 from robojudge.utils.settings import settings
 from robojudge.tasks.case_scraping import (
-    run_scraper_parser_pipeline,
-    run_filtered_scraper_parser_pipeline,
+    scraper_parser_pipeline,
+    construct_filtered_ruling_pipeline,
 )
 from robojudge.utils.functional import generate_uuid
 from robojudge.db.mongo_db import document_db, DocumentStorage
@@ -42,7 +42,7 @@ async def fetch_cases(request: Request):
     if settings.ENVIRONMENT != "dev":
         raise HTTPException(400, "Invalid for production use.")
     logger.info("Triggering case scraping based on an API request.")
-    run_scraper_parser_pipeline()
+    scraper_parser_pipeline.run()
     return PlainTextResponse("ok", 202)
 
 
@@ -62,15 +62,13 @@ async def fetch_specified_cases(
     fetch_job_token = generate_uuid()
     payload = {"token": fetch_job_token}
 
-    # TODO: investigate bug
-    run_filtered_scraper_parser_pipeline(fetch_job_token, request)
+    construct_filtered_ruling_pipeline(fetch_job_token, request).run()
 
     return payload
 
 
-# TODO: add token expiration?
 @router.get(
-    "/fetch/{fetch_job_token}",
+    "/{fetch_job_token}",
     response_model=FetchCasesStatusResponse,
     dependencies=[Depends(RateLimiter(times=30, seconds=60))],
     tags=["scraping"],
@@ -91,7 +89,9 @@ async def get_cases_by_fetch_job_token(
             detail=f'Fetch job with token "{fetch_job_token}" was not found.',
         )
 
-    cases = document_db.collection.find({"case_id": {"$in": fetch_job["case_ids"]}})
+    cases = document_db.collection.find(
+        {"case_id": {"$in": fetch_job["scraped_ruling_ids"]}}
+    )
     response = FetchCasesStatusResponse(status=fetch_job["status"], content=list(cases))
 
     return response

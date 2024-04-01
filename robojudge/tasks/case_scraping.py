@@ -41,10 +41,11 @@ def intialize_scheduled_scraping():
     """
     Schedules the requested number of parallel scrapers.
     """
+
     scheduler = BlockingScheduler()
     for _ in range(settings.PARALLEL_SCRAPER_INSTANCES):
         scheduler.add_job(
-            run_scraper_parser_pipeline,
+            scraper_parser_pipeline.run(),
             CronTrigger.from_crontab(settings.SCRAPER_CRONTAB),
         )
 
@@ -54,7 +55,7 @@ def intialize_scheduled_scraping():
         scheduler.shutdown()
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES)
 async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesRequest):
     filters = ScrapingFilters(**request.filters.dict())
     scraping_job = ScrapingJob(
@@ -88,7 +89,7 @@ async def scrape_ids_based_on_filter_worker(token: str, request: FetchCasesReque
     return scraping_job
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES)
 async def scraper_worker(scraping_job: ScrapingJob = None):
     if not scraping_job:
         scraping_job = ScrapingJob(
@@ -132,7 +133,7 @@ async def scraper_worker(scraping_job: ScrapingJob = None):
     return scraping_job, scraped_rulings
 
 
-@dramatiq.actor(max_retries=settings.MAX_RETRIES, min_backoff=settings.MIN_BACKOFF)
+@dramatiq.actor(max_retries=settings.MAX_RETRIES)
 def parser_worker(args):
     """
     Takes scraped rulings and upserts them into DBs.
@@ -167,14 +168,16 @@ def parser_worker(args):
         logger.exception("Error while parsing rulings:", job_id=scraping_job.token)
 
 
-run_scraper_parser_pipeline = dramatiq.pipeline(
-    [scraper_worker.message(), parser_worker.message()]
-).run
+def construct_filtered_ruling_pipeline(*args, **kwargs):
+    return dramatiq.pipeline(
+        [
+            scrape_ids_based_on_filter_worker.message(*args, **kwargs),
+            scraper_worker.message(),
+            parser_worker.message(),
+        ]
+    )
 
-run_filtered_scraper_parser_pipeline = dramatiq.pipeline(
-    [
-        scrape_ids_based_on_filter_worker.message(),
-        scraper_worker.message(),
-        parser_worker.message(),
-    ]
-).run
+
+scraper_parser_pipeline = dramatiq.pipeline(
+    [scraper_worker.message(), parser_worker.message()]
+)

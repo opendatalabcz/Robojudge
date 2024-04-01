@@ -48,8 +48,6 @@ class Settings(BaseSettings):
     OLDEST_KNOWN_CASE_ID = 450
     # In case of a failed scraping job (not because of an individual ruling failure, but the whole job failing), try again this number of times
     MAX_RETRIES: int = 2
-    # The scraper will wait at least this number of milliseconds before retrying a failed job
-    MIN_BACKOFF: str = 15_000
 
     # LLM settings
     OPENAI_API_KEY = "dummykey"

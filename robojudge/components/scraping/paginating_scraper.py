@@ -2,11 +2,13 @@ import asyncio
 
 from playwright.async_api import (
     async_playwright,
+    TimeoutError as PlaywrightTimeoutError,
     Page,
 )
 
 from robojudge.components.scraping.case_page_scraper import CasePageScraper
 from robojudge.utils.internal_types import ScrapingFilters
+from robojudge.utils.logger import logger
 
 
 class PaginatingRulingIdSelector:
@@ -20,10 +22,10 @@ class PaginatingRulingIdSelector:
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
             page = await browser.new_page()
-
-            await cls.apply_filters_on_main_page(page, filters)
-
             case_ids = []
+
+            if not await cls.apply_filters_on_main_page(page, filters):
+                return case_ids
 
             is_next_button_enabled = True
             while (
@@ -36,7 +38,7 @@ class PaginatingRulingIdSelector:
             return case_ids
 
     @classmethod
-    async def apply_filters_on_main_page(cls, page, filters: ScrapingFilters):
+    async def apply_filters_on_main_page(cls, page, filters: ScrapingFilters) -> bool:
         # Disable timeout by setting it to 0
         await page.goto(url=CasePageScraper.MAIN_PAGE_URL, timeout=0)
 
@@ -47,9 +49,17 @@ class PaginatingRulingIdSelector:
         )
         await search_button.click()
 
-        await page.wait_for_selector(
-            'table[class="table table-striped dataTable bg-white rounded"]',
-        )
+        try:
+            await page.wait_for_selector(
+                'table[class="table table-striped dataTable bg-white rounded"]',
+            )
+        except PlaywrightTimeoutError:
+            logger.warning(
+                "No ruling ids found for filters, skipping.", filters=filters
+            )
+            return False
+
+        return True
 
     @classmethod
     async def input_filter_values(cls, page: Page, filters: ScrapingFilters):
@@ -89,12 +99,15 @@ class PaginatingRulingIdSelector:
 
     @classmethod
     async def extract_case_links_from_page(cls, page: Page):
-        links = await page.locator("tr").filter(has=page.locator("a")).all()
-
         case_ids = []
-        for link in links:
-            case_id = await link.locator("a").get_attribute("href")
-            case_ids.append(case_id.removeprefix(CasePageScraper.LINK_PREFIX))
+        try:
+            links = await page.locator("tr").filter(has=page.locator("a")).all()
+
+            for link in links:
+                case_id = await link.locator("a").get_attribute("href")
+                case_ids.append(case_id.removeprefix(CasePageScraper.LINK_PREFIX))
+        except PlaywrightTimeoutError:
+            logger.warning("No ruling ids found on page, skipping.", page=page)
 
         return case_ids
 
