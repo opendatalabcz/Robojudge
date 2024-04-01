@@ -97,17 +97,13 @@ async def search_cases(
         n_results=search_request.page_size,
         filters=search_request.filters,
     )
-    case_ids = set(str(case.metadata.case_id) for case in case_chunks)
-
+    case_ids = [str(case.metadata.case_id) for case in case_chunks]
     logger.info(f'Vector DB returned similar ruling_ids: "{case_ids}".')
 
-    # Find the whole cases in document DB
-    cases_in_document_db = list(
-        document_db.collection.find({"case_id": {"$in": list(case_ids)}})
-    )
-
     cases_with_summary: list[Case] = []
-    for case_in_doc_db in cases_in_document_db:
+    # Find the whole cases in document DB
+    for case_id in case_ids:
+        case_in_doc_db = document_db.collection.find_one({"case_id": case_id})
         cases_with_summary.append(Case(**case_in_doc_db))
 
     if search_request.generate_summaries:
