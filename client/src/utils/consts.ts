@@ -3,9 +3,11 @@ export const DEFAULT_HELPER_TEXT = `Zadejte popis nebo text případu, pro kter�
 
 export const MIN_DESCRIPTION_LENGTH = 20;
 export const MAX_DESCRIPTION_LENGTH = 20000;
+export const MAX_QUESTION_LENGTH = 250;
 
 export const INPUT_TOO_SHORT = `Zadejte prosím delší popis případu (aspoň ${MIN_DESCRIPTION_LENGTH} znaků).`;
 export const INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_DESCRIPTION_LENGTH} znaků.`;
+export const QUESTION_INPUT_TOO_LONG = `Zadejte prosím maximálně ${MAX_QUESTION_LENGTH} znaků.`;
 
 export const EMPTY_FILTER_ALERT =
   "Nebyla nalezena žádná rozhodnutí splňující parametry vyhledávání. Zkuste změnit vyhledávaná období.";

@@ -9,7 +9,7 @@ from langchain.prompts.chat import (
 from langchain.chains import RefineDocumentsChain, LLMChain
 
 from robojudge.components.reasoning.llm_definitions import standard_llm
-from robojudge.components.summarizer.langchain_summarizer import CaseSummarizer
+from robojudge.components.chunker import TextChunker
 
 
 SYSTEM_MESSAGE_TEMPLATE = """\
@@ -78,7 +78,7 @@ class CaseQuestionAnswerer:
             initial_response_name=initial_response_name,
         )
 
-        chunks = CaseSummarizer.split_text_into_llm_chunks(text)
+        chunks = TextChunker.split_text_into_llm_chunks(text)
         result, summary_metadata = await self.refiner.acombine_docs(docs=chunks)
         return result
 

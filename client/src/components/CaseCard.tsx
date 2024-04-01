@@ -24,6 +24,8 @@ import { Case } from "../utils/types";
 import {
   CLICK_TO_COPY_PROMPT,
   FETCH_ANSWER_ERROR_ALERT,
+  MAX_QUESTION_LENGTH,
+  QUESTION_INPUT_TOO_LONG,
 } from "../utils/consts";
 
 const styles = {
@@ -97,6 +99,8 @@ function CaseCardQuestionInterface({
   const [caseQuestion, setCaseQuestion] = useState("");
   const [caseAnswer, setCaseAnswer] = useState("");
 
+  const [tooltipText, setTooltipText] = useState("");
+
   useEffect(() => {
     if (courtCase.isLoading) {
       setIsCardExpanded(false);
@@ -104,6 +108,14 @@ function CaseCardQuestionInterface({
       setCaseAnswer("");
     }
   }, [courtCase]);
+
+  useEffect(() => {
+    if (caseQuestion.length > MAX_QUESTION_LENGTH) {
+      setTooltipText(QUESTION_INPUT_TOO_LONG);
+    } else {
+      setTooltipText("");
+    }
+  }, [caseQuestion]);
 
   const sendCaseQuestion = async () => {
     try {
@@ -167,13 +179,17 @@ function CaseCardQuestionInterface({
             }}
           />
           <div>
-            <Button
-              variant="outlined"
-              disabled={isLoading || !caseQuestion}
-              onClick={sendCaseQuestion}
-            >
-              Odeslat
-            </Button>
+            <Tooltip title={tooltipText} placement="bottom">
+              <div>
+                <Button
+                  variant="outlined"
+                  disabled={isLoading || !caseQuestion || !!tooltipText}
+                  onClick={sendCaseQuestion}
+                >
+                  Odeslat
+                </Button>
+              </div>
+            </Tooltip>
           </div>
         </Grid2>
         <Grid2>

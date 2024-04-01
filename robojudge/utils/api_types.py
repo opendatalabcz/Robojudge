@@ -49,7 +49,7 @@ class CaseQuestionRequest(BaseModel):
     question: str = Field(
         description="Question to the LLM about a ruling.",
         example="Kolik bylo v případu žalobců?",
-        max_length=500,
+        max_length=250,
     )
 
 
