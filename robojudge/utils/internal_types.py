@@ -142,7 +142,6 @@ class ChunkMetadata(BaseModel):
 
 class CaseChunk(BaseModel):
     chunk_id: str = Field(description="Not case_id but the internal ChromaDB id")
-    chunk_text: str
     metadata: ChunkMetadata
 
 

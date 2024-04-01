@@ -29,15 +29,13 @@ class Settings(BaseSettings):
     # Scraping settings
     # Limits the number of cases than can be queried using semantic search
     MAX_SEARCHABLE_RULING_COUNT: int = 20
-    # Allows scraping based on API request
-    ENABLE_SCRAPING: bool = True
     # Allows periodic and automatic scraping
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     # In case no rulings are scraped based on a set of IDs, the scraper will increasingly try bigger gaps before it finds rulings.
     # This is the maximum by much it will be allowed to jump.
     SCRAPER_MAX_EMPTY_JUMP = 5000
     # How many rulings a single scraping job will attempt to scrape
-    SCRAPER_SINGLE_RUN_CASE_COUNT = 40
+    SCRAPER_SINGLE_RUN_CASE_COUNT = 20
     # The scraper will wait for page loading at most this much (milliseconds)
     SCRAPER_TIMEOUT = 10_000
     # How many scrapers should be periodically run (in parallel)

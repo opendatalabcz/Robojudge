@@ -52,7 +52,7 @@ class CaseEmbeddingStorage:
             logger.warning("No cases provided to upsert into chromaDB")
             return
 
-        cases_for_db = {"documents": [], "metadatas": [], "ids": []}
+        cases_for_db = {"documents": [], "metadatas": [], "ids": [], "embeddings": []}
         for case in cases:
             # Only the most important metadata are stored here
             # For more details, MongoDB is queried
@@ -66,8 +66,10 @@ class CaseEmbeddingStorage:
 
             chunks = TextChunker.split_text_into_embeddable_chunks(case.reasoning)
 
-            for chunk_index, chunk in enumerate(chunks):
-                cases_for_db["documents"].append(chunk)
+            # Don't put the actual text into the DB, only generate the embedding
+            cases_for_db["embeddings"].extend(self.collection._embed(input=chunks))
+            for chunk_index in range(len(chunks)):
+                cases_for_db["documents"].append("")
                 cases_for_db["metadatas"].append(
                     {**metadata, "chunk_index": chunk_index}
                 )
@@ -75,7 +77,7 @@ class CaseEmbeddingStorage:
                     CaseEmbeddingStorage.generate_id(f"{case.case_id}_{chunk_index}")
                 )
 
-        self.collection.upsert(**cases_for_db.dict())
+        self.collection.upsert(**cases_for_db)
 
     def get_all_case_chunks(self) -> list[CaseChunk]:
         """
@@ -149,16 +151,14 @@ class CaseEmbeddingStorage:
         """Parses a dict of lists into a list of pydantic models (`CaseChunk`)"""
         cases: list[CaseChunk] = []
 
-        for id, metadata, document in zip_longest(
+        for id, metadata in zip_longest(
             cases_from_db["ids"] or [],
             cases_from_db["metadatas"],
-            cases_from_db["documents"],
         ):
             cases.append(
                 CaseChunk(
                     chunk_id=id,
                     metadata=metadata,
-                    chunk_text=document,
                 )
             )
 
@@ -170,19 +170,18 @@ class CaseEmbeddingStorage:
         Flattens and parses a list of lists for properties like ids, texts, etc.
         """
         results = []
-        for ids, metadatas, distances, documents in zip(
+        for ids, metadatas, distances in zip(
             query_result["ids"],
             query_result["metadatas"],
             query_result["distances"],
-            query_result["documents"],
         ):
-            for id, metadata, distance, document in zip(
-                ids, metadatas, distances, documents
-            ):
+            for (
+                id,
+                metadata,
+                distance,
+            ) in zip(ids, metadatas, distances):
                 chunk_metadata = ChunkMetadata(**metadata, distance=distance)
-                results.append(
-                    CaseChunk(chunk_id=id, chunk_text=document, metadata=chunk_metadata)
-                )
+                results.append(CaseChunk(chunk_id=id, metadata=chunk_metadata))
 
         return results
 

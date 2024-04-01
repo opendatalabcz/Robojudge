@@ -30,14 +30,11 @@ from robojudge.components.scraping.ruling_ids_selector import (
 logger: structlog.BoundLogger = structlog.get_logger()
 
 
-if settings.ENABLE_SCRAPING or settings.ENABLE_AUTOMATIC_SCRAPING:
-    rabbitmq_broker = RabbitmqBroker(
-        host=settings.RABBIT_HOST, port=settings.RABBIT_PORT
-    )
-    rabbitmq_broker.add_middleware(dramatiq.middleware.AsyncIO())
+rabbitmq_broker = RabbitmqBroker(host=settings.RABBIT_HOST, port=settings.RABBIT_PORT)
+rabbitmq_broker.add_middleware(dramatiq.middleware.AsyncIO())
 
-    dramatiq.set_encoder(dramatiq.PickleEncoder())
-    dramatiq.set_broker(rabbitmq_broker)
+dramatiq.set_encoder(dramatiq.PickleEncoder())
+dramatiq.set_broker(rabbitmq_broker)
 
 
 def intialize_scheduled_scraping():
@@ -145,6 +142,12 @@ def parser_worker(args):
         scraped_rulings: list[Case]
         scraping_job, scraped_rulings = args
 
+        logger.info(
+            f"Upserting rulings ({len(scraping_job.scraped_ruling_ids)}):",
+            job_id=scraping_job.token,
+            ruling_ids=scraping_job.scraped_ruling_ids,
+        )
+
         embedding_db.upsert_cases(scraped_rulings)
         document_db.upsert_documents(scraped_rulings)
 
@@ -161,7 +164,7 @@ def parser_worker(args):
 
         logger.info("Rulings parsed into DB:", job_id=scraping_job.token)
     except Exception:
-        logger.exception("Error while parsing rulings:")
+        logger.exception("Error while parsing rulings:", job_id=scraping_job.token)
 
 
 run_scraper_parser_pipeline = dramatiq.pipeline(

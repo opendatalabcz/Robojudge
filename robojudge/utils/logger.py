@@ -15,4 +15,8 @@ logging.basicConfig(
     level=settings.LOG_LEVEL,
 )
 
+log_level = structlog.stdlib.NAME_TO_LEVEL[settings.LOG_LEVEL.casefold()]
+structlog.configure(
+    wrapper_class=structlog.make_filtering_bound_logger(log_level),
+)
 logger: structlog.BoundLogger = structlog.get_logger()
