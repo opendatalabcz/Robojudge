@@ -31,7 +31,9 @@ router = APIRouter(prefix="/scraping")
 
 @router.post(
     "/run",
-    dependencies=[Depends(RateLimiter(times=5, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=5, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     include_in_schema=False,
 )
 async def fetch_cases(request: Request):
@@ -48,7 +50,9 @@ async def fetch_cases(request: Request):
 
 @router.post(
     "/schedule",
-    dependencies=[Depends(RateLimiter(times=5, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=5, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     tags=["scraping"],
     status_code=202,
     response_model=FetchCasesResponse,
@@ -70,7 +74,9 @@ async def fetch_specified_cases(
 @router.get(
     "/{fetch_job_token}",
     response_model=FetchCasesStatusResponse,
-    dependencies=[Depends(RateLimiter(times=30, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=30, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     tags=["scraping"],
 )
 async def get_cases_by_fetch_job_token(

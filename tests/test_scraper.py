@@ -3,7 +3,7 @@ import json
 import pytest
 from bs4 import BeautifulSoup
 
-from robojudge.components.case_page_scraper import CasePageScraper
+from robojudge.components.scraping.case_page_scraper import CasePageScraper
 
 
 @pytest.fixture(scope="session")
@@ -22,7 +22,7 @@ def case_scraper(html_page: str):
 
 @pytest.fixture(scope="session")
 def parsed_case():
-    with open('tests/assets/scraped_case.json', 'r') as rf:
+    with open("tests/assets/scraped_case.json", "r") as rf:
         return json.load(rf)
 
 

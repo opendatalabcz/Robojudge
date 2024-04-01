@@ -1,8 +1,8 @@
 import pytest
-from playwright.async_api import async_playwright, Page, expect
+from playwright.async_api import Page, expect
 
-from robojudge.components.paginating_scraper import PaginatingScraper
-from robojudge.components.case_page_scraper import CasePageScraper
+from robojudge.components.scraping.paginating_scraper import PaginatingRulingIdSelector
+from robojudge.components.scraping.case_page_scraper import CasePageScraper
 from robojudge.utils.internal_types import ScrapingFilters
 
 # Playwright async cannot be currently tested with pytest: https://github.com/microsoft/playwright-pytest/issues/74
@@ -17,7 +17,7 @@ async def test_input_filters(page: Page):
 
     await page.goto(url=CasePageScraper.MAIN_PAGE_URL, timeout=0)
 
-    await PaginatingScraper.input_filter_values(page, filters)
+    await PaginatingRulingIdSelector.input_filter_values(page, filters)
 
     expect(await page.get_by_placeholder("(hledaná slova)")).to_contain_text("slovo")
 
@@ -32,9 +32,9 @@ async def test_single_page_results(page: Page):
         publication_date_to="2023-05-19",
     )
 
-    await PaginatingScraper.apply_filters_on_main_page(page, filters)
+    await PaginatingRulingIdSelector.apply_filters_on_main_page(page, filters)
 
-    case_ids = await PaginatingScraper.extract_case_links_from_page(page)
+    case_ids = await PaginatingRulingIdSelector.extract_case_links_from_page(page)
 
     assert case_ids == ["454489", "449564"]
 
@@ -48,13 +48,13 @@ async def test_multiple_page_results(page: Page):
         publication_date_to="2023-05-16",
     )
 
-    case_ids = await PaginatingScraper.extract_case_ids(filters)
+    case_ids = await PaginatingRulingIdSelector.extract_case_ids(filters)
 
     assert len(case_ids) > 0
 
-    await PaginatingScraper.apply_filters_on_main_page(page, filters)
+    await PaginatingRulingIdSelector.apply_filters_on_main_page(page, filters)
 
-    case_ids = await PaginatingScraper.extract_case_links_from_page(page)
+    case_ids = await PaginatingRulingIdSelector.extract_case_links_from_page(page)
 
     assert case_ids == [
         "455215",

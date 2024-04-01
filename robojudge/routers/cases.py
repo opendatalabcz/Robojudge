@@ -34,7 +34,9 @@ router = APIRouter(prefix="/cases")
 @router.get(
     "",
     response_model=list[Case],
-    dependencies=[Depends(RateLimiter(times=30, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=30, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     tags=["rulings"],
 )
 async def get_all_cases(
@@ -57,7 +59,9 @@ async def get_all_cases(
 @router.post(
     "/search",
     response_model=SearchCasesResponse,
-    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     tags=["rulings"],
 )
 async def search_cases(
@@ -121,7 +125,9 @@ async def search_cases(
 @router.post(
     "/{case_id}/question",
     response_model=CaseQuestionResponse,
-    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))]
+    if settings.ENVIRONMENT == "prod"
+    else [],
     tags=["rulings"],
 )
 async def answer_case_question(
