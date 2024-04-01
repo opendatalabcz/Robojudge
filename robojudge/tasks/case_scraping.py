@@ -45,7 +45,7 @@ def intialize_scheduled_scraping():
     scheduler = BlockingScheduler()
     for _ in range(settings.PARALLEL_SCRAPER_INSTANCES):
         scheduler.add_job(
-            scraper_parser_pipeline.run(),
+            scraper_parser_pipeline.run,
             CronTrigger.from_crontab(settings.SCRAPER_CRONTAB),
         )
 
