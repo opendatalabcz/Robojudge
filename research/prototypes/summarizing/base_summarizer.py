@@ -11,7 +11,7 @@ azure_endpoint=settings.OPENAI_API_BASE,
 api_version="2023-03-15-preview")
 
 from robojudge.utils.logger import logging
-from robojudge.utils.async_tools import make_async, gather_with_concurrency
+from research.utils.async_tools import make_async, gather_with_concurrency
 from robojudge.utils.settings import settings
 from robojudge.utils.gpt_tokenizer import tokenizer
 
@@ -115,7 +115,7 @@ class BaseSummarizer(ABC):
         ]
 
         try:
-            chat_completion = client.chat.completions.create(model=settings.GPT_MODEL_NAME, messages=messages, temperature=0)
+            chat_completion = client.chat.completions.create(model=settings.INAPP_GPT_MODEL_NAME, messages=messages, temperature=0)
 
             return chat_completion.choices[0].message.content
             # return 'Summary:' + "\n".join(self.chunk_summaries)

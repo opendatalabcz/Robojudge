@@ -4,7 +4,7 @@ from llama_cpp import Llama
 
 from robojudge.components.summarizer.base_summarizer import BaseSummarizer
 from robojudge.utils.logger import logging
-from robojudge.utils.async_tools import make_async
+from research.utils.async_tools import make_async
 
 logger = logging.getLogger(__name__)
 

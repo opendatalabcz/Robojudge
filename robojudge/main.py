@@ -1,4 +1,3 @@
-import asyncio
 from multiprocessing import Process
 
 import redis.asyncio as redis
@@ -6,18 +5,33 @@ from fastapi_limiter import FastAPILimiter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from icecream import install
+from robojudge.tasks.case_scraping import intialize_scheduled_scraping
 
-from robojudge.tasks.case_scraping import run_scheduler
-from robojudge.utils.logger import logging
 from robojudge.utils.settings import settings
-
 import robojudge.routers.cases
+import robojudge.routers.scraping
 
-if settings.ENVIRONMENT == "dev":
-    install()
+tags_metadata = [
+    {
+        "name": "rulings",
+        "description": "Endpoints for fetching rulings based on semantic search and answering questions with LLM.",
+    },
+    {
+        "name": "scraping",
+        "description": "Endpoints to initiate scraping, poll the job status and its results.",
+    },
+]
 
-app = FastAPI()
+
+app = FastAPI(
+    title="Robojudge API",
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+    openapi_tags=tags_metadata,
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +41,7 @@ app.add_middleware(
 )
 
 app.include_router(robojudge.routers.cases.router)
+app.include_router(robojudge.routers.scraping.router)
 
 
 @app.get("/health")
@@ -41,14 +56,14 @@ async def get_health():
 @app.on_event("startup")
 async def startup():
     redis_connection = redis.from_url(
-        f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True)
+        f"redis://{settings.REDIS_URL}", encoding="utf-8", decode_responses=True
+    )
     await FastAPILimiter.init(redis_connection)
 
 
 if __name__ == "__main__":
-
     if settings.ENABLE_AUTOMATIC_SCRAPING:
-        Process(target=run_scheduler).start()
+        Process(target=intialize_scheduled_scraping).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
-# TODO: Mongo password
+# TODO: rename cases to rulings

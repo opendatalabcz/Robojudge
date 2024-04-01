@@ -1,11 +1,9 @@
 import asyncio
-import json
-import logging
 from async_lru import alru_cache
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
-
+from robojudge.utils.logger import logger
 from robojudge.components.reasoning.llm_definitions import standard_llm
 
 SYSTEM_MESSAGE_TEMPLATE = """\
@@ -19,8 +17,8 @@ Here is the query you should assess: {input}
 
 
 class QueryCheckerOutput(BaseModel):
-    relevant: bool = Field(description='Is the query relevant')
-    reasoning: str = Field(description='Why did you decide this way')
+    relevant: bool = Field(description="Is the query relevant")
+    reasoning: str = Field(description="Why did you decide this way")
 
 
 class RulingQueryChecker:
@@ -28,17 +26,22 @@ class RulingQueryChecker:
 
     def __init__(self) -> None:
         output_parser = JsonOutputParser(pydantic_object=QueryCheckerOutput)
-        prompt = PromptTemplate(template=SYSTEM_MESSAGE_TEMPLATE, input_variables=[
-            'input'], partial_variables={'format_instructions': output_parser.get_format_instructions()})
+        prompt = PromptTemplate(
+            template=SYSTEM_MESSAGE_TEMPLATE,
+            input_variables=["input"],
+            partial_variables={
+                "format_instructions": output_parser.get_format_instructions()
+            },
+        )
 
         self.llm_chain = prompt | standard_llm | output_parser
 
     @alru_cache
     async def assess_query_relevance(self, query: str) -> dict:
         try:
-            return await self.llm_chain.ainvoke(input={'input': query})
+            return await self.llm_chain.ainvoke(input={"input": query})
         except Exception as e:
-            logging.exception(f'Error while assessing query relevance: {e}')
+            logger.exception(f"Error while assessing query relevance: {e}")
 
 
 query_checker = RulingQueryChecker()

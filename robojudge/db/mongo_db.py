@@ -7,10 +7,8 @@ from pymongo.collection import Collection
 import mongomock
 
 from robojudge.utils.settings import settings
-from robojudge.utils.logger import logging
-from robojudge.utils.internal_types import Case, ScrapingInformation
-
-logger = logging.getLogger(__name__)
+from robojudge.utils.logger import logger
+from robojudge.utils.internal_types import Case
 
 
 class DocumentStorage:
@@ -18,7 +16,7 @@ class DocumentStorage:
     DB_NAME = "robojudge_case_db"
     COLLECTION_NAME = "cases"
     SCRAPING_INFORMATION_COLLECTION_NAME = "scraping"
-    FETCH_JOB_COLLECTION_NAME = "fetch_jobs"
+    SCRAPING_JOB_COLLECTION_NAME = "fetch_jobs"
 
     def __init__(self) -> None:
         self.client = pymongo.MongoClient(
@@ -40,20 +38,22 @@ class DocumentStorage:
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
 
     @property
-    def scraping_collection(self):
-        return self.client[self.DB_NAME][self.SCRAPING_INFORMATION_COLLECTION_NAME]
-
-    @property
-    def fetch_job_collection(self):
-        return self.client[self.DB_NAME][self.FETCH_JOB_COLLECTION_NAME]
+    def scraping_job_collection(self):
+        return self.client[self.DB_NAME][self.SCRAPING_JOB_COLLECTION_NAME]
 
     def find_latest_case_id(self):
         try:
-            cases = self.scraping_collection.find().sort("$natural", -1).limit(1)
+            cases = (
+                self.scraping_job_collection.find().sort("last_ruling_id", -1).limit(1)
+            )
             cases = list(cases)
             if len(cases) > 0:
-                last_case_id = int(list(cases)[0]["last_case_id"])
-                return last_case_id if last_case_id > settings.OLDEST_KNOWN_CASE_ID else settings.OLDEST_KNOWN_CASE_ID
+                last_case_id = int(list(cases)[0]["last_ruling_id"])
+                return (
+                    last_case_id
+                    if last_case_id > settings.OLDEST_KNOWN_CASE_ID
+                    else settings.OLDEST_KNOWN_CASE_ID
+                )
 
             # Try to deduce last case from cases themselves if scraping metadata are missing
             cases = self.collection.find().sort("$natural", -1).limit(1)
@@ -64,21 +64,11 @@ class DocumentStorage:
             return settings.OLDEST_KNOWN_CASE_ID
 
         except Exception:
-            logging.exception(f"Error while searching for latest case_id:")
-
-    def insert_scraping_instance_information(
-        self, scraping_information: ScrapingInformation
-    ):
-        try:
-            self.scraping_collection.insert_one(scraping_information.dict())
-        except Exception:
-            logging.exception(
-                f'Error while inserting scraping information: "{scraping_information}":'
-            )
+            logger.exception("Error while searching for latest case_id:")
 
     def upsert_documents(self, cases: list[Case]):
         if len(cases) < 1:
-            logging.warning("No documents to upsert to MongoDB")
+            logger.warning("No documents to upsert to MongoDB")
             return
 
         try:
@@ -93,7 +83,7 @@ class DocumentStorage:
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(f'Error while upserting metadata: "{cases}":')
+            logger.exception(f'Error while upserting metadata: "{cases}":')
 
     def add_document_summaries(self, summaried_cases: list[Case]):
         if len(summaried_cases) < 1:
@@ -111,15 +101,13 @@ class DocumentStorage:
 
             self.collection.bulk_write(updates)
         except Exception:
-            logging.exception(
-                f"Error while adding summaries {summaried_cases}:")
+            logger.exception(f"Error while adding summaries {summaried_cases}:")
 
     def delete_documents(self, case_ids: list[str]):
         try:
             self.collection.delete_many({"case_id": {"$in": case_ids}})
         except Exception:
-            logging.exception(
-                f"Error while deleting metadata with ids {case_ids}:")
+            logger.exception(f"Error while deleting metadata with ids {case_ids}:")
 
 
 @mongomock.patch(servers=((settings.DOCUMENT_DB_HOST, settings.DOCUMENT_DB_PORT),))
