@@ -1,3 +1,4 @@
+import datetime
 from typing import Any
 import uuid
 import os
@@ -202,19 +203,43 @@ class CaseEmbeddingStorage:
             match filter_key:
                 case "publication_date_from":
                     where_clauses["$and"].append(
-                        construct_where_clause("publication_date", "$gte", filter_value)
+                        construct_where_clause(
+                            "publication_date",
+                            "$gte",
+                            datetime.datetime.strptime(
+                                filter_value, "%Y-%m-%d"
+                            ).timestamp(),
+                        )
                     )
                 case "publication_date_to":
                     where_clauses["$and"].append(
-                        construct_where_clause("publication_date", "$lte", filter_value)
+                        construct_where_clause(
+                            "publication_date",
+                            "$lte",
+                            datetime.datetime.strptime(
+                                filter_value, "%Y-%m-%d"
+                            ).timestamp(),
+                        )
                     )
                 case "sentence_date_from":
                     where_clauses["$and"].append(
-                        construct_where_clause("sentence_date", "$gte", filter_value)
+                        construct_where_clause(
+                            "sentence_date",
+                            "$gte",
+                            datetime.datetime.strptime(
+                                filter_value, "%Y-%m-%d"
+                            ).timestamp(),
+                        )
                     )
                 case "sentence_date_to":
                     where_clauses["$and"].append(
-                        construct_where_clause("sentence_date", "$lte", filter_value)
+                        construct_where_clause(
+                            "sentence_date",
+                            "$lte",
+                            datetime.datetime.strptime(
+                                filter_value, "%Y-%m-%d"
+                            ).timestamp(),
+                        )
                     )
 
         if not len(where_clauses["$and"]):

@@ -103,10 +103,11 @@ export function Home({ triggerAlert }: HomeProps) {
 
   const createFilters = () => {
     return {
-      publication_date_from: publicationDateFrom?.unix() ?? undefined,
-      publication_date_to: publicationDateTo?.unix() ?? undefined,
-      sentence_date_from: sentenceDateFrom?.unix() ?? undefined,
-      sentence_date_to: sentenceDateTo?.unix() ?? undefined,
+      publication_date_from:
+        publicationDateFrom?.format("YYYY-MM-DD") ?? undefined,
+      publication_date_to: publicationDateTo?.format("YYYY-MM-DD") ?? undefined,
+      sentence_date_from: sentenceDateFrom?.format("YYYY-MM-DD") ?? undefined,
+      sentence_date_to: sentenceDateTo?.format("YYYY-MM-DD") ?? undefined,
     };
   };
 

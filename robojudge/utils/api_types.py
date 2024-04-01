@@ -1,25 +1,21 @@
-import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
 
 from robojudge.utils.internal_types import ScrapingFilters, Case, ScrapingJobStatus
 
-# TODO: change from timestamps
 
-
-# TODO: update desc and type
 class CaseSearchRequestFilters(BaseModel):
-    publication_date_from: Optional[float] = Field(
+    publication_date_from: Optional[str] = Field(
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
     )
-    publication_date_to: Optional[float] = Field(
+    publication_date_to: Optional[str] = Field(
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
     )
-    sentence_date_from: Optional[float] = Field(
+    sentence_date_from: Optional[str] = Field(
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
     )
-    sentence_date_to: Optional[float] = Field(
+    sentence_date_to: Optional[str] = Field(
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
     )
 
