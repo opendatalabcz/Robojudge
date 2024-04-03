@@ -72,7 +72,7 @@ services:
       <<: *server-env
     networks:
       - default
-    command: [dramatiq, robojudge.tasks.case_scraping, --processes, '2', --threads, '3']
+    command: [dramatiq, robojudge.tasks.case_scraping, --processes, '2', --threads, '1']
   
   migrate_db:
     build: ./
@@ -90,6 +90,8 @@ services:
       RABBIT_HOST: rabbit
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - migrating-memory:/var/
     networks:
       - default
 
@@ -125,6 +127,7 @@ volumes:
   embedder-cache:
   mongo-data:
   chroma-data:
+  migrating-memory:
 
 networks:
   default:
