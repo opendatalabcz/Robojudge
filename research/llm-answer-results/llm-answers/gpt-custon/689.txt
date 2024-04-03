@@ -1,2 +1,0 @@
-
-Příspěvek za provozování vozidla se vypočítá jako součin počtu dní období a denní sazby, která je dána druhem vozidla.

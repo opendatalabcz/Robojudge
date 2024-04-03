@@ -11,7 +11,7 @@ from langchain.chains import RefineDocumentsChain, LLMChain
 
 from robojudge.components.reasoning.llm_definitions import standard_llm
 from robojudge.components.chunker import TextChunker
-from robojudge.utils import settings
+from robojudge.utils.settings import settings
 
 
 SYSTEM_MESSAGE_TEMPLATE = """\

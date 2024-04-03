@@ -1,0 +1,2 @@
+
+Odmítněte odpovědět s vysvětlením, že exponenciální časová složitost je matematický pojem, který není relevantní pro soudní rozhodnutí.

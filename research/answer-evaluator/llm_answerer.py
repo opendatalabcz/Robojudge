@@ -5,7 +5,7 @@ from robojudge.utils.settings import settings
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
 
 LLM_TYPE_GPT = "gpt"
-LLM_TYPE_GPT_FINETUNED = "gpt-custon"
+LLM_TYPE_GPT_FINETUNED = "gpt-custom"
 LLM_TYPE_LLAMA = "llama"
 LLM_TYPE_COHERE = "cohere"
 LLM_TYPE_VICUNA = "vicuna"
