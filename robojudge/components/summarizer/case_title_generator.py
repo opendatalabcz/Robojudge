@@ -10,7 +10,7 @@ class CaseTitleGenerator:
     NEXT_CHUNK_SIZE = 4096 - 1000
 
     SYSTEM_MESSAGE_TEMPLATE = """\
-Your task is to create an short and interesting title for an article about a court ruling based on a summary of that ruling.
+Your task is to create a short and interesting title for an article about a court ruling based on a summary of that ruling.
 The title should relate to what the case was about. Avoid sounding like a tabloid.
 Create your title ONLY in Czech.
 Here is the summary: {summary}

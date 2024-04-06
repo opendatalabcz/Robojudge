@@ -22,21 +22,6 @@ If the question is obviously unrelated to something which could be discussed in 
 Create your answer ONLY in Czech.
 """
 
-prefix = """
-Answer the following question as a skilled Czech lawyer would.
-You should retrieve parts of a court ruling that may contain the answer.
-GO THROUGH ALL THE PARTS until you find an answer.
-Repeat getting the parts of the court ruling until you can completely answer.
-Formulate an answer to the question in 2-5 sentences
-If the answer cannot be found after checking ALL court ruling parts, explain that you cannot answer the question.
-ALWAYS answer in Czech.
-
-You have access to the following tools:"""
-
-suffix = """
-Question: {input}
-{agent_scratchpad}"""
-
 
 class CaseQuestionAnswerer:
     NEXT_CHUNK_SIZE = 4096 - 1000
