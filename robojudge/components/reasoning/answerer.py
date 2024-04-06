@@ -1,6 +1,7 @@
 import asyncio
 from async_lru import alru_cache
 
+from langchain_openai.chat_models import ChatOpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -10,6 +11,7 @@ from langchain.chains import RefineDocumentsChain, LLMChain
 
 from robojudge.components.reasoning.llm_definitions import standard_llm
 from robojudge.components.chunker import TextChunker
+from robojudge.utils.settings import settings
 
 
 SYSTEM_MESSAGE_TEMPLATE = """\
@@ -41,7 +43,7 @@ class CaseQuestionAnswerer:
 
     @classmethod
     @alru_cache
-    async def answer_question(self, question: str, text: str) -> str:
+    async def answer_question(cls, question: str, text: str, llm_name=None) -> str:
         system_message_prompt = SystemMessagePromptTemplate.from_template(
             SYSTEM_MESSAGE_TEMPLATE
         )
@@ -57,7 +59,16 @@ class CaseQuestionAnswerer:
         document_variable_name = "context"
         initial_response_name = "prev_response"
 
-        initial_llm_chain = LLMChain(llm=standard_llm, prompt=initial_prompt)
+        llm = standard_llm
+        if llm_name:
+            llm = ChatOpenAI(
+                openai_api_key=settings.OPENAI_API_KEY,
+                openai_api_base=settings.OPENAI_API_BASE,
+                model=llm_name,
+                temperature=0,
+            )
+
+        initial_llm_chain = LLMChain(llm=llm, prompt=initial_prompt)
 
         prompt_refine = HumanMessagePromptTemplate.from_template(
             f"Question: {question}"
@@ -69,9 +80,9 @@ class CaseQuestionAnswerer:
             [system_message_prompt, prompt_refine]
         )
 
-        refine_llm_chain = LLMChain(llm=standard_llm, prompt=refine_prompt)
+        refine_llm_chain = LLMChain(llm=llm, prompt=refine_prompt)
 
-        self.refiner = RefineDocumentsChain(
+        cls.refiner = RefineDocumentsChain(
             initial_llm_chain=initial_llm_chain,
             refine_llm_chain=refine_llm_chain,
             document_variable_name=document_variable_name,
@@ -79,7 +90,7 @@ class CaseQuestionAnswerer:
         )
 
         chunks = TextChunker.split_text_into_llm_chunks(text)
-        result, summary_metadata = await self.refiner.acombine_docs(docs=chunks)
+        result, summary_metadata = await cls.refiner.acombine_docs(docs=chunks)
         return result
 
 
@@ -88,5 +99,6 @@ if __name__ == "__main__":
 
     question = "Kterým dopravním prostředkem jel žalovaný?"
 
-    res = asyncio.run(CaseQuestionAnswerer.answer_question(question, test_reasoning))
+    res = asyncio.run(CaseQuestionAnswerer.answer_question(
+        question, test_reasoning))
     print(res)

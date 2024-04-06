@@ -5,12 +5,14 @@ from robojudge.utils.settings import settings
 from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
 
 LLM_TYPE_GPT = "gpt"
+LLM_TYPE_GPT_FINETUNED = "gpt-custom"
 LLM_TYPE_LLAMA = "llama"
 LLM_TYPE_COHERE = "cohere"
 LLM_TYPE_VICUNA = "vicuna"
 
-MEASURED_LLM_TYPES = [LLM_TYPE_GPT, LLM_TYPE_LLAMA, LLM_TYPE_VICUNA]
+MEASURED_LLM_TYPES = [LLM_TYPE_GPT_FINETUNED]
 
+CUSTOM_LLM_NAME = "ft:gpt-3.5-turbo-1106:personal:002:96i5C6q4"
 
 LLAMA_SYSTEM_PROMPT = """
 You are a legal assistant who answers a question based on the provided text.
@@ -44,6 +46,8 @@ class ResearchLLMAnswerer:
     async def generate_answer(cls, llm_type: str, question: str, text: str):
         if llm_type == LLM_TYPE_GPT:
             return await CaseQuestionAnswerer.answer_question(question, text)
+        elif llm_type == LLM_TYPE_GPT_FINETUNED:
+            return await CaseQuestionAnswerer.answer_question(question, text, CUSTOM_LLM_NAME)
         elif llm_type == LLM_TYPE_LLAMA:
             return cls.answer_llama(question, text)
         elif llm_type == LLM_TYPE_COHERE:
@@ -51,7 +55,8 @@ class ResearchLLMAnswerer:
         elif llm_type == LLM_TYPE_VICUNA:
             return cls.answer_vicuna(question, text)
         else:
-            raise Exception(f'Unknown llm_type to generate an answer "{llm_type}"')
+            raise Exception(
+                f'Unknown llm_type to generate an answer "{llm_type}"')
 
     @classmethod
     def answer_cohere(cls, question: str, text: str):

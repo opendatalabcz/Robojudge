@@ -33,7 +33,6 @@ async def run_migration():
 
 
 def migrate_ruling(ruling: dict):
-    # ruling_chunks = embedding_db.get_case_chunks_by_case_id(case_ids=[ruling["case_id"]])
     try:
         ruling_chunks = embedding_db.collection.query(
             query_texts="", where={"case_id": {"$in": [ruling["case_id"]]}}
@@ -45,7 +44,6 @@ def migrate_ruling(ruling: dict):
                 "publication_date"
             ].timestamp()
             metadata["court"] = ruling["metadata"]["court"]
-
             embedding_db.collection.update(
                 ids=ruling_chunks["ids"][0], metadatas=ruling_chunks["metadatas"][0]
             )
