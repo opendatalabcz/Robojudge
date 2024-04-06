@@ -76,7 +76,6 @@ services:
   
   migrate_db:
     build: ./
-    restart: unless-stopped
     depends_on:
       - mongo
       - chroma
@@ -88,8 +87,6 @@ services:
       EMBEDDING_DB_HOST: chroma
       REDIS_URL: redis
       RABBIT_HOST: rabbit
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
       - migrating-memory:/var/
     networks:
