@@ -1,3 +1,4 @@
+import asyncio
 from multiprocessing import Process
 
 import redis.asyncio as redis
@@ -5,20 +6,16 @@ from fastapi_limiter import FastAPILimiter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from robojudge.tasks.case_scraping import intialize_scheduled_scraping
+from robojudge.tasks.database_initializer import initialize_dbs
+from robojudge.tasks.scraping_scheduler import intialize_scheduled_scraping
 
 from robojudge.utils.settings import settings
-import robojudge.routers.cases
-import robojudge.routers.scraping
+import robojudge.routers.rulings
 
 tags_metadata = [
     {
         "name": "rulings",
         "description": "Endpoints for fetching rulings based on semantic search and answering questions with LLM.",
-    },
-    {
-        "name": "scraping",
-        "description": "Endpoints to initiate scraping, poll the job status and its results.",
     },
 ]
 
@@ -40,8 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(robojudge.routers.cases.router)
-app.include_router(robojudge.routers.scraping.router)
+app.include_router(robojudge.routers.rulings.router)
 
 
 @app.get("/health")
@@ -64,6 +60,8 @@ async def startup():
 if __name__ == "__main__":
     if settings.ENABLE_AUTOMATIC_SCRAPING:
         Process(target=intialize_scheduled_scraping).start()
+        Process(target=lambda: asyncio.run(initialize_dbs())).start()
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
 # TODO: rename cases to rulings
+# TODO: 2phase dockerfiles

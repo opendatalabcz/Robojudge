@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from robojudge.main import app
 from robojudge.db.mongo_db import document_db
-from robojudge.utils.internal_types import Case, ScrapingJob, ScrapingFilters
+from robojudge.utils.internal_types import Ruling, ScrapingJob, ScrapingFilters
 
 
 client = TestClient(app)
@@ -16,7 +16,7 @@ client = TestClient(app)
 def cases_in_mongo():
     with open("tests/assets/cases_in_mongo.json", "r") as rf:
         cases_json = json.load(rf)
-        return [Case(**json_case) for json_case in cases_json]
+        return [Ruling(**json_case) for json_case in cases_json]
 
 
 def test_health_endpoint():
@@ -25,8 +25,8 @@ def test_health_endpoint():
     assert response.json()["status"] == "up"
 
 
-def test_get_all_cases(cases_in_mongo: list[Case]):
-    document_db.upsert_documents(cases_in_mongo)
+def test_get_all_cases(cases_in_mongo: list[Ruling]):
+    document_db.upsert_rulings(cases_in_mongo)
 
     response = client.get("/cases")
 
@@ -36,7 +36,7 @@ def test_get_all_cases(cases_in_mongo: list[Case]):
     assert len(cases_from_response) == 2
     assert set(
         [response_case["case_id"] for response_case in cases_from_response]
-    ) == set([case.case_id for case in cases_in_mongo])
+    ) == set([case.ruling_id for case in cases_in_mongo])
 
 
 def test_trigger_fetch():
@@ -54,8 +54,8 @@ def test_trigger_fetch():
     assert fetch_job_response["token"]
 
 
-def test_get_cases_by_fetch_job_token(cases_in_mongo: list[Case]):
-    case_ids = [case.case_id for case in cases_in_mongo]
+def test_get_cases_by_fetch_job_token(cases_in_mongo: list[Ruling]):
+    case_ids = [case.ruling_id for case in cases_in_mongo]
     token = "very-special-token"
     fetch_job = ScrapingJob(
         token=token,
@@ -63,8 +63,8 @@ def test_get_cases_by_fetch_job_token(cases_in_mongo: list[Case]):
         started_at=datetime.datetime.now()
     )
 
-    document_db.upsert_documents(cases_in_mongo)
-    document_db.scraping_job_collection.insert_one(fetch_job.dict())
+    document_db.upsert_rulings(cases_in_mongo)
+    document_db.fetch_job_collection.insert_one(fetch_job.dict())
 
     response = client.get(f"/scraping/{token}")
 

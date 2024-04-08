@@ -13,7 +13,7 @@ services:
     ports:
       - ${DOCUMENT_DB_PORT}:${DOCUMENT_DB_PORT}
     volumes:
-      - mongo-data:/data/db
+      - mongo-data-v2:/data/db
     networks:
       - default
 
@@ -21,7 +21,7 @@ services:
     image: ghcr.io/chroma-core/chroma:0.4.24
     restart: unless-stopped
     volumes:
-      - chroma-data:/chroma
+      - chroma-data-v2:/chroma
     environment:
       - IS_PERSISTENT=TRUE
     ports:
@@ -30,7 +30,7 @@ services:
       - default
 
   rabbit:
-    image: rabbitmq:3.13.0
+    image: rabbitmq:3.13.0-management
     restart: unless-stopped
     ports:
       - 5672:5672
@@ -45,7 +45,8 @@ services:
     depends_on:
       - mongo
       - chroma
-      - scraper_workers
+      - fetcher_workers
+      - parser_workers
       - redis
     env_file:
       - .env
@@ -57,7 +58,7 @@ services:
       - default
     command: [python, -m, robojudge.main]
 
-  scraper_workers:
+  fetcher_workers:
     build: ./
     restart: unless-stopped
     volumes:
@@ -72,28 +73,47 @@ services:
       <<: *server-env
     networks:
       - default
-    command: [dramatiq, robojudge.tasks.case_scraping, --processes, '2', --threads, '1']
-  
-  migrate_db:
+    command:
+      [
+        dramatiq,
+        robojudge.tasks.scraping_scheduler,
+        --processes,
+        "1",
+        --threads,
+        "1",
+        --queues,
+        fetching-queue,
+      ]
+
+  parser_workers:
     build: ./
+    restart: unless-stopped
+    volumes:
+      - embedder-cache:/root/.cache/chroma/
     depends_on:
       - mongo
       - chroma
+      - rabbit
     env_file:
       - .env
-    command: [python, -m, robojudge.tasks.enrich_chroma_metadata]
     environment:
-      DOCUMENT_DB_HOST: mongo
-      EMBEDDING_DB_HOST: chroma
-      REDIS_URL: redis
-      RABBIT_HOST: rabbit
-    volumes:
-      - migrating-memory:/var/
+      <<: *server-env
     networks:
       - default
+    command:
+      [
+        dramatiq,
+        robojudge.tasks.scraping_scheduler,
+        --processes,
+        "1",
+        --threads,
+        "1",
+        --queues,
+        parsing-queue,
+      ]
 
   client:
-    build: 
+    build:
       context: ./
       dockerfile: ./client/Dockerfile
     restart: unless-stopped
@@ -119,13 +139,11 @@ services:
     networks:
       - default
 
-
 volumes:
   embedder-cache:
-  mongo-data:
-  chroma-data:
-  migrating-memory:
+  mongo-data-v2:
+  chroma-data-v2:
 
 networks:
   default:
-      name: robojudge-network
+    name: robojudge-network

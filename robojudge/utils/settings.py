@@ -31,21 +31,18 @@ class Settings(BaseSettings):
     MAX_SEARCHABLE_RULING_COUNT: int = 20
     # Allows periodic and automatic scraping
     ENABLE_AUTOMATIC_SCRAPING: bool = True
-    # In case no rulings are scraped based on a set of IDs, the scraper will increasingly try bigger gaps before it finds rulings.
-    # This is the maximum by much it will be allowed to jump.
-    SCRAPER_MAX_EMPTY_JUMP = 5000
     # How many rulings a single scraping job will attempt to scrape
-    SCRAPER_SINGLE_RUN_CASE_COUNT = 20
-    # The scraper will wait for page loading at most this much (milliseconds)
-    SCRAPER_TIMEOUT = 10_000
-    # How many scrapers should be periodically run (in parallel)
-    PARALLEL_SCRAPER_INSTANCES = 2
-    # The frequency of running periodic scraping (https://crontab.guru/#*/2_*_*_*_*)
-    SCRAPER_CRONTAB = "*/2 * * * *"
-    # Will scrape rulings from the newest to the oldest
-    SCRAPE_CASES_FROM_LAST: bool = False
-    # Based on manual testing, this is one of the first available cases
-    OLDEST_KNOWN_CASE_ID = 450
+    SCRAPER_SINGLE_RUN_CASE_COUNT = 10
+    # The frequency of running periodic scraping - once per day is the most sensible (https://crontab.guru/#*/2_*_*_*_*)
+    SCRAPER_CRONTAB = "0 1 * * *"
+    # No rulings could have appeared sooner than this date
+    FIRST_JUSTICE_DB_DATE = "2020-10-12"
+    # Number of seconds to wait between adding another date to fetch rulings for (for DB initialization)
+    BASE_FETCH_JOB_INTERVAL = 0.9
+    # Number of seconds added to the interval if a failure happens
+    FAILED_FETCH_JOB_INTERVAL_INCREASE = 1
+    # Number of seconds subtracted from the interval if a success happens (BASE is always the minimum)
+    SUCCESSFUL_FETCH_JOB_INTERVAL_INCREASE = 0.1
     # In case of a failed scraping job (not because of an individual ruling failure, but the whole job failing), try again this number of times
     MAX_RETRIES: int = 2
 

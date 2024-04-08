@@ -69,10 +69,19 @@ DOCUMENT_METADATA_MAP = {
 }
 
 
-class Metadata(BaseModel):
+class RulingMetadata(BaseModel):
     jednaci_cislo: str = Field(
         description="Identification string used in the Czech legal system. For the purposes of the API, 'spisová značka' is understood to be the same thing as 'číslo jednací'.",
         example="19 C 77/2023-44",
+    )
+    url: str = Field(
+        description="URL of the ruling in JSON format",
+        example="https://rozhodnuti.justice.cz/api/finaldoc/6d5da321-1c07-499b-8c27-f03b748d7792",
+    )
+    type: str = Field(
+        default="",
+        description="Type of ruling",
+        example="JUDGEMENT",
     )
     court: str = Field(
         default="",
@@ -107,16 +116,16 @@ class Metadata(BaseModel):
         description="List of regulations related to the ruling.",
         example=["§ 23 z. č. 292/2013 Sb.", "§ 757 z. č. 89/2012 Sb"],
     )
-    related_cases: list[str] = Field(
+    related_rulings: list[str] = Field(
         default=[], description="List of ruling 'jednací číslo' related to this ruling."
     )
 
 
-class Case(BaseModel):
-    case_id: str = Field(
-        description="This ID corresponds to an integer used by the Justice Ministry's website"
+class Ruling(BaseModel):
+    ruling_id: str = Field(
+        description="This ID corresponds to an uuid used by the Justice Ministry's website"
     )
-    metadata: Metadata
+    metadata: RulingMetadata
     verdict: str = Field(default="", description='"výrok" in Czech')
     reasoning: str = Field(default="", description='"odůvodnění" in Czech')
     summary: Optional[str] = Field(
@@ -154,6 +163,11 @@ class ScrapingJobStatus(StrEnum):
 class ScrapingJobType(StrEnum):
     SCHEDULED = auto()
     MANUAL = auto()
+
+
+class FetchJob(BaseModel):
+    date: str
+    started_at: datetime.datetime
 
 
 class ScrapingJob(BaseModel):

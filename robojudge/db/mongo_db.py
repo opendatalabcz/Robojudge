@@ -8,15 +8,14 @@ import mongomock
 
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logger
-from robojudge.utils.internal_types import Case
+from robojudge.utils.internal_types import Ruling
 
 
 class DocumentStorage:
     client: pymongo.MongoClient
-    DB_NAME = "robojudge_case_db"
-    COLLECTION_NAME = "cases"
-    SCRAPING_INFORMATION_COLLECTION_NAME = "scraping"
-    SCRAPING_JOB_COLLECTION_NAME = "fetch_jobs"
+    DB_NAME = "robojudge_db"
+    COLLECTION_NAME = "rulings"
+    FETCH_JOB_COLLECTION_NAME = "fetch_jobs"
 
     def __init__(self) -> None:
         self.client = pymongo.MongoClient(
@@ -26,7 +25,7 @@ class DocumentStorage:
             f'Connection established to MongoDB "{settings.DOCUMENT_DB_HOST}:{settings.DOCUMENT_DB_PORT}".'
         )
 
-        self.collection.create_index("case_id")
+        self.collection.create_index("ruling_id")
 
     # Enables to be used as a FastAPI dependency which needs a callable
     def __call__(self):
@@ -34,80 +33,57 @@ class DocumentStorage:
 
     # Searching is done through the collection object directly
     @property
-    def collection(self) -> Collection[Case]:
+    def collection(self) -> Collection[dict]:
         return self.client[self.DB_NAME][self.COLLECTION_NAME]
 
     @property
-    def scraping_job_collection(self):
-        return self.client[self.DB_NAME][self.SCRAPING_JOB_COLLECTION_NAME]
+    def fetch_job_collection(self) -> Collection[dict]:
+        return self.client[self.DB_NAME][self.FETCH_JOB_COLLECTION_NAME]
 
-    def find_latest_case_id(self):
-        try:
-            cases = (
-                self.scraping_job_collection.find().sort("last_ruling_id", -1).limit(1)
-            )
-            cases = list(cases)
-            if len(cases) > 0:
-                last_case_id = int(list(cases)[0]["last_ruling_id"])
-                return (
-                    last_case_id
-                    if last_case_id > settings.OLDEST_KNOWN_CASE_ID
-                    else settings.OLDEST_KNOWN_CASE_ID
-                )
-
-            # Try to deduce last case from cases themselves if scraping metadata are missing
-            cases = self.collection.find().sort("$natural", -1).limit(1)
-            cases = list(cases)
-            if len(cases) > 0:
-                return int(list(cases)[0]["case_id"])
-
-            return settings.OLDEST_KNOWN_CASE_ID
-
-        except Exception:
-            logger.exception("Error while searching for latest case_id:")
-
-    def upsert_documents(self, cases: list[Case]):
-        if len(cases) < 1:
-            logger.warning("No documents to upsert to MongoDB")
+    def upsert_rulings(self, rulings: list[Ruling]):
+        if len(rulings) < 1:
+            logger.warning("No rulings to upsert to MongoDB")
             return
 
         try:
             updates = [
                 ReplaceOne(
-                    {"case_id": case.case_id},
-                    {**case.dict(), "created_at": datetime.datetime.now()},
+                    {"ruling_id": ruling.ruling_id},
+                    {**ruling.dict(), "created_at": datetime.datetime.now()},
                     upsert=True,
                 )
-                for case in cases
+                for ruling in rulings
             ]
 
             self.collection.bulk_write(updates)
-        except Exception:
-            logger.exception(f'Error while upserting metadata: "{cases}":')
+        except Exception as e:
+            logger.exception(f"Error while upserting rulings into MongoDB: {e}")
 
-    def add_document_summaries(self, summaried_cases: list[Case]):
-        if len(summaried_cases) < 1:
+    def add_ruling_summaries(self, summaried_rulings: list[Ruling]):
+        if len(summaried_rulings) < 1:
             return
 
         try:
             logger.info("Saving generated summaries.")
             updates = [
                 UpdateOne(
-                    {"case_id": summaried_case.case_id},
-                    {"$set": {"summary": summaried_case.summary}},
+                    {"ruling_id": summaried_ruling.ruling_id},
+                    {"$set": {"summary": summaried_ruling.summary}},
                 )
-                for summaried_case in summaried_cases
+                for summaried_ruling in summaried_rulings
             ]
 
             self.collection.bulk_write(updates)
         except Exception:
-            logger.exception(f"Error while adding summaries {summaried_cases}:")
+            logger.exception(f"Error while adding summaries {summaried_rulings}:")
 
-    def delete_documents(self, case_ids: list[str]):
+    def delete_rulings(self, ruling_ids: list[str]):
         try:
-            self.collection.delete_many({"case_id": {"$in": case_ids}})
+            self.collection.delete_many({"ruling_id": {"$in": ruling_ids}})
         except Exception:
-            logger.exception(f"Error while deleting metadata with ids {case_ids}:")
+            logger.exception(
+                f"Error while deleting rulings from MongoDB with ids {ruling_ids}:"
+            )
 
 
 @mongomock.patch(servers=((settings.DOCUMENT_DB_HOST, settings.DOCUMENT_DB_PORT),))
