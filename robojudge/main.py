@@ -64,4 +64,3 @@ if __name__ == "__main__":
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
 
 # TODO: rename cases to rulings
-# TODO: 2phase dockerfiles
