@@ -15,7 +15,7 @@ client = TestClient(app)
 def rulings_in_mongo():
     with open("tests/assets/rulings_in_mongo.json", "r") as rf:
         rulings_json = json.load(rf)
-        return [Ruling(**json_case) for json_case in rulings_json]
+        return [Ruling(**json_ruling) for json_ruling in rulings_json]
 
 
 def test_health_endpoint():

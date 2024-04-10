@@ -66,7 +66,7 @@ async def get_rulings_for_date(date: str):
     )
 
     for ruling_info_batch in more_itertools.chunked(
-        ruling_infos, settings.SCRAPER_SINGLE_RUN_CASE_COUNT
+        ruling_infos, settings.SCRAPER_SINGLE_RUN_RULING_COUNT
     ):
         construct_fetch_upsert_pipeline(ruling_info_batch).run()
 
@@ -106,6 +106,8 @@ async def fetch_worker(ruling_infos: list[dict]):
         f"Fetched ({len(successful_rulings)}) rulings:",
         ruling_ids=successful_ruling_ids,
     )
+
+    # TODO: filter non-text rulings and store them aside
 
     global FETCH_JOB_INTERVAL
     if len(failed_ruling_infos):

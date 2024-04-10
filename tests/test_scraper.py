@@ -3,8 +3,6 @@ import json
 import pytest
 from bs4 import BeautifulSoup
 
-from robojudge.components.scraping.case_page_scraper import CasePageScraper
-
 
 @pytest.fixture(scope="session")
 def html_page():

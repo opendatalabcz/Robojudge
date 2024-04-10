@@ -27,12 +27,12 @@ class Settings(BaseSettings):
     EMBEDDING_CHUNK_SIZE = 256
 
     # Scraping settings
-    # Limits the number of cases than can be queried using semantic search
+    # Limits the number of rulings than can be queried using semantic search
     MAX_SEARCHABLE_RULING_COUNT: int = 20
     # Allows periodic and automatic scraping
     ENABLE_AUTOMATIC_SCRAPING: bool = True
     # How many rulings a single scraping job will attempt to scrape
-    SCRAPER_SINGLE_RUN_CASE_COUNT = 10
+    SCRAPER_SINGLE_RUN_RULING_COUNT = 10
     # The frequency of running periodic scraping - once per day is the most sensible (https://crontab.guru/#*/2_*_*_*_*)
     SCRAPER_CRONTAB = "0 1 * * *"
     # No rulings could have appeared sooner than this date

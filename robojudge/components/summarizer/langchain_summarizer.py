@@ -11,7 +11,7 @@ from robojudge.components.reasoning.llm_definitions import standard_llm
 from robojudge.components.chunker import TextChunker
 
 
-class CaseSummarizer:
+class RulingReasoningSummarizer:
     SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create an interesting summary of a court ruling.
 You will receive the court ruling in parts and continuously refine your summary from the previous parts.
@@ -66,7 +66,7 @@ Create your summary ONLY in Czech and use a maximum of 7 sentences.
             return ""
 
 
-summarizer = CaseSummarizer()
+summarizer = RulingReasoningSummarizer()
 
 if __name__ == "__main__":
     test_text = """

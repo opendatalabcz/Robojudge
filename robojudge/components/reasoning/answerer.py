@@ -23,7 +23,7 @@ Create your answer ONLY in Czech.
 """
 
 
-class CaseQuestionAnswerer:
+class RulingQuestionAnswerer:
     NEXT_CHUNK_SIZE = 4096 - 1000
 
     @classmethod
@@ -84,6 +84,6 @@ if __name__ == "__main__":
 
     question = "Kterým dopravním prostředkem jel žalovaný?"
 
-    res = asyncio.run(CaseQuestionAnswerer.answer_question(
+    res = asyncio.run(RulingQuestionAnswerer.answer_question(
         question, test_reasoning))
     print(res)
