@@ -32,7 +32,7 @@ def test_get_all_rulings(rulings_in_mongo: list[Ruling]):
     rulings_from_response = response.json()
 
     assert response.status_code == 200
-    assert len(rulings_from_response) == 2
+    assert len(rulings_from_response) == 3
     assert set(
         [response_ruling["ruling_id"] for response_ruling in rulings_from_response]
     ) == set([ruling.ruling_id for ruling in rulings_in_mongo])

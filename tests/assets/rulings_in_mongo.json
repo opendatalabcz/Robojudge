@@ -11,12 +11,8 @@
       "court": "Okresní soud v Kutné Hoře",
       "subject_matter": "O zaplacení 1 992 Kč s příslušenstvím",
       "judge_name": "Mgr. Jindřich Kříž",
-      "sentence_date": {
-        "$date": "2024-01-09T00:00:00.000Z"
-      },
-      "publication_date": {
-        "$date": "2024-02-06T00:00:00.000Z"
-      },
+      "sentence_date": "2024-01-09T00:00:00.000Z",
+      "publication_date": "2024-02-06T00:00:00.000Z",
       "ecli_id": "ECLI:CZ:OSKH:2024:8.C.10.2024.1",
       "keywords": ["peněžité plnění"],
       "regulations_mentioned": [
@@ -51,12 +47,8 @@
       "court": "Okresní soud v Kutné Hoře",
       "subject_matter": "O zaplacení 3 375 Kč s příslušenstvím",
       "judge_name": "Mgr. Bc. Alena Šorčíková",
-      "sentence_date": {
-        "$date": "2024-01-15T00:00:00.000Z"
-      },
-      "publication_date": {
-        "$date": "2024-02-06T00:00:00.000Z"
-      },
+      "sentence_date": "2024-01-15T00:00:00.000Z",
+      "publication_date": "2024-02-06T00:00:00.000Z",
       "ecli_id": "ECLI:CZ:OSKH:2024:12.C.19.2024.1",
       "keywords": ["peněžité plnění", "poplatky rozhlasové a televizní"],
       "regulations_mentioned": [
@@ -95,12 +87,8 @@
       "court": "Okresní soud v Karviné",
       "subject_matter": "45 056 Kč s příslušenstvím",
       "judge_name": "JUDr. Eva Glombicová",
-      "sentence_date": {
-        "$date": "2023-12-13T00:00:00.000Z"
-      },
-      "publication_date": {
-        "$date": "2024-02-06T00:00:00.000Z"
-      },
+      "sentence_date": "2023-12-13T00:00:00.000Z",
+      "publication_date": "2024-02-06T00:00:00.000Z",
       "ecli_id": "ECLI:CZ:OSKI:2023:18.C.279.2023.1",
       "keywords": [
         "bezdůvodné obohacení",

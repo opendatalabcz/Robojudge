@@ -30,7 +30,9 @@ class RulingScraper:
         async with httpx.AsyncClient(timeout=600) as client:
             try:
                 # The endpoint is paginated, the first (zeroth) page is implicit.
-                ruling_infos, response = await cls.get_rulings_list_page(date_url, client)
+                ruling_infos, response = await cls.get_rulings_list_page(
+                    date_url, client
+                )
 
                 if (total_pages := response.get("totalPages")) != 1:
                     for page_num in range(1, total_pages):
@@ -116,13 +118,16 @@ class RulingScraper:
 
     @classmethod
     def get_ruling_dates_since_justice_db_start(
-        cls, start_date: str = None
+        cls, start_date: str = None, end_date: str = None
     ) -> list[str]:
         dates = []
         start_date = datetime.datetime.strptime(
             start_date, "%Y-%m-%d"
         ) + datetime.timedelta(days=1)
-        end_date = datetime.datetime.today()
+        if end_date:
+            end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        else:
+            end_date = datetime.datetime.today()
 
         delta = end_date - start_date
 
@@ -131,9 +136,3 @@ class RulingScraper:
             dates.append(date.strftime("%Y-%m-%d"))
 
         return dates
-        # async with httpx.AsyncClient() as client:
-        #     res = await client.get(cls.JUSTICE_API_BASE_URL, timeout=600)
-        #     res.raise_for_status()
-
-        #     dates_raw = res.json()
-        #     return [obj.get("datum", "") for obj in dates_raw if obj.get("datum", "")]
