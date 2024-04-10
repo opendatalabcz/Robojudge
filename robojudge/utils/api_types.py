@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from robojudge.utils.internal_types import ScrapingFilters, Ruling, ScrapingJobStatus
+from robojudge.utils.internal_types import Ruling
 
 
 class RulingSearchRequestFilters(BaseModel):
@@ -51,30 +51,6 @@ class RulingQuestionRequest(BaseModel):
 
 class RulingQuestionResponse(BaseModel):
     answer: str = Field(description="The LLM's answer to a question (request).")
-
-
-class FetchRulingsRequest(BaseModel):
-    limit: Optional[int] = Field(
-        default=1000,
-        le=1000,
-        description="Maximum number of rulings to scrape based on the filters.",
-    )
-    filters: ScrapingFilters
-
-
-class FetchRulingsResponse(BaseModel):
-    token: str = Field(
-        description="Unique identifier of the scraping job used for polling the API."
-    )
-
-
-class FetchRulingsStatusResponse(BaseModel):
-    status: ScrapingJobStatus = Field(
-        description="The current status of the fetch job."
-    )
-    content: Optional[list[Ruling]] = Field(
-        description="Rulings that were scraped (gradually added as more are scraped)."
-    )
 
 
 class SearchRulingsResponse(BaseModel):

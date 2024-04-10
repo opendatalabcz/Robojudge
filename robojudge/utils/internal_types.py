@@ -1,72 +1,7 @@
 from typing import Optional
 import datetime
-from enum import auto
 
-from strenum import StrEnum
 from pydantic import BaseModel, Field
-
-
-class ScrapingFilters(BaseModel):
-    judge_firstname: Optional[str] = Field(
-        default="",
-        description="First name of the judge who decided the case.",
-        example="Petr",
-    )
-    judge_lastname: Optional[str] = Field(
-        default="",
-        description="Last name of the judge who decided the case.",
-        example="Mareš",
-    )
-    court: Optional[str] = Field(
-        default="",
-        description="Exact name of the court who handed down the ruling.",
-        example="Okresní soud ve Zlíně",
-    )
-    fulltext_search: Optional[str] = Field(
-        default="",
-        description="Will search for this string in the rulings in a fulltext manner.",
-        example="Žalovaný se k návrhu žalobce nevyjádřil",
-    )
-    # keyword: Optional[str] = '' # Does not work on the justice website
-    publication_date_from: Optional[str] = Field(
-        default="",
-        description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
-        example="2020-12-01",
-    )
-    publication_date_to: Optional[str] = Field(
-        default="",
-        description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
-        example="2020-12-01",
-    )
-
-
-class CaseMetadataAttributes(StrEnum):
-    JEDNACI_CISLO = "jednaci_cislo"
-    COURT = "court"
-    JUDGE_NAME = "judge_name"
-    ECLI_ID = "ecli_id"
-    SUBJECT_MATTER = "subject_matter"
-    SENTENCE_DATE = "sentence_date"
-    PUBLICATION_DATE = "publication_date"
-    LAST_CHANGE_DATE = "last_change_date"
-    KEYWORDS = "keywords"
-    REGULATIONS_MENTIONED = "regulations_mentioned"
-    RELATED_CASES = "related_cases"
-
-
-DOCUMENT_METADATA_MAP = {
-    "Jednací číslo": CaseMetadataAttributes.JEDNACI_CISLO,
-    "Soud": CaseMetadataAttributes.COURT,
-    "Autor": CaseMetadataAttributes.JUDGE_NAME,
-    "Identifikátor ECLI": CaseMetadataAttributes.ECLI_ID,
-    "Předmět řízení": CaseMetadataAttributes.SUBJECT_MATTER,
-    "Datum vydání": CaseMetadataAttributes.SENTENCE_DATE,
-    "Datum zveřejnění": CaseMetadataAttributes.PUBLICATION_DATE,
-    "Datum poslední změny": CaseMetadataAttributes.PUBLICATION_DATE,
-    "Klíčová slova": CaseMetadataAttributes.KEYWORDS,
-    "Zmíněná ustanovení": CaseMetadataAttributes.REGULATIONS_MENTIONED,
-    "Vztah k jiným rozhodnutím": CaseMetadataAttributes.RELATED_CASES,
-}
 
 
 class RulingMetadata(BaseModel):
@@ -154,33 +89,6 @@ class CaseChunk(BaseModel):
     metadata: ChunkMetadata
 
 
-class ScrapingJobStatus(StrEnum):
-    RUNNING = auto()
-    FINISHED = auto()
-    ERROR = auto()
-
-
-class ScrapingJobType(StrEnum):
-    SCHEDULED = auto()
-    MANUAL = auto()
-
-
 class FetchJob(BaseModel):
     date: str
     started_at: datetime.datetime
-
-
-class ScrapingJob(BaseModel):
-    token: Optional[str] = ""
-    last_ruling_id: int = -1
-    started_at: datetime.datetime
-    finished_at: datetime.datetime = None
-    filters: Optional[ScrapingFilters] = None
-    status: ScrapingJobStatus = ScrapingJobStatus.RUNNING
-    filtered_ruling_ids: list[str] = []
-    scraped_ruling_ids: list[str] = []
-    previous_empty_scraping_counts: int = 0
-    type: ScrapingJobType = ScrapingJobType.SCHEDULED
-
-    class Config:
-        use_enum_values = True
