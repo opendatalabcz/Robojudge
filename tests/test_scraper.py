@@ -43,6 +43,14 @@ async def test_get_ruling_infos_for_empty_date():
 
 
 @pytest.mark.asyncio
+async def test_get_ruling_infos_with_multiple_pages():
+    DATE = "2024-02-01"
+    ruling_infos = await RulingScraper.get_ruling_infos_for_date(DATE)
+
+    assert len(ruling_infos) == 279
+
+
+@pytest.mark.asyncio
 async def test_get_ruling_by_url(fetched_ruling: str, fetched_ruling_info: dict):
     # Compare JSON because of special field type like datetime.datetime()
     async with httpx.AsyncClient() as client:
