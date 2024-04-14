@@ -118,7 +118,7 @@ export function Home({ triggerAlert }: HomeProps) {
 
       const filters = createFilters();
 
-      const { data } = await axios.post(SERVER_URL + "/cases/search", {
+      const { data } = await axios.post(SERVER_URL + "/rulings/search", {
         query_text: caseDescription,
         page_size: RESULTS_COUNT,
         current_page: currentPage,
