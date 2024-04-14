@@ -92,3 +92,4 @@ class RulingChunk(BaseModel):
 class FetchJob(BaseModel):
     date: str
     started_at: datetime.datetime
+    ruling_ids: list[str]

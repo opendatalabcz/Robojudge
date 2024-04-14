@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     # The frequency of running periodic scraping - once per day is the most sensible (https://crontab.guru/#*/2_*_*_*_*)
     SCRAPER_CRONTAB = "0 1 * * *"
     # No rulings could have appeared sooner than this date
-    FIRST_JUSTICE_DB_DATE = "2020-10-12"
+    FIRST_JUSTICE_DB_DATE = "2020-11-28"
     # Number of seconds to wait between adding another date to fetch rulings for (for DB initialization)
     BASE_FETCH_JOB_INTERVAL = 0.9
     # Number of seconds added to the interval if a failure happens

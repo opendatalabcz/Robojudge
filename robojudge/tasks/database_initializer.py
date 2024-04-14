@@ -9,8 +9,11 @@ from robojudge.utils.settings import settings
 
 async def initialize_dbs():
     logger.info("Initializing DBs with all previous rulings.")
+    # Find the last fetch job for a date with at least one ruling published on that date
     last_fetched_date = (
-        document_db.fetch_job_collection.find({}).sort("started_at", -1).limit(1)
+        document_db.fetch_job_collection.find({"ruling_ids.0": {"$exists": True}})
+        .sort("started_at", -1)
+        .limit(1)
     )
     last_fetched_date = list(last_fetched_date)
     if len(last_fetched_date) > 0:

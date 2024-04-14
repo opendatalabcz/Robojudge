@@ -59,6 +59,10 @@ async def get_rulings_for_date(date: str):
     fetch_job = FetchJob(
         date=date,
         started_at=datetime.datetime.now(),
+        ruling_ids=[
+            extract_ruling_id(ruling_info.get("odkaz", ""))
+            for ruling_info in ruling_infos
+        ],
     )
 
     document_db.fetch_job_collection.replace_one(
