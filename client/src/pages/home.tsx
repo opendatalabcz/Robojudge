@@ -126,7 +126,7 @@ export function Home({ triggerAlert }: HomeProps) {
         filters,
       });
 
-      const { cases: casesRaw, max_page: maxPage, relevance, reasoning } = data;
+      const { rulings: casesRaw, max_page: maxPage, relevance, reasoning } = data;
 
       setCases((cases) => [
         ...cases.slice(0, -RESULTS_COUNT), // Remove the skeletons

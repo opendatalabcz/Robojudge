@@ -7,9 +7,9 @@ from robojudge.utils.logger import logger
 from robojudge.components.reasoning.llm_definitions import standard_llm
 
 SYSTEM_MESSAGE_TEMPLATE = """\
-Your task is to determine if a query/text is a valid query when searching for contents of civil court rulings (including family law).
-You will receive a query and you should assess if it is related to something which could be decided by a civil court (e.g., family law, financial disputes, etc.).
-Reject only the most obviously irrelevant queries.
+Your task is to determine if a query/text is a valid query when searching for contents of court rulings.
+You will receive a query and you should assess if it is at least somewhat related to something which could be decided by a court.
+In general, reject only the most obviously irrelevant queries.
 If the query is irrelevant, provide a reasoning in Czech why.
 {format_instructions}
 Here is the query you should assess: {input}

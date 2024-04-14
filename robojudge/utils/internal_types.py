@@ -75,7 +75,7 @@ class Ruling(BaseModel):
 class ChunkMetadata(BaseModel):
     chunk_index: int = Field(description="Used to sort chunks of the same ruling")
     jednaci_cislo: str
-    ruling_id: int
+    ruling_id: str
     sentence_date: Optional[float] = None
     publication_date: Optional[float] = None
     court: Optional[str] = ""

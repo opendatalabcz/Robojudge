@@ -199,6 +199,7 @@ class RulingEmbeddingStorage:
                 metadata,
                 distance,
             ) in zip(ids, metadatas, distances):
+                print(metadata)
                 chunk_metadata = ChunkMetadata(**metadata, distance=distance)
                 results.append(RulingChunk(chunk_id=id, metadata=chunk_metadata))
 
