@@ -118,7 +118,7 @@ export function Home({ triggerAlert }: HomeProps) {
 
       const filters = createFilters();
 
-      const { data } = await axios.post(SERVER_URL + "/cases/search", {
+      const { data } = await axios.post(SERVER_URL + "/rulings/search", {
         query_text: caseDescription,
         page_size: RESULTS_COUNT,
         current_page: currentPage,
@@ -126,7 +126,7 @@ export function Home({ triggerAlert }: HomeProps) {
         filters,
       });
 
-      const { cases: casesRaw, max_page: maxPage, relevance, reasoning } = data;
+      const { rulings: casesRaw, max_page: maxPage, relevance, reasoning } = data;
 
       setCases((cases) => [
         ...cases.slice(0, -RESULTS_COUNT), // Remove the skeletons

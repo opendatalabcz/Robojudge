@@ -1,43 +1,70 @@
 import json
 
+import httpx
 import pytest
-from bs4 import BeautifulSoup
 
-from robojudge.components.scraping.case_page_scraper import CasePageScraper
-
-
-@pytest.fixture(scope="session")
-def html_page():
-    with open("tests/assets/page.html", "r") as rf:
-        return rf.read()
+from robojudge.components.scraping.ruling_scraper import RulingScraper
 
 
 @pytest.fixture(scope="session")
-def case_scraper(html_page: str):
-    scraper = CasePageScraper("435673")
-    scraper.page = html_page
-    scraper.page_soup = BeautifulSoup(scraper.page, "html.parser")
-    return scraper
-
-
-@pytest.fixture(scope="session")
-def parsed_case():
-    with open("tests/assets/scraped_case.json", "r") as rf:
+def fetched_ruling_infos():
+    with open("tests/assets/fetched_ruling_infos.json", "r") as rf:
         return json.load(rf)
 
 
+@pytest.fixture(scope="session")
+def fetched_ruling_info(fetched_ruling_infos: list[dict]):
+    return fetched_ruling_infos[0]
+
+
+@pytest.fixture(scope="session")
+def fetched_ruling():
+    with open("tests/assets/fetched_ruling.json", "r") as rf:
+        ruling_json = json.load(rf)
+        return ruling_json
+
+
 @pytest.mark.asyncio
-async def test_scrape_case_page(html_page: str):
-    tested_page = await CasePageScraper("435673").scrape_case_page()
-    assert tested_page == html_page
+async def test_get_ruling_infos_for_date(fetched_ruling_infos: list[dict]):
+    DATE = "2024/02/04"
+
+    ruling_infos = await RulingScraper.get_ruling_infos_for_date(DATE)
+
+    assert len(ruling_infos) == 2
+    assert ruling_infos == fetched_ruling_infos
 
 
-def test_extract_metadata(case_scraper: CasePageScraper, parsed_case: dict):
+@pytest.mark.asyncio
+async def test_get_ruling_infos_for_empty_date():
+    EMPTY_DATE = "2024-02-03"
+    ruling_infos = await RulingScraper.get_ruling_infos_for_date(EMPTY_DATE)
+
+    assert ruling_infos == []
+
+
+@pytest.mark.asyncio
+async def test_get_ruling_infos_with_multiple_pages():
+    DATE = "2024-02-01"
+    ruling_infos = await RulingScraper.get_ruling_infos_for_date(DATE)
+
+    assert len(ruling_infos) == 279
+
+
+@pytest.mark.asyncio
+async def test_get_ruling_by_url(fetched_ruling: str, fetched_ruling_info: dict):
     # Compare JSON because of special field type like datetime.datetime()
-    assert case_scraper.extract_metadata().json() == json.dumps(parsed_case["metadata"])
+    async with httpx.AsyncClient() as client:
+        tested_ruling, _ = await RulingScraper.get_ruling_by_url(
+            fetched_ruling_info, client
+        )
+
+        assert json.loads(tested_ruling.json()) == fetched_ruling
 
 
-def test_extract_text(case_scraper: CasePageScraper, parsed_case: dict):
-    verdict, reasoning = case_scraper.extract_text()
-    assert verdict == parsed_case["verdict"]
-    assert reasoning == parsed_case["reasoning"]
+def test_get_ruling_dates_since_justice_db_start():
+    start_date = "2024-02-27"
+    end_date = "2024-03-02"
+
+    dates = RulingScraper.get_ruling_dates_since_justice_db_start(start_date, end_date)
+
+    assert dates == ["2024-02-28", "2024-02-29", "2024-03-01"]

@@ -122,8 +122,8 @@ function CaseCardQuestionInterface({
       setIsLoading(true);
 
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"}/cases/${
-          courtCase.caseId
+        `${process.env.REACT_APP_SERVER_URL ?? "http://localhost:4000"}/rulings/${
+          courtCase.rulingId
         }/question`,
         {
           question: caseQuestion,
@@ -306,7 +306,7 @@ export function CaseCard({ courtCase, triggerAlert }: CardCardProps) {
 
         {!courtCase.isLoading ? (
           <a
-            href={`${process.env.REACT_APP_JUSTICE_URL}/${courtCase.caseId}`}
+            href={`${process.env.REACT_APP_JUSTICE_URL}?id=${courtCase.rulingId}`}
             target="_blank"
             rel="noopener noreferrer"
           >

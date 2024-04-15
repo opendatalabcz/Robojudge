@@ -2,10 +2,10 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from robojudge.utils.internal_types import ScrapingFilters, Case, ScrapingJobStatus
+from robojudge.utils.internal_types import Ruling
 
 
-class CaseSearchRequestFilters(BaseModel):
+class RulingSearchRequestFilters(BaseModel):
     publication_date_from: Optional[str] = Field(
         description="String date in the 'YYYY-MM-DD' format. Publication means when the ruling was uploaded to the justice.cz website",
     )
@@ -20,14 +20,14 @@ class CaseSearchRequestFilters(BaseModel):
     )
 
 
-class CaseSearchRequest(BaseModel):
+class RulingSearchRequest(BaseModel):
     query_text: str = Field(
-        description="Any string of text which should have similar cases in the DB. Longer texts have more accurate results.",
+        description="Any string of text which should have similar rulings in the DB. Longer texts have more accurate results.",
         example="Soud řešil rozvod manželství, protože každý z manželů měl jiného partnera a nechtěli spolu zůstat.",
         max_length=20000,
         min_length=20,
     )
-    filters: Optional[CaseSearchRequestFilters]
+    filters: Optional[RulingSearchRequestFilters]
     page_size: Optional[int] = Field(
         default=3,
         description="The number of results to return in a single response.",
@@ -37,11 +37,11 @@ class CaseSearchRequest(BaseModel):
     )
     generate_summaries: Optional[bool] = Field(
         default=False,
-        description="Whether to generate any new summaries. In case the case already has a summary in DB, it will return that.",
+        description="Whether to generate any new summaries. In case the ruling already has a summary in DB, it will return that.",
     )
 
 
-class CaseQuestionRequest(BaseModel):
+class RulingQuestionRequest(BaseModel):
     question: str = Field(
         description="Question to the LLM about a ruling.",
         example="Kolik bylo v případu žalobců?",
@@ -49,36 +49,12 @@ class CaseQuestionRequest(BaseModel):
     )
 
 
-class CaseQuestionResponse(BaseModel):
+class RulingQuestionResponse(BaseModel):
     answer: str = Field(description="The LLM's answer to a question (request).")
 
 
-class FetchCasesRequest(BaseModel):
-    limit: Optional[int] = Field(
-        default=1000,
-        le=1000,
-        description="Maximum number of rulings to scrape based on the filters.",
-    )
-    filters: ScrapingFilters
-
-
-class FetchCasesResponse(BaseModel):
-    token: str = Field(
-        description="Unique identifier of the scraping job used for polling the API."
-    )
-
-
-class FetchCasesStatusResponse(BaseModel):
-    status: ScrapingJobStatus = Field(
-        description="The current status of the fetch job."
-    )
-    content: Optional[list[Case]] = Field(
-        description="Rulings that were scraped (gradually added as more are scraped)."
-    )
-
-
-class SearchCasesResponse(BaseModel):
-    cases: list[Case] = Field(
+class SearchRulingsResponse(BaseModel):
+    rulings: list[Ruling] = Field(
         default=[], description="Found rulings based on the query text."
     )
     relevance: bool = Field(

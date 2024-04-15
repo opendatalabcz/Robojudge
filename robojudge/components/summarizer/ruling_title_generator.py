@@ -6,7 +6,7 @@ from robojudge.utils.logger import logger
 from robojudge.components.reasoning.llm_definitions import standard_llm
 
 
-class CaseTitleGenerator:
+class RulingTitleGenerator:
     NEXT_CHUNK_SIZE = 4096 - 1000
 
     SYSTEM_MESSAGE_TEMPLATE = """\
@@ -32,7 +32,7 @@ Here is the summary: {summary}
             return ""
 
 
-title_generator = CaseTitleGenerator()
+title_generator = RulingTitleGenerator()
 
 if __name__ == "__main__":
     test_summary = """

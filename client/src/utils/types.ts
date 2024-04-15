@@ -1,5 +1,5 @@
 export type Case = {
-  caseId: string;
+  rulingId: string;
   summary: string;
   title: string;
   metadata: Record<string, unknown>;

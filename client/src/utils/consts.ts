@@ -1,5 +1,5 @@
 export const DEFAULT_HELPER_TEXT = `Zadejte popis nebo text případu, pro který chcete najít již rozhodnuté podobné
-                  případy. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
+                  případy. Databáze momentálně obsahuje hlavně rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
 
 export const MIN_DESCRIPTION_LENGTH = 20;
 export const MAX_DESCRIPTION_LENGTH = 20000;
@@ -19,7 +19,7 @@ export const queryExamples = [
   {
     text: "Soud řešil rozvod manželství, protože každý z manželů měl jiného partnera a nechtěli spolu zůstat.",
   },
-  { text: "Muž cestoval v MHD a dostal pokutu, protože jel načerno." },
+  { text: "Muž cestoval v MHD a dostal pokutu, protože jel načerno. Žalobce pokutu vymáhá u soudu." },
 ];
 
 export const TOO_MANY_QUERIES_ALERT =

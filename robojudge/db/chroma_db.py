@@ -10,18 +10,18 @@ import chromadb.config
 from chromadb.utils import embedding_functions
 
 from robojudge.components.chunker import TextChunker
-from robojudge.utils.api_types import CaseSearchRequestFilters
+from robojudge.utils.api_types import RulingSearchRequestFilters
 from robojudge.utils.settings import settings
 from robojudge.utils.logger import logger
 from robojudge.utils.internal_types import (
-    Case,
-    CaseChunk,
+    Ruling,
+    RulingChunk,
     ChunkMetadata,
 )
 
 
-class CaseEmbeddingStorage:
-    COLLECTION_NAME = "cases"
+class RulingEmbeddingStorage:
+    COLLECTION_NAME = "rulings"
     client: chromadb.PersistentClient
     embedding_function: embedding_functions.DefaultEmbeddingFunction
 
@@ -32,7 +32,8 @@ class CaseEmbeddingStorage:
             settings=chromadb.config.Settings(anonymized_telemetry=False),
         )
         self.collection = self.client.get_or_create_collection(
-            name=CaseEmbeddingStorage.COLLECTION_NAME,
+            name=RulingEmbeddingStorage.COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},  # l2 is the default
         )
 
         self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
@@ -44,94 +45,111 @@ class CaseEmbeddingStorage:
     def __call__(self):
         return self
 
-    def upsert_cases(self, cases: list[Case]):
+    def upsert_rulings(self, rulings: list[Ruling]):
         """
         Upserts chunks of the provided texts alongside selected metadata.
         IDs are generated in a deterministic way, so duplicates do not occur.
         """
-        if not len(cases):
-            logger.warning("No cases provided to upsert into chromaDB")
+        if not len(rulings):
+            logger.warning("No rulings provided to upsert into chromaDB")
             return
 
-        cases_for_db = {"documents": [], "metadatas": [], "ids": [], "embeddings": []}
-        for case in cases:
-            # Only the most important metadata are stored here
-            # For more details, MongoDB is queried
-            metadata = {
-                "case_id": case.case_id,
-                "jednaci_cislo": case.metadata.jednaci_cislo,
-                "sentence_date": case.metadata.sentence_date.timestamp(),
-                "publication_date": case.metadata.publication_date.timestamp(),
-                "court": case.metadata.court,
+        try:
+            rulings_for_db = {
+                "documents": [],
+                "metadatas": [],
+                "ids": [],
+                "embeddings": [],
             }
+            for ruling in rulings:
+                # Only the most important metadata are stored here
+                # For more details, MongoDB is queried
+                metadata = {
+                    "ruling_id": ruling.ruling_id,
+                    "jednaci_cislo": ruling.metadata.jednaci_cislo,
+                    "sentence_date": ruling.metadata.sentence_date.timestamp(),
+                    "publication_date": ruling.metadata.publication_date.timestamp(),
+                    "court": ruling.metadata.court,
+                }
 
-            chunks = TextChunker.split_text_into_embeddable_chunks(case.reasoning)
+                chunks = TextChunker.split_text_into_embeddable_chunks(ruling.reasoning)
 
-            # Don't put the actual text into the DB, only generate the embedding
-            cases_for_db["embeddings"].extend(self.collection._embed(input=chunks))
-            for chunk_index in range(len(chunks)):
-                cases_for_db["documents"].append("")
-                cases_for_db["metadatas"].append(
-                    {**metadata, "chunk_index": chunk_index}
+                # Don't put the actual text into the DB, only generate the embedding
+                rulings_for_db["embeddings"].extend(
+                    self.collection._embed(input=chunks)
                 )
-                cases_for_db["ids"].append(
-                    CaseEmbeddingStorage.generate_id(f"{case.case_id}_{chunk_index}")
-                )
+                for chunk_index in range(len(chunks)):
+                    rulings_for_db["documents"].append("")
+                    rulings_for_db["metadatas"].append(
+                        {**metadata, "chunk_index": chunk_index}
+                    )
+                    rulings_for_db["ids"].append(
+                        RulingEmbeddingStorage.generate_id(
+                            f"{ruling.ruling_id}_{chunk_index}"
+                        )
+                    )
 
-        self.collection.upsert(**cases_for_db)
+            self.collection.upsert(**rulings_for_db)
+        except Exception as e:
+            logger.exception(f"Error while upserting rulings into ChromaDB: {e}")
 
-    def get_all_case_chunks(self) -> list[CaseChunk]:
+    def get_all_ruling_chunks(self) -> list[RulingChunk]:
         """
         Returns all chunks in the database.
         """
-        case_chunks_from_db = self.collection.get(ids=[], where={})
-        return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
+        ruling_chunks_from_db = self.collection.get(ids=[], where={})
+        return RulingEmbeddingStorage.cast_to_ruling_chunks(ruling_chunks_from_db)
 
-    def get_case_chunks_by_chunk_id(self, chunk_ids: list[str]) -> list[CaseChunk]:
-        case_chunks_from_db = self.collection.get(ids=chunk_ids)
-        return CaseEmbeddingStorage.cast_to_case_chunks(case_chunks_from_db)
+    def get_ruling_chunks_by_chunk_id(self, chunk_ids: list[str]) -> list[RulingChunk]:
+        ruling_chunks_from_db = self.collection.get(ids=chunk_ids)
+        return RulingEmbeddingStorage.cast_to_ruling_chunks(ruling_chunks_from_db)
 
-    def get_case_chunks_by_case_id(self, case_ids: list[str]) -> list[CaseChunk]:
+    def get_ruling_chunks_by_ruling_id(
+        self, ruling_ids: list[str]
+    ) -> list[RulingChunk]:
         query_result = self.collection.query(
-            query_texts="", where={"case_id": {"$in": case_ids}}
+            query_texts="", where={"ruling_id": {"$in": ruling_ids}}
         )
-        return CaseEmbeddingStorage.parse_text_query_result(query_result)
+        return RulingEmbeddingStorage.parse_text_query_result(query_result)
 
-    def delete_case_chunks(self, case_ids: list[str]):
-        return self.collection.delete(ids=case_ids)
+    def delete_ruling_chunks(self, ruling_ids: list[str]):
+        try:
+            return self.collection.delete(ids=ruling_ids)
+        except Exception as e:
+            logger.exception(f"Error while deleting rulings from ChromaDB: {e}")
 
     def find_rulings_by_text(
         self, query_text: str, offset: int = 0, n_results: int = 5, filters: dict = None
-    ) -> list[CaseChunk]:
+    ) -> list[RulingChunk]:
         """
         Returns rulings corresponding to the query text (at most once even if multiple chunks are found for that ruling).
         Supports pagination with `offset` and `n_results`.
         If `query_text` is too long, it will be split into chunks used in the DB itself.
         """
-        chunks = self.find_case_chunks_by_text(query_text, filters)
+        chunks = self.find_ruling_chunks_by_text(query_text, filters)
         unique_ruling_ids = set()
         unique_chunks = []
         for chunk in chunks:
-            if chunk.metadata.case_id not in unique_ruling_ids:
-                unique_ruling_ids.add(chunk.metadata.case_id)
+            if chunk.metadata.ruling_id not in unique_ruling_ids:
+                unique_ruling_ids.add(chunk.metadata.ruling_id)
                 unique_chunks.append(chunk)
 
         return sorted(unique_chunks, key=lambda x: x.metadata.distance)[
             offset : offset + n_results
         ]
 
-    def find_case_chunks_by_text(
+    def find_ruling_chunks_by_text(
         self,
         query_text: str,
         filters: dict = None,
-    ) -> list[CaseChunk]:
+    ) -> list[RulingChunk]:
         """
         Returns chunks corresponding to the query text.
         Supports pagination with `offset` and `n_results`.
         Suports filtering and projection (`included_fields`).
         If `query_text` is too long, it will be split into chunks used in the DB itself.
         """
-        where_clauses = CaseEmbeddingStorage.parse_filters(filters)
+        where_clauses = RulingEmbeddingStorage.parse_filters(filters)
         query_texts = TextChunker.split_text_into_embeddable_chunks(query_text)
 
         query_result = self.collection.query(
@@ -140,7 +158,7 @@ class CaseEmbeddingStorage:
             where=where_clauses,
         )
 
-        parsed_chunks = CaseEmbeddingStorage.parse_text_query_result(query_result)
+        parsed_chunks = RulingEmbeddingStorage.parse_text_query_result(query_result)
         return parsed_chunks
 
     @staticmethod
@@ -148,25 +166,25 @@ class CaseEmbeddingStorage:
         return str(uuid.uuid5(uuid.NAMESPACE_URL, name))
 
     @staticmethod
-    def cast_to_case_chunks(cases_from_db: list[list]) -> list[CaseChunk]:
-        """Parses a dict of lists into a list of pydantic models (`CaseChunk`)"""
-        cases: list[CaseChunk] = []
+    def cast_to_ruling_chunks(rulings_from_db: list[list]) -> list[RulingChunk]:
+        """Parses a dict of lists into a list of pydantic models (`rulingChunk`)"""
+        rulings: list[RulingChunk] = []
 
         for id, metadata in zip_longest(
-            cases_from_db["ids"] or [],
-            cases_from_db["metadatas"],
+            rulings_from_db["ids"] or [],
+            rulings_from_db["metadatas"],
         ):
-            cases.append(
-                CaseChunk(
+            rulings.append(
+                RulingChunk(
                     chunk_id=id,
                     metadata=metadata,
                 )
             )
 
-        return cases
+        return rulings
 
     @staticmethod
-    def parse_text_query_result(query_result: dict[list[list]]) -> list[CaseChunk]:
+    def parse_text_query_result(query_result: dict[list[list]]) -> list[RulingChunk]:
         """
         Flattens and parses a list of lists for properties like ids, texts, etc.
         """
@@ -181,13 +199,14 @@ class CaseEmbeddingStorage:
                 metadata,
                 distance,
             ) in zip(ids, metadatas, distances):
+                print(metadata)
                 chunk_metadata = ChunkMetadata(**metadata, distance=distance)
-                results.append(CaseChunk(chunk_id=id, metadata=chunk_metadata))
+                results.append(RulingChunk(chunk_id=id, metadata=chunk_metadata))
 
         return results
 
     @staticmethod
-    def parse_filters(filters: CaseSearchRequestFilters):
+    def parse_filters(filters: RulingSearchRequestFilters):
         """
         Translates a dictionary of potential filters into Chroma query language.
         """
@@ -253,6 +272,6 @@ class CaseEmbeddingStorage:
 
 if os.environ.get("ENV") == "test":
     print("Detected testing environment -> creating test ChromaDB.")
-    embedding_db = unittest.mock.Mock(spec=CaseEmbeddingStorage)
+    embedding_db = unittest.mock.Mock(spec=RulingEmbeddingStorage)
 else:
-    embedding_db = CaseEmbeddingStorage()
+    embedding_db = RulingEmbeddingStorage()

@@ -37,9 +37,7 @@ export function Info() {
                 </p>
                 <p>
                   K dispozici je také API, pomocí kterého je možné získat
-                  scrapovaná rozhodnutí včetně metadat. API také umožňuje
-                  scrapovat rozhodnutí na základě filtrů odpovídajících filtrům
-                  na webu justice.cz.
+                  scrapovaná rozhodnutí včetně metadat.
                 </p>
                 <p>
                   Tvůrce aplikace neodpovídá za správnost či úplnost
@@ -50,7 +48,7 @@ export function Info() {
                 <p>
                   Server na pozadí aplikace se snaží aktualizovat databázi
                   rozhodnutí, aby obsahovala všechna rozhodnutí z webu
-                  justice.cz, úplnost databáze však není zaručena.
+                  justice.cz, absolutní úplnost a aktuálnost databáze však nemůže být zaručena.
                 </p>
               </div>
               <div style={{ marginTop: "42px" }}>
@@ -60,8 +58,7 @@ export function Info() {
                 <p>
                   Do hlavního textového okna popište případ, pro který mají být
                   nalezeny soudní rozhodnutí řešící podobnou věc. Popis je možné
-                  formulovat přirozeným jazykem, ale také heslovitě; pro
-                  vyhledávání je důležitý význam nikoli forma.
+                  formulovat přirozeným jazykem, ale také heslovitě. Použití přesné terminologie zpřesňuje vyhledávání, ale není nezbytné.
                 </p>
                 <p>
                   K vyhledávání je také možné použít text konkrétního rozhodnutí

@@ -2,7 +2,7 @@ import replicate
 import cohere
 
 from robojudge.utils.settings import settings
-from robojudge.components.reasoning.answerer import CaseQuestionAnswerer
+from robojudge.components.reasoning.answerer import RulingQuestionAnswerer
 
 LLM_TYPE_GPT = "gpt"
 LLM_TYPE_GPT_FINETUNED = "gpt-custom"
@@ -45,9 +45,9 @@ class ResearchLLMAnswerer:
     @classmethod
     async def generate_answer(cls, llm_type: str, question: str, text: str):
         if llm_type == LLM_TYPE_GPT:
-            return await CaseQuestionAnswerer.answer_question(question, text)
+            return await RulingQuestionAnswerer.answer_question(question, text)
         elif llm_type == LLM_TYPE_GPT_FINETUNED:
-            return await CaseQuestionAnswerer.answer_question(question, text, CUSTOM_LLM_NAME)
+            return await RulingQuestionAnswerer.answer_question(question, text, CUSTOM_LLM_NAME)
         elif llm_type == LLM_TYPE_LLAMA:
             return cls.answer_llama(question, text)
         elif llm_type == LLM_TYPE_COHERE:
