@@ -1,5 +1,5 @@
 export const DEFAULT_HELPER_TEXT = `Zadejte popis nebo text případu, pro který chcete najít již rozhodnuté podobné
-                  případy. Databáze momentálně obsahuje pouze rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
+                  případy. Databáze momentálně obsahuje hlavně rozhodnutí civilních soudů v 1. stupni (viz "INFO").`;
 
 export const MIN_DESCRIPTION_LENGTH = 20;
 export const MAX_DESCRIPTION_LENGTH = 20000;

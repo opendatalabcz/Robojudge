@@ -58,8 +58,7 @@ export function Info() {
                 <p>
                   Do hlavního textového okna popište případ, pro který mají být
                   nalezeny soudní rozhodnutí řešící podobnou věc. Popis je možné
-                  formulovat přirozeným jazykem, ale také heslovitě; pro
-                  vyhledávání je důležitý význam nikoli forma.
+                  formulovat přirozeným jazykem, ale také heslovitě. Použití přesné terminologie zpřesňuje vyhledávání, ale není nezbytné.
                 </p>
                 <p>
                   K vyhledávání je také možné použít text konkrétního rozhodnutí
