@@ -19,7 +19,7 @@ export const queryExamples = [
   {
     text: "Soud řešil rozvod manželství, protože každý z manželů měl jiného partnera a nechtěli spolu zůstat.",
   },
-  { text: "Soud uložil žalovanému platit výživné svému dítěti, i když žije samo." },
+  { text: "Muž cestoval v MHD a dostal pokutu, protože jel načerno. Žalobce pokutu vymáhá u soudu." },
 ];
 
 export const TOO_MANY_QUERIES_ALERT =

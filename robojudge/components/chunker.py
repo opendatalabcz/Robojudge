@@ -12,7 +12,6 @@ from robojudge.utils.gpt_tokenizer import tokenizer
 
 class TextChunker:
     MIN_CHUNK_LENGTH_TO_EMBED = 5  # Discard chunks shorter than this
-    EMBEDDINGS_BATCH_SIZE = 16  # The number of embeddings to request at a time
     MAX_NUM_CHUNKS = 10000  # The maximum number of chunks to generate from a text
     MIN_CHUNK_SIZE_CHARS = 100  # The minimum size of each text chunk in characters
 

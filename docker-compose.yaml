@@ -13,7 +13,7 @@ services:
     ports:
       - ${DOCUMENT_DB_PORT}:${DOCUMENT_DB_PORT}
     volumes:
-      - mongo-data-v2:/data/db
+      - mongo-data-v3:/data/db
     networks:
       - default
 
@@ -21,7 +21,7 @@ services:
     image: ghcr.io/chroma-core/chroma:0.4.24
     restart: unless-stopped
     volumes:
-      - chroma-data-v2:/chroma
+      - chroma-data-v3:/chroma
     environment:
       - IS_PERSISTENT=TRUE
     ports:
@@ -141,8 +141,8 @@ services:
 
 volumes:
   embedder-cache:
-  mongo-data-v2:
-  chroma-data-v2:
+  mongo-data-v3:
+  chroma-data-v3:
 
 networks:
   default:

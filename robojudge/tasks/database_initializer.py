@@ -22,5 +22,5 @@ async def initialize_dbs():
         start_date = settings.FIRST_JUSTICE_DB_DATE
 
     dates = RulingScraper.get_ruling_dates_since_justice_db_start(start_date)
-    for date in dates:
+    for date in dates[: settings.MAX_DATES_COUNT]:
         await get_rulings_for_date(date)

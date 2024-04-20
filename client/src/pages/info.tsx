@@ -48,7 +48,8 @@ export function Info() {
                 <p>
                   Server na pozadí aplikace se snaží aktualizovat databázi
                   rozhodnutí, aby obsahovala všechna rozhodnutí z webu
-                  justice.cz, absolutní úplnost a aktuálnost databáze však nemůže být zaručena.
+                  justice.cz, absolutní úplnost a aktuálnost databáze však
+                  nemůže být zaručena.
                 </p>
               </div>
               <div style={{ marginTop: "42px" }}>
@@ -58,13 +59,13 @@ export function Info() {
                 <p>
                   Do hlavního textového okna popište případ, pro který mají být
                   nalezeny soudní rozhodnutí řešící podobnou věc. Popis je možné
-                  formulovat přirozeným jazykem, ale také heslovitě. Použití přesné terminologie zpřesňuje vyhledávání, ale není nezbytné.
+                  formulovat přirozeným jazykem. Použití přesné terminologie
+                  zpřesňuje vyhledávání. Přesnost vyhledávání lze rovněž zvýšit
+                  zadáním úryvku skutečného rozhodnutí.
                 </p>
                 <p>
-                  K vyhledávání je také možné použít text konkrétního rozhodnutí
-                  nebo jeho část. Po rozkliknutí je možné také využít rozšířené
-                  vyhledávání pomocí data. Po rozkliknutí lišty je možné také
-                  využít rozšířené vyhledávání pomocí data.
+                  Po rozkliknutí lišty je možné také využít rozšířené
+                  vyhledávání pomocí data.
                 </p>
                 <p>
                   Databáze Ministerstva spravedlnosti, ze které jsou rozhodnutí

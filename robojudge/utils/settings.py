@@ -23,8 +23,9 @@ class Settings(BaseSettings):
     RABBIT_PORT: int = 5672
 
     # Used for splitting ruling and query texts
-    # Based on the used embedding model's maximum context size (in tokens)
-    EMBEDDING_CHUNK_SIZE = 256
+    # Based on the used embedding model's maximum context size with a lower margin (in tokens)
+    EMBEDDING_CHUNK_SIZE = 8000
+    EMBEDDING_DIMENSIONS = 512
 
     # Scraping settings
     # Limits the number of rulings than can be queried using semantic search
@@ -37,6 +38,8 @@ class Settings(BaseSettings):
     SCRAPER_CRONTAB = "0 1 * * *"
     # No rulings could have appeared sooner than this date
     FIRST_JUSTICE_DB_DATE = "2020-11-28"
+    # Limit the number of dates scraped for demo purposes
+    MAX_DATES_COUNT = 720
     # Number of seconds to wait between adding another date to fetch rulings for (for DB initialization)
     BASE_FETCH_JOB_INTERVAL = 0.9
     # Number of seconds added to the interval if a failure happens
@@ -51,6 +54,7 @@ class Settings(BaseSettings):
     OPENAI_API_BASE = "https://api.openai.com/v1"
     OPENAI_API_VERSION = "2023-08-01-preview"
     INAPP_GPT_MODEL_NAME = "gpt-3.5-turbo-1106"
+    EMBEDDER_MODEL_NAME = "text-embedding-3-small"
 
     # Research settings
     AUTO_EVALUATOR_NAME = "gpt-4-1106-preview"

@@ -5,9 +5,11 @@ import os
 from itertools import zip_longest
 import unittest.mock
 
+from langchain_openai import OpenAIEmbeddings
 import chromadb
 import chromadb.config
 from chromadb.utils import embedding_functions
+from chromadb import Documents, EmbeddingFunction, Embeddings
 
 from robojudge.components.chunker import TextChunker
 from robojudge.utils.api_types import RulingSearchRequestFilters
@@ -18,6 +20,18 @@ from robojudge.utils.internal_types import (
     RulingChunk,
     ChunkMetadata,
 )
+
+
+class OpenAIEmbeddingFunction(EmbeddingFunction):
+    def __init__(self):
+        self.embeddings_model = OpenAIEmbeddings(
+            api_key=settings.OPENAI_API_KEY,
+            model=settings.EMBEDDER_MODEL_NAME,
+            dimensions=settings.EMBEDDING_DIMENSIONS,
+        )
+
+    def __call__(self, input: Documents) -> Embeddings:
+        return self.embeddings_model.embed_documents(input)
 
 
 class RulingEmbeddingStorage:
@@ -33,10 +47,10 @@ class RulingEmbeddingStorage:
         )
         self.collection = self.client.get_or_create_collection(
             name=RulingEmbeddingStorage.COLLECTION_NAME,
-            metadata={"hnsw:space": "l2"},  # l2 is the default
+            metadata={"hnsw:space": "cosine"},  # l2 is the default
+            embedding_function=OpenAIEmbeddingFunction(),
         )
 
-        self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
         logger.info(
             f'Connection to established to ChromaDB "{settings.EMBEDDING_DB_HOST}:{settings.EMBEDDING_DB_PORT}".'
         )
