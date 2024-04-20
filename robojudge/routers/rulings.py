@@ -109,7 +109,7 @@ async def search_rulings(
     if search_request.generate_summaries:
         await asyncio.gather(*map(prepare_summary_and_title, rulings_with_summary))
         # Cache the results if the rulings are retrieved in the future
-        bg_tasks.add_task(document_db.add_ruling_summaries, rulings_with_summary)
+        bg_tasks.add_task(document_db.add_ruling_summaries_and_titles, rulings_with_summary)
 
     return SearchRulingsResponse(
         rulings=rulings_with_summary,

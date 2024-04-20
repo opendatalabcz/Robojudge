@@ -59,23 +59,28 @@ class DocumentStorage:
         except Exception as e:
             logger.exception(f"Error while upserting rulings into MongoDB: {e}")
 
-    def add_ruling_summaries(self, summaried_rulings: list[Ruling]):
+    def add_ruling_summaries_and_titles(self, summaried_rulings: list[Ruling]):
         if len(summaried_rulings) < 1:
             return
 
         try:
-            logger.info("Saving generated summaries.")
+            logger.info("Saving generated summaries and titles.")
             updates = [
                 UpdateOne(
                     {"ruling_id": summaried_ruling.ruling_id},
-                    {"$set": {"summary": summaried_ruling.summary}},
+                    {
+                        "$set": {
+                            "summary": summaried_ruling.summary,
+                            "title": summaried_ruling.title,
+                        }
+                    },
                 )
                 for summaried_ruling in summaried_rulings
             ]
 
             self.collection.bulk_write(updates)
         except Exception:
-            logger.exception(f"Error while adding summaries {summaried_rulings}:")
+            logger.exception(f"Error while adding summaries and titles {summaried_rulings}:")
 
     def delete_rulings(self, ruling_ids: list[str]):
         try:

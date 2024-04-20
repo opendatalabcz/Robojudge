@@ -33,7 +33,7 @@ class RulingEmbeddingStorage:
         )
         self.collection = self.client.get_or_create_collection(
             name=RulingEmbeddingStorage.COLLECTION_NAME,
-            metadata={"hnsw:space": "cosine"},  # l2 is the default
+            metadata={"hnsw:space": "l2"},  # l2 is the default
         )
 
         self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
