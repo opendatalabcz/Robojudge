@@ -1,6 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import 'dayjs/locale/cs';
 import React from "react";
 
 import ReactDOM from "react-dom/client";
@@ -25,7 +26,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='cz'>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='cs'>
         <App />
       </LocalizationProvider>
     </ThemeProvider>
