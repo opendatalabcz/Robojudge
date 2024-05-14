@@ -2,7 +2,8 @@
 Tento repozitář obsahuje webovou aplikaci, která využívá Large Language Modely (LLM) k analýze získaných soudních rozsudků a zobrazuje výsledky prostřednictvím webového rozhraní.
 
 Aplikace se skládá z FE, BE, dokumentové a vektorové databáze a stahovače (scraperu) rozhodnutí. Pro fungování jsou potřeba všechny tyto komponenty. Podrobnosti jsou uvedeny v související bakalářské práci a v kódu samotném.
-![robojudge_arch_new](https://github.com/opendatalabcz/Robojudge/assets/42498748/1006c5cc-9bbf-43fb-87da-fa00612dd145)
+![robojudge_arch_new](https://github.com/opendatalabcz/Robojudge/assets/42498748/3ec115aa-4efa-43f8-bdbe-729507589656)
+
 
 ## Instalace
 Repozitář obsahuje soubor `docker-compose.yaml`, který umožňuje spustit všechny potřebné aplikace jako kontejnery.
