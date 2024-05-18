@@ -24,8 +24,6 @@ Create your answer ONLY in Czech.
 
 
 class RulingQuestionAnswerer:
-    NEXT_CHUNK_SIZE = 4096 - 1000
-
     @classmethod
     @alru_cache
     async def answer_question(cls, question: str, text: str, llm_name=None) -> str:
@@ -75,7 +73,7 @@ class RulingQuestionAnswerer:
         )
 
         chunks = TextChunker.split_text_into_llm_chunks(text)
-        result, summary_metadata = await cls.refiner.acombine_docs(docs=chunks)
+        result, _ = await cls.refiner.acombine_docs(docs=chunks)
         return result
 
 

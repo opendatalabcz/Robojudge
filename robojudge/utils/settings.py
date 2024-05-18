@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     EMBEDDING_CHUNK_SIZE = 8000
     EMBEDDING_DIMENSIONS = 512
 
+    # Used for splitting rulings to generate summaries
+    LLM_CHUNK_SIZE = 15700
+
     # Scraping settings
     # Limits the number of rulings than can be queried using semantic search
     MAX_SEARCHABLE_RULING_COUNT: int = 20

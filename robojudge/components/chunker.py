@@ -15,8 +15,6 @@ class TextChunker:
     MAX_NUM_CHUNKS = 10000  # The maximum number of chunks to generate from a text
     MIN_CHUNK_SIZE_CHARS = 100  # The minimum size of each text chunk in characters
 
-    LLM_CHUNK_SIZE = 4096 - 500
-
     @classmethod
     def split_text_into_embeddable_chunks(
         cls, text: str, chunk_size: Optional[int] = settings.EMBEDDING_CHUNK_SIZE
@@ -75,10 +73,10 @@ class TextChunker:
         chunks = []
 
         tokens = tokenizer.encode(text)
-        if len(tokens) <= cls.LLM_CHUNK_SIZE:
+        if len(tokens) <= settings.LLM_CHUNK_SIZE:
             chunks.append(Document(page_content=text))
         else:
-            split_tokens = more_itertools.chunked(tokens, cls.LLM_CHUNK_SIZE)
+            split_tokens = more_itertools.chunked(tokens, settings.LLM_CHUNK_SIZE)
             chunks.extend(
                 [
                     Document(page_content=tokenizer.decode(token_batch))

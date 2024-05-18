@@ -7,8 +7,6 @@ from robojudge.components.reasoning.llm_definitions import standard_llm
 
 
 class RulingTitleGenerator:
-    NEXT_CHUNK_SIZE = 4096 - 1000
-
     SYSTEM_MESSAGE_TEMPLATE = """\
 Your task is to create a short and interesting title for an article about a court ruling based on a summary of that ruling.
 The title should relate to what the case was about. Avoid sounding like a tabloid.
